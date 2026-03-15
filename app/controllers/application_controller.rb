@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   # verify_authorized lives in InertiaController (not here),
   # so auth controllers (Sessions, Passwords) are not forced to call authorize.
 
+  rescue_from Pundit::NotAuthorizedError, with: :pundit_not_authorized
+
   around_action :switch_locale
   before_action :require_complete_profile
 
@@ -26,6 +28,11 @@ class ApplicationController < ActionController::Base
   private
 
   def pundit_user = Current.user
+  def current_user = Current.user
+
+  def pundit_not_authorized
+    head :forbidden
+  end
 
   def user_json(u)
     {

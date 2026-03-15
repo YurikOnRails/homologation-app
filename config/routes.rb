@@ -15,6 +15,14 @@ Rails.application.routes.draw do
   end
   root "dashboard#index"
 
+  resources :homologation_requests, path: "requests" do
+    resources :messages, only: [:create]
+    member do
+      get  :download_document
+      post :confirm_payment
+    end
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

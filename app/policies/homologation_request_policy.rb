@@ -1,5 +1,5 @@
 class HomologationRequestPolicy < ApplicationPolicy
-  def index?   = user.present?
+  def index?   = user.student? || coordinator_or_admin?
   def show?    = owner? || coordinator_or_admin?
   def create?  = user.student?
   def update?  = coordinator_or_admin?
@@ -22,9 +22,5 @@ class HomologationRequestPolicy < ApplicationPolicy
 
   def owner?
     record.user_id == user.id
-  end
-
-  def coordinator_or_admin?
-    user.coordinator? || user.super_admin?
   end
 end

@@ -14,6 +14,12 @@ class ApplicationPolicy
   def edit?   = update?
   def destroy? = false
 
+  protected
+
+  def coordinator_or_admin?
+    user.coordinator? || user.super_admin?
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user
