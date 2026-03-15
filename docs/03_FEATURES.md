@@ -101,30 +101,49 @@ These fields are saved in `users` table and pre-filled in future requests.
 - **F7.4** Mark as read / mark all as read
 
 ### F8. User Roles & Authorization (Pundit)
-- **F8.1** Roles: super_admin, coordinator, teacher, student, family
-- **F8.2** Students: can only see/edit own requests
-- **F8.3** Coordinators: can see assigned + unassigned requests, manage status
-- **F8.4** Teachers: read-only access to assigned students' requests
-- **F8.5** Family: read-only access to linked student's requests
-- **F8.6** Super Admin: full access to everything
+- **F8.1** 4 roles: super_admin, coordinator, teacher, student (family removed — duplicates student)
+- **F8.2** Students: see/edit own requests, book lessons, chat with coordinator and teacher
+- **F8.3** Coordinators: manage all requests, assign teachers to students, change statuses
+- **F8.4** Teachers: see assigned students, calendar of lessons, share meeting links
+- **F8.5** Super Admin: full access + Stripe billing + user management
+
+### F9. Teachers & Lessons
+- **F9.1** Teacher profile: level (junior/mid/senior/native), hourly rate (€), bio
+- **F9.2** Permanent meeting link (Zoom/Meet) stored in profile — used by default for all lessons
+- **F9.3** Coordinator assigns students to teachers (many-to-many)
+- **F9.4** Teacher calendar: list of upcoming lessons with date, time, student name
+- **F9.5** Lessons: scheduled_at, duration (default 60 min), status (scheduled/completed/cancelled)
+- **F9.6** Teacher can attach/change meeting link per specific lesson (overrides permanent link)
+- **F9.7** Teacher can share meeting link in chat with student
+- **F9.8** Student sees own upcoming lessons and meeting link
+- **F9.9** Teacher can add notes after lesson (private, not visible to student)
+- **F9.10** Notifications: lesson reminder, new lesson booked, lesson cancelled
+
+### F10. Teacher-Student Chat
+- **F10.1** Separate chat between teacher and student (not tied to homologation request)
+- **F10.2** Teacher shares meeting links in chat when they change
+- **F10.3** Same Action Cable real-time as request chat
+- **F10.4** Conversations table supports both: request chats AND teacher-student chats
 
 ---
 
 ## Phase 2: Admin & Integrations
 
-### F9. Super Admin Dashboard
-- **F9.1** Overview stats: total requests, by status, by month
-- **F9.2** Charts: requests over time, response time avg, status distribution
-- **F9.3** User management: list, create, edit, deactivate users
-- **F9.4** Assign roles to users
-- **F9.5** Add/remove Coordinators and Teachers
-- **F9.6** View all requests across all students
-- **F9.7** Export data (CSV)
-- **F9.8** AmoCRM sync status panel: see which requests synced, which had errors, retry
+### F11. Super Admin Dashboard
+- **F11.1** Overview stats: total requests, by status, by month
+- **F11.2** Charts: requests over time, response time avg, status distribution
+- **F11.3** User management: list, create, edit, deactivate users
+- **F11.4** Assign roles to users
+- **F11.5** Add/remove Coordinators and Teachers
+- **F11.6** View all requests across all students
+- **F11.7** AmoCRM sync status panel
+- **F11.8** Stripe billing: create invoices, track payments for homologation services
+- **F11.9** Teacher management: set levels, hourly rates
+- **F11.10** Assign teachers to students
 
-**Charts library:** recharts (React, lightweight, works well with shadcn/ui)
+**Charts library:** recharts
 
-### F10. AmoCRM Integration (triggered by payment confirmation)
+### F12. AmoCRM Integration (triggered by payment confirmation)
 
 **What our app syncs automatically (saves 80% of manual work):**
 - Contact: Name, Email, Phone, WhatsApp, Birthday, Country, Age, 18years
@@ -141,21 +160,21 @@ These fields are saved in `users` table and pre-filled in future requests.
 - Reasons for refusal (only if rejected)
 
 **Technical:**
-- **F10.1** Coordinator clicks "Confirm Payment" → triggers CRM sync
-- **F10.2** Creates Contact in AmoCRM with student's WhatsApp (for direct messaging)
-- **F10.3** Creates Lead in "Homologation" pipeline linked to Contact
-- **F10.4** Maps student form fields to AmoCRM custom fields
-- **F10.5** Uploads Application + Originals files to Lead
-- **F10.6** Background job (Solid Queue) — non-blocking
-- **F10.7** Stores AmoCRM IDs on local records
-- **F10.8** Admin can see sync status, errors, retry failed syncs
-- **F10.9** Subsequent status changes update Lead stage in CRM
+- **F12.1** Coordinator clicks "Confirm Payment" → triggers CRM sync
+- **F12.2** Creates Contact in AmoCRM with student's WhatsApp (for direct messaging)
+- **F12.3** Creates Lead in "Homologation" pipeline linked to Contact
+- **F12.4** Maps student form fields to AmoCRM custom fields
+- **F12.5** Uploads Application + Originals files to Lead
+- **F12.6** Background job (Solid Queue) — non-blocking
+- **F12.7** Stores AmoCRM IDs on local records
+- **F12.8** Admin can see sync status, errors, retry failed syncs
+- **F12.9** Subsequent status changes update Lead stage in CRM
 
 ---
 
 ## Phase 3: Enhancements
 
-### F11. Multi-language Support (BUILT INTO PHASE 1 — not deferred!)
+### F13. Multi-language Support (BUILT INTO PHASE 1 — not deferred!)
 i18n is built into the app from day one. See `docs/11_I18N_MULTILANGUAGE.md` for full details.
 - **F11.1** 3 languages: Spanish (default), English, Russian
 - **F11.2** Frontend: `react-i18next` — all UI text via `t()` function, ZERO hardcoded strings
@@ -165,7 +184,7 @@ i18n is built into the app from day one. See `docs/11_I18N_MULTILANGUAGE.md` for
 - **F11.6** User locale saved in `users.locale`, detected from browser on first visit
 - **F11.7** Dates formatted with locale-aware `date-fns`
 
-### F12. Profile Management
+### F14. Profile Management
 - **F12.1** Edit profile (name, email, phone, whatsapp, birthday, country, avatar)
 - **F12.2** Change password
 - **F12.3** Link/unlink OAuth providers

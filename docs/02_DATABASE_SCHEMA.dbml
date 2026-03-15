@@ -8,19 +8,21 @@
 
 Table users [headercolor: #3498db] {
   id integer [pk, increment]
-  name varchar [not null, note: 'Full name']
-  email_address varchar [not null, unique, note: 'Login email']
+  name varchar [not null]
+  email_address varchar [not null, unique]
   password_digest varchar [note: 'NULL if OAuth-only']
   provider varchar [note: 'google / apple']
-  uid varchar [note: 'OAuth provider ID']
+  uid varchar [note: 'OAuth ID']
   avatar_url varchar
   phone varchar [note: '🔒 encrypted']
-  whatsapp varchar [not null, note: '🔒 encrypted, for AmoCRM']
+  whatsapp varchar [not null, note: '🔒 encrypted']
   birthday date
   country varchar
+  identity_card varchar [note: '🔒 encrypted, DNI/NIE']
+  passport varchar [note: '🔒 encrypted']
   locale varchar [default: 'es', note: 'es / en / ru']
   amo_crm_contact_id varchar
-  privacy_accepted_at datetime [note: 'GDPR consent']
+  privacy_accepted_at datetime
   created_at datetime [not null]
   updated_at datetime [not null]
 
@@ -32,7 +34,7 @@ Table users [headercolor: #3498db] {
 
 Table roles [headercolor: #3498db] {
   id integer [pk, increment]
-  name varchar [not null, unique, note: 'super_admin / coordinator / teacher / student / family']
+  name varchar [not null, unique, note: 'super_admin / coordinator / teacher / student']
 }
 
 Table user_roles [headercolor: #3498db] {
@@ -55,6 +57,59 @@ Table sessions [headercolor: #3498db] {
 }
 
 
+// ─── TEACHERS ────────────────────────────────
+
+Table teacher_profiles [headercolor: #e67e22] {
+  id integer [pk, increment]
+  user_id integer [not null, unique, note: 'User with teacher role']
+  level varchar [not null, note: 'junior / mid / senior / native']
+  hourly_rate decimal [not null, note: '€ per hour']
+  permanent_meeting_link varchar [note: 'Zoom/Meet link if fixed']
+  bio text
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
+
+Table teacher_students [headercolor: #e67e22] {
+  id integer [pk, increment]
+  teacher_id integer [not null, note: 'User with teacher role']
+  student_id integer [not null, note: 'User with student role']
+  assigned_by integer [not null, note: 'Coordinator who assigned']
+  created_at datetime [not null]
+
+  indexes {
+    (teacher_id, student_id) [unique]
+    student_id
+  }
+
+  Note: 'Many-to-many. Coordinator assigns.'
+}
+
+Table lessons [headercolor: #e67e22] {
+  id integer [pk, increment]
+  teacher_id integer [not null]
+  student_id integer [not null]
+  scheduled_at datetime [not null, note: 'Date + time of lesson']
+  duration_minutes integer [not null, default: 60]
+  meeting_link varchar [note: 'Link for this lesson (or from teacher profile)']
+  status varchar [not null, default: 'scheduled', note: 'scheduled / completed / cancelled']
+  notes text [note: 'Teacher notes after lesson']
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  indexes {
+    (teacher_id, scheduled_at)
+    (student_id, scheduled_at)
+    status
+  }
+
+  Note: '''
+  Calendar entry for Spanish lessons.
+  If meeting_link is NULL → use teacher_profiles.permanent_meeting_link
+  '''
+}
+
+
 // ─── HOMOLOGATION REQUESTS ───────────────────
 
 Table homologation_requests [headercolor: #e74c3c] {
@@ -65,23 +120,23 @@ Table homologation_requests [headercolor: #e74c3c] {
   service_type varchar [not null, note: 'equivalencia / invoice / informe / other']
   subject varchar [not null]
   description text
-  identity_card varchar [note: '🔒 encrypted']
-  passport varchar [note: '🔒 encrypted']
   education_system varchar
   studies_finished varchar [note: 'yes / no / in_progress']
   study_type_spain varchar [note: 'grado / master / doctorado / fp / bachillerato']
   studies_spain varchar
   university varchar
-  country varchar
   referral_source varchar
   language_knowledge varchar [note: 'A1–C2']
   language_certificate varchar [note: 'DELE / SIELE']
   privacy_accepted boolean [not null, default: false]
 
-  status varchar [not null, default: 'submitted', note: 'submitted → in_review → awaiting_payment → payment_confirmed → in_progress → resolved / closed']
+  status varchar [not null, default: 'submitted']
+  status_changed_at datetime
+  status_changed_by integer [note: 'Who changed status']
   payment_amount decimal [note: '€']
   payment_confirmed_at datetime
   payment_confirmed_by integer
+  stripe_payment_intent_id varchar [note: 'Stripe PI for tracking']
   amo_crm_lead_id varchar
   amo_crm_synced_at datetime
   amo_crm_sync_error text
@@ -100,7 +155,11 @@ Table homologation_requests [headercolor: #e74c3c] {
   • originals    (many)
   • documents    (many)
 
-  AmoCRM Lead created on payment_confirmed
+  Status: submitted → in_review → awaiting_payment
+  → payment_confirmed ⚡AmoCRM → in_progress → resolved / closed
+
+  identity_card & passport stored on users table (not here)
+  country read from users.country (not duplicated)
   '''
 }
 
@@ -109,11 +168,17 @@ Table homologation_requests [headercolor: #e74c3c] {
 
 Table conversations [headercolor: #2ecc71] {
   id integer [pk, increment]
-  homologation_request_id integer [not null, unique]
+  homologation_request_id integer [unique, note: 'NULL if direct chat']
+  teacher_student_id integer [note: 'NULL if request chat']
   created_at datetime [not null]
   updated_at datetime [not null]
 
-  Note: 'One per request. Auto-created.'
+  Note: '''
+  Two use cases:
+  1. Request chat: homologation_request_id set
+  2. Teacher-student chat: teacher_student_id set
+  One of the two must be set.
+  '''
 }
 
 Table messages [headercolor: #2ecc71] {
@@ -128,10 +193,7 @@ Table messages [headercolor: #2ecc71] {
     (conversation_id, created_at)
   }
 
-  Note: '''
-  Files: has_many_attached :attachments
-  Real-time via Action Cable
-  '''
+  Note: 'Files: has_many_attached :attachments. Real-time via Action Cable.'
 }
 
 
@@ -140,7 +202,7 @@ Table messages [headercolor: #2ecc71] {
 Table notifications [headercolor: #f39c12] {
   id integer [pk, increment]
   user_id integer [not null]
-  notifiable_type varchar [not null, note: 'Request / Message']
+  notifiable_type varchar [not null]
   notifiable_id integer [not null]
   title varchar [not null]
   body text
@@ -169,30 +231,54 @@ Table amo_crm_tokens [headercolor: #9b59b6] {
 }
 
 
-// ─── RELATIONSHIPS ───────────────────────────
+// =============================================
+// RELATIONSHIPS
+// =============================================
 
+// Auth
 Ref: user_roles.user_id > users.id
 Ref: user_roles.role_id > roles.id
 Ref: sessions.user_id > users.id
 
+// Teachers
+Ref: teacher_profiles.user_id - users.id
+Ref: teacher_students.teacher_id > users.id
+Ref: teacher_students.student_id > users.id
+Ref: teacher_students.assigned_by > users.id
+Ref: lessons.teacher_id > users.id
+Ref: lessons.student_id > users.id
+
+// Requests
 Ref: homologation_requests.user_id > users.id
 Ref: homologation_requests.coordinator_id > users.id
 Ref: homologation_requests.payment_confirmed_by > users.id
+Ref: homologation_requests.status_changed_by > users.id
 
+// Chat
 Ref: conversations.homologation_request_id - homologation_requests.id
+Ref: conversations.teacher_student_id > teacher_students.id
 Ref: messages.conversation_id > conversations.id
 Ref: messages.user_id > users.id
 
+// Notifications
 Ref: notifications.user_id > users.id
 
 
-// ─── TABLE GROUPS ────────────────────────────
+// =============================================
+// TABLE GROUPS
+// =============================================
 
 TableGroup "Auth & Users" [color: #3498db] {
   users
   roles
   user_roles
   sessions
+}
+
+TableGroup "Teachers & Lessons" [color: #e67e22] {
+  teacher_profiles
+  teacher_students
+  lessons
 }
 
 TableGroup "Homologation" [color: #e74c3c] {

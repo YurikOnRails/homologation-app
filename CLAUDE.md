@@ -4,6 +4,8 @@
 
 Homologation app for managing student document equivalencia requests in Spain.
 Students submit requests, upload documents, chat with coordinators, and data syncs to AmoCRM after payment confirmation.
+Teachers give Spanish lessons to students with calendar and video call links.
+Super admin manages everything including Stripe billing.
 
 ## Tech Stack
 
@@ -13,8 +15,9 @@ Students submit requests, upload documents, chat with coordinators, and data syn
 - **UI:** shadcn/ui components (shadcn-admin layout style)
 - **Database:** SQLite3
 - **Auth:** Rails 8 built-in generator + OmniAuth (Google, Apple). NOT Devise.
-- **Authorization:** Pundit (5 roles: super_admin, coordinator, teacher, student, family)
-- **Files:** Active Storage with direct upload
+- **Authorization:** Pundit (4 roles: super_admin, coordinator, teacher, student)
+- **Payments:** Stripe (super_admin creates invoices)
+- **Files:** Active Storage with direct upload (local disk, no S3)
 - **Real-time:** Action Cable (Solid Cable adapter, SQLite-backed, no Redis)
 - **Background jobs:** Solid Queue (SQLite-backed, no Redis)
 - **CRM:** AmoCRM API via Faraday
@@ -120,7 +123,7 @@ Coordinator clicks "Confirm Payment" → `AmoCrmSyncJob` runs in background → 
 All dropdowns read from `config/select_options.yml`. This file has multi-language labels and AmoCRM enum ID mappings. Passed to frontend via Inertia shared data.
 
 ### 8. Security — simple and mandatory
-- `encrypts :phone, :whatsapp` (User), `encrypts :identity_card, :passport` (Request)
+- `encrypts :phone, :whatsapp, :identity_card, :passport` (User)
 - `rate_limit` on auth controllers
 - Privacy policy checkbox with `privacy_accepted_at` timestamp
 - Files served through controller (Pundit checks access)
@@ -156,19 +159,36 @@ submitted → in_review → awaiting_payment → payment_confirmed → in_progre
 
 AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
 
+## Roles (4 total, no family)
+
+| Role | Key capabilities |
+|---|---|
+| `super_admin` | Everything + Stripe billing + user management + teacher config |
+| `coordinator` | Manage requests, assign teachers to students, confirm payments |
+| `teacher` | Calendar of lessons, meeting links, chat with students, see assigned students |
+| `student` | Submit requests, upload docs, chat, view lessons |
+
+## Teachers & Lessons
+
+- `teacher_profiles`: level (junior/mid/senior/native), hourly_rate (€), permanent_meeting_link
+- `teacher_students`: many-to-many, assigned by coordinator
+- `lessons`: scheduled_at, duration, meeting_link (overrides permanent if set), status, notes
+- If lesson has no meeting_link → use teacher's permanent link from profile
+- Teacher shares changing links via chat
+
 ## Documentation
 
 Full docs in `/docs`:
 - `00_PRINCIPLES.md` — Core rules: fast & simple
 - `01_ARCHITECTURE.md` — Stack, high-level architecture, directory structure
-- `02_DATABASE_SCHEMA.md` — All tables, fields, indexes, relationships
+- `02_DATABASE_SCHEMA.md` + `.dbml` — Schema for dbdiagram.io (12 tables, color-coded)
 - `03_FEATURES.md` — User stories, data flow diagram
-- `04_ROLES_AND_AUTHORIZATION.md` — Permission matrix, Pundit policies
+- `04_ROLES_AND_AUTHORIZATION.md` — 4 roles, permission matrix, Pundit policies
 - `05_AUTH_OAUTH.md` — Rails 8 auth generator + OmniAuth setup
 - `06_AMOCRM_INTEGRATION.md` — Trigger flow, field mapping, Faraday client, sync job
-- `07_IMPLEMENTATION_PLAN.md` — 8 steps, gems, npm packages, test strategy
+- `07_IMPLEMENTATION_PLAN.md` — Steps, gems, npm packages, test strategy
 - `08_API_ROUTES.md` — All routes, controllers, Action Cable channels
 - `09_UI_COMPONENTS.md` — shadcn-admin layout, pages, file structure
 - `10_TECHNICAL_DETAILS.md` — Select options YAML, Faraday, Active Storage, Action Cable
-- `11_I18N_MULTILANGUAGE.md` — i18n setup, translation files, React rules, date formatting
-- `12_SECURITY_GDPR.md` — EU compliance, encryption, rate limiting, checklist
+- `11_I18N_MULTILANGUAGE.md` — i18n setup, translation files, React rules
+- `12_SECURITY_GDPR.md` — EU compliance, encryption, rate limiting
