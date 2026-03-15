@@ -4,8 +4,7 @@ class DatabaseBackupJob < ApplicationJob
   DATABASES = %w[production production_cache production_queue production_cable].freeze
   MAX_BACKUPS = 7
 
-  def perform
-    backup_dir = Rails.root.join("storage", "backups")
+  def perform(backup_dir: Rails.root.join("storage", "backups"))
     FileUtils.mkdir_p(backup_dir)
 
     timestamp = Time.current.strftime("%Y%m%d_%H%M%S")
@@ -27,7 +26,7 @@ class DatabaseBackupJob < ApplicationJob
         Rails.logger.info("[DatabaseBackupJob] Backed up #{db_name} → #{dest.basename}")
       rescue => e
         Rails.logger.error("[DatabaseBackupJob] FAILED #{db_name}: #{e.message}")
-        File.delete(dest) if dest && File.exist?(dest)
+        File.delete(dest) if dest
       ensure
         dst_db&.close
         src_db&.close

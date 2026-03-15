@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resource :session, only: [:new, :create, :destroy]
   resource :registration, only: [:new, :create]
   resources :passwords, param: :token, only: [:new, :create, :edit, :update]
+  resource :profile, only: [:edit, :update]
 
   # OAuth
   post "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
@@ -12,9 +13,7 @@ Rails.application.routes.draw do
   constraints(host: "127.0.0.1") do
     get "(*path)", to: redirect { |params, req| "#{req.protocol}localhost:#{req.port}/#{params[:path]}" }
   end
-  # Root will point to dashboard once it's created in Step 4
-  # root "dashboard#index"
-  get "/", to: redirect("/session/new"), as: :root
+  root "dashboard#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

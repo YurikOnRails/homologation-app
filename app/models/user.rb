@@ -49,7 +49,7 @@ class User < ApplicationRecord
   end
 
   def profile_complete?
-    whatsapp.present? && birthday.present? && country.present?
+    birthday.present? && country.present? && whatsapp.present?
   end
 
   def super_admin? = has_role?("super_admin")

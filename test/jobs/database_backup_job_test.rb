@@ -2,8 +2,10 @@ require "test_helper"
 
 class DatabaseBackupJobTest < ActiveJob::TestCase
   setup do
-    @backup_dir = Rails.root.join("storage", "backups")
+    @backup_dir = Rails.root.join("tmp", "test_backups_#{Process.pid}_#{rand(10_000)}")
     FileUtils.rm_rf(@backup_dir)
+    source = Rails.root.join("storage", "production.sqlite3")
+    FileUtils.cp(Rails.root.join("storage", "test.sqlite3"), source) unless File.exist?(source)
   end
 
   teardown do
@@ -11,11 +13,7 @@ class DatabaseBackupJobTest < ActiveJob::TestCase
   end
 
   test "creates backup directory and backup files" do
-    # Create a test source database
-    source = Rails.root.join("storage", "production.sqlite3")
-    FileUtils.cp(Rails.root.join("storage", "test.sqlite3"), source) unless File.exist?(source)
-
-    DatabaseBackupJob.perform_now
+    DatabaseBackupJob.perform_now(backup_dir: @backup_dir)
 
     assert Dir.exist?(@backup_dir), "Backup directory should be created"
     backups = Dir.glob(@backup_dir.join("production_*.sqlite3"))
@@ -31,10 +29,7 @@ class DatabaseBackupJobTest < ActiveJob::TestCase
       FileUtils.touch(@backup_dir.join("production_#{ts}.sqlite3"))
     end
 
-    source = Rails.root.join("storage", "production.sqlite3")
-    FileUtils.cp(Rails.root.join("storage", "test.sqlite3"), source) unless File.exist?(source)
-
-    DatabaseBackupJob.perform_now
+    DatabaseBackupJob.perform_now(backup_dir: @backup_dir)
 
     # 9 old + 1 new = 10, should keep only 7
     remaining = Dir.glob(@backup_dir.join("production_*.sqlite3"))

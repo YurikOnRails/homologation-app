@@ -11,18 +11,21 @@ class ApplicationController < ActionController::Base
   # so auth controllers (Sessions, Passwords) are not forced to call authorize.
 
   around_action :switch_locale
+  before_action :require_complete_profile
 
   inertia_share do
     {
-      auth: { user: respond_to?(:current_user, true) && current_user ? user_json(current_user) : nil },
+      auth: { user: Current.user ? user_json(Current.user) : nil },
       flash: { notice: flash[:notice], alert: flash[:alert] },
-      features: respond_to?(:current_user, true) && current_user ? build_features(current_user) : {},
-      unreadNotificationsCount: 0, # TODO Step 8: replace with current_user.notifications.where(read_at: nil).count
+      features: Current.user ? build_features(Current.user) : {},
+      unreadNotificationsCount: 0, # TODO Step 8: replace with Current.user.notifications.where(read_at: nil).count
       selectOptions: Rails.application.config.select_options
     }
   end
 
   private
+
+  def pundit_user = Current.user
 
   def user_json(u)
     {
@@ -58,15 +61,20 @@ class ApplicationController < ActionController::Base
     }
   end
 
+  def require_complete_profile
+    return unless Current.user
+    return if Current.user.profile_complete?
+    return if request.path.start_with?("/profile", "/session", "/registration", "/auth", "/passwords")
+    redirect_to edit_profile_path, notice: t("flash.complete_profile")
+  end
+
   def switch_locale(&action)
     locale = extract_locale_from_user || extract_locale_from_header || I18n.default_locale
     I18n.with_locale(locale, &action)
   end
 
   def extract_locale_from_user
-    return nil unless respond_to?(:current_user, true)
-
-    current_user&.locale
+    Current.user&.locale
   end
 
   def extract_locale_from_header
