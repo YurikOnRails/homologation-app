@@ -1,0 +1,11 @@
+ana_in_equivalencia_conversation:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ana_equivalencia_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
+  created_at: 2026-01-10 10:05:00
+  updated_at: 2026-01-10 10:05:00
+
+maria_in_equivalencia_conversation:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ana_equivalencia_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:coordinator_maria) %>
+  created_at: 2026-01-10 10:05:00
+  updated_at: 2026-01-10 10:05:00

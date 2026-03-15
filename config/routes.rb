@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
 
   # Redirect to localhost from 127.0.0.1 to use same IP address with Vite server
   constraints(host: "127.0.0.1") do
@@ -6,6 +8,7 @@ Rails.application.routes.draw do
   end
   # Root will point to dashboard once it's created in Step 4
   # root "dashboard#index"
+  get "/", to: redirect("/session/new"), as: :root
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
