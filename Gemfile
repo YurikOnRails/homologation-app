@@ -8,7 +8,23 @@ gem "sqlite3", ">= 2.1"
 gem "puma", ">= 5.0"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
+
+# Auth: OAuth
+gem "omniauth"
+gem "omniauth-google-oauth2"
+gem "omniauth-apple"
+gem "omniauth-rails_csrf_protection"
+
+# Authorization
+gem "pundit"
+
+# HTTP client (AmoCRM + Telegram)
+gem "faraday"
+gem "faraday-multipart"
+
+# File validation
+gem "active_storage_validations"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -53,6 +69,8 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  # Mock HTTP calls to AmoCRM/Telegram in tests
+  gem "webmock"
 end
 
 gem "inertia_rails", "~> 3.18"
