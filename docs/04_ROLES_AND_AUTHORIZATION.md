@@ -13,44 +13,31 @@
 
 ## Permission Matrix
 
-### 🔧 Administration
-
-| Action | super_admin | coordinator | teacher | student |
-|---|:-:|:-:|:-:|:-:|
-| Admin dashboard | ✅ | — | — | — |
-| Manage users (CRUD) | ✅ | — | — | — |
-| Stripe billing | ✅ | — | — | — |
-| Set teacher level / rate | ✅ | — | — | — |
-
-### 📋 Homologation Requests
-
-| Action | super_admin | coordinator | teacher | student |
-|---|:-:|:-:|:-:|:-:|
-| View all requests | ✅ | ✅ | — | — |
-| View assigned students' requests | ✅ | ✅ | ✅ | — |
-| View own requests | ✅ | ✅ | ✅ | ✅ |
-| Submit new request | — | — | — | ✅ |
-| Change request status | ✅ | ✅ | — | — |
-| Confirm payment | ✅ | ✅ | — | — |
-| Upload documents | ✅ | ✅ | — | ✅ |
-| Download documents | ✅ | ✅ | ✅ | — |
-
-### 👩‍🏫 Teachers & Lessons
-
-| Action | super_admin | coordinator | teacher | student |
-|---|:-:|:-:|:-:|:-:|
-| Assign teacher to student | ✅ | ✅ | — | — |
-| View teacher calendar | ✅ | ✅ | ✅ | — |
-| View own lessons | ✅ | ✅ | ✅ | ✅ |
-| Create / edit lessons | ✅ | ✅ | ✅ | — |
-| Share meeting link in chat | ✅ | ✅ | ✅ | — |
-
-### 💬 Chat
-
-| Action | super_admin | coordinator | teacher | student |
-|---|:-:|:-:|:-:|:-:|
-| Chat in request conversation | ✅ | ✅ | — | ✅ |
-| Chat teacher ↔ student | ✅ | ✅ | ✅ | ✅ |
+| Action                              | super_admin | coordinator | teacher | student |
+|-------------------------------------|:-----------:|:-----------:|:-------:|:-------:|
+| **🔧 Administration**              |             |             |         |         |
+| Admin dashboard                     |     ✅      |      —      |    —    |    —    |
+| Manage users (CRUD)                 |     ✅      |      —      |    —    |    —    |
+| Stripe billing                      |     ✅      |      —      |    —    |    —    |
+| Set teacher level / rate            |     ✅      |      —      |    —    |    —    |
+| **📋 Homologation Requests**       |             |             |         |         |
+| View all requests                   |     ✅      |     ✅      |    —    |    —    |
+| View assigned students' requests    |     ✅      |     ✅      |   ✅    |    —    |
+| View own requests                   |     ✅      |     ✅      |   ✅    |   ✅    |
+| Submit new request                  |      —      |      —      |    —    |   ✅    |
+| Change request status               |     ✅      |     ✅      |    —    |    —    |
+| Confirm payment                     |     ✅      |     ✅      |    —    |    —    |
+| Upload documents                    |     ✅      |     ✅      |    —    |   ✅    |
+| Download documents                  |     ✅      |     ✅      |   ✅    |    —    |
+| **👩‍🏫 Teachers & Lessons**          |             |              |         |         |
+| Assign teacher to student           |     ✅      |     ✅      |    —    |    —    |
+| View teacher calendar               |     ✅      |     ✅      |   ✅    |    —    |
+| View own lessons                    |     ✅      |     ✅      |   ✅    |   ✅    |
+| Create / edit lessons               |     ✅      |     ✅      |   ✅    |    —    |
+| Share meeting link in chat          |     ✅      |     ✅      |   ✅    |    —    |
+| **💬 Chat**                         |             |             |         |         |
+| Chat in request conversation        |     ✅      |     ✅      |    —    |   ✅    |
+| Chat teacher ↔ student             |     ✅      |     ✅      |   ✅    |   ✅    |
 
 ## Implementation
 
