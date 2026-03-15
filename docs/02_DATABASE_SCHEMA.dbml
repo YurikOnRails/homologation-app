@@ -30,6 +30,11 @@ Table users [headercolor: #3498db] {
   guardian_whatsapp varchar [note: '🔒 encrypted, for AmoCRM if minor']
   guardian_user_id integer [note: 'FK → users, optional parent account for future']
 
+  // ── Notification Preferences ──
+  telegram_chat_id varchar [note: 'Telegram Bot chat ID, set when user clicks /start']
+  notification_telegram boolean [not null, default: false, note: 'Send to Telegram?']
+  notification_email boolean [not null, default: true, note: 'Send to email?']
+
   amo_crm_contact_id varchar
   privacy_accepted_at datetime
   created_at datetime [not null]

@@ -43,6 +43,18 @@ Students can be minors (parents pay) or adults (pay themselves).
 **MVP:** guardian fields are text, parent gets invoices/notifications by email.
 **Future:** parent registers, links to child via `guardian_user_id`, can log in and see status.
 
+## Notification Preferences & Telegram
+
+| Field on `users` | Purpose |
+|---|---|
+| `telegram_chat_id` | Telegram Bot chat ID, set when user clicks /start in bot |
+| `notification_telegram` | `true` = send notifications to Telegram (default: false) |
+| `notification_email` | `true` = send notifications to email (default: true) |
+
+**Flow:** User clicks "Connect Telegram" in profile → opens `t.me/YourBot` → clicks /start → bot receives `chat_id` → saved to user → `notification_telegram` set to `true`.
+
+**Channels:** In-app (always) + Email (default on) + Telegram (opt-in via button). User can toggle each in profile settings.
+
 ## Encrypted Fields (GDPR)
 
 | Model | Field |

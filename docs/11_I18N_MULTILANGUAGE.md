@@ -171,7 +171,14 @@ app/frontend/locales/
     "phone": "Teléfono",
     "birthday": "Fecha de nacimiento",
     "country": "País de origen",
-    "save_continue": "Guardar y continuar"
+    "save_continue": "Guardar y continuar",
+    "notifications_section": "Preferencias de notificaciones",
+    "email_notifications": "Notificaciones por email",
+    "telegram_notifications": "Notificaciones por Telegram",
+    "connect_telegram": "Conectar Telegram",
+    "disconnect_telegram": "Desconectar Telegram",
+    "telegram_connected": "Telegram conectado",
+    "telegram_hint": "Recibe notificaciones instantáneas en Telegram — gratis"
   },
 
   "requests": {
@@ -429,7 +436,14 @@ app/frontend/locales/
     "phone": "Phone",
     "birthday": "Date of Birth",
     "country": "Country of Origin",
-    "save_continue": "Save & Continue"
+    "save_continue": "Save & Continue",
+    "notifications_section": "Notification preferences",
+    "email_notifications": "Email notifications",
+    "telegram_notifications": "Telegram notifications",
+    "connect_telegram": "Connect Telegram",
+    "disconnect_telegram": "Disconnect Telegram",
+    "telegram_connected": "Telegram connected",
+    "telegram_hint": "Receive instant notifications in Telegram — free"
   },
 
   "requests": {
@@ -687,7 +701,14 @@ app/frontend/locales/
     "phone": "Телефон",
     "birthday": "Дата рождения",
     "country": "Страна происхождения",
-    "save_continue": "Сохранить и продолжить"
+    "save_continue": "Сохранить и продолжить",
+    "notifications_section": "Настройки уведомлений",
+    "email_notifications": "Уведомления на email",
+    "telegram_notifications": "Уведомления в Telegram",
+    "connect_telegram": "Подключить Telegram",
+    "disconnect_telegram": "Отключить Telegram",
+    "telegram_connected": "Telegram подключён",
+    "telegram_hint": "Получайте мгновенные уведомления в Telegram — бесплатно"
   },
 
   "requests": {

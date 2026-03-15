@@ -132,15 +132,37 @@ See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
 - **F6.13** Edit teacher profile (level, rate, permanent link)
 - **F6.14** Receives notifications on new requests and messages
 
-### F7. Notifications
+### F7. Notifications (In-app + Email + Telegram)
 - **F7.1** In-app notifications (bell icon with badge count)
 - **F7.2** Real-time via Action Cable (NotificationChannel)
-- **F7.3** Email notifications for:
+- **F7.3** Email notifications (enabled by default, user can disable in profile)
+- **F7.4** Telegram Bot notifications (opt-in: user connects via button in profile)
+- **F7.5** Notification events:
   - New request submitted (→ coordinators)
   - New message received (→ student or coordinator)
   - Status changed (→ student)
   - Payment confirmed (→ student)
-- **F7.4** Mark as read / mark all as read
+  - New lesson scheduled (→ student)
+  - Lesson cancelled (→ student + teacher)
+  - Lesson reminder 1h before (→ student + teacher)
+- **F7.6** Mark as read / mark all as read
+- **F7.7** Notification preferences in profile: toggle Email ON/OFF, toggle Telegram ON/OFF
+- **F7.8** "Connect Telegram" button in profile → opens bot link → user sends /start → bot saves chat_id
+
+**Telegram Bot setup:**
+1. Create bot via @BotFather → get token
+2. Set webhook: `POST https://api.telegram.org/bot{token}/setWebhook?url=https://yourapp.com/telegram/webhook`
+3. User clicks "Connect Telegram" → opens `t.me/YourBot?start={user_token}`
+4. Bot receives /start with `user_token` → `POST /telegram/webhook` → save `telegram_chat_id` to user
+5. NotificationJob checks `user.notification_telegram?` && `user.telegram_chat_id.present?` → sends via Telegram Bot API
+
+**Delivery matrix:**
+
+| Channel | Default | User controls | Cost |
+|---|---|---|---|
+| In-app (bell) | Always ON | Cannot disable | Free |
+| Email | ON | Can disable in profile | Free |
+| Telegram | OFF | Enable via "Connect Telegram" button | Free |
 
 ### F8. User Roles & Authorization (Pundit)
 - **F8.1** 4 roles: super_admin, coordinator, teacher, student (family removed — duplicates student)

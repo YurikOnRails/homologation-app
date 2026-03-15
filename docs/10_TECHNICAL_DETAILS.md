@@ -147,3 +147,125 @@ Key points:
 - Auth: same session cookie as HTTP (no extra config)
 - Solid Cable adapter (SQLite-backed, already configured, no Redis)
 - Auto-reconnect built into Action Cable client
+
+---
+
+## 5. Telegram Bot Notifications (Free)
+
+Telegram Bot API — completely free, no limits, no message templates, no provider needed.
+
+### Setup
+
+1. Create bot via [@BotFather](https://t.me/BotFather) → get `bot_token`
+2. Add token to Rails credentials: `bin/rails credentials:edit`
+   ```yaml
+   telegram:
+     bot_token: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+     webhook_secret: "random_secret_string_for_verification"
+   ```
+3. Set webhook (one-time, in production):
+   ```bash
+   curl -X POST "https://api.telegram.org/bot{TOKEN}/setWebhook" \
+     -d "url=https://yourapp.com/telegram/webhook&secret_token=random_secret_string"
+   ```
+
+### Service: TelegramClient
+
+```ruby
+# app/services/telegram_client.rb
+class TelegramClient
+  API_BASE = "https://api.telegram.org/bot#{Rails.application.credentials.dig(:telegram, :bot_token)}"
+
+  def initialize
+    @conn = Faraday.new(url: API_BASE) do |f|
+      f.request :json
+      f.response :json
+      f.request :retry, max: 2, interval: 1
+    end
+  end
+
+  def send_message(chat_id, text)
+    @conn.post("/sendMessage", {
+      chat_id: chat_id,
+      text: text,
+      parse_mode: "HTML"
+    })
+  end
+end
+```
+
+### Webhook Controller
+
+```ruby
+# app/controllers/telegram_controller.rb
+class TelegramController < ApplicationController
+  skip_before_action :verify_authenticity_token
+  skip_after_action :verify_authorized
+
+  def webhook
+    # Verify webhook secret
+    unless request.headers["X-Telegram-Bot-Api-Secret-Token"] == Rails.application.credentials.dig(:telegram, :webhook_secret)
+      return head :forbidden
+    end
+
+    data = JSON.parse(request.body.read)
+    handle_message(data["message"]) if data["message"]
+    head :ok
+  end
+
+  private
+
+  def handle_message(message)
+    text = message["text"]
+    chat_id = message["chat"]["id"]
+
+    if text&.start_with?("/start")
+      # /start USER_TOKEN — link Telegram to user account
+      user_token = text.split(" ")[1]
+      user = User.find_by(telegram_link_token: user_token)
+      if user
+        user.update!(telegram_chat_id: chat_id.to_s, notification_telegram: true, telegram_link_token: nil)
+        TelegramClient.new.send_message(chat_id, "✅ Telegram connected! You will receive notifications here.")
+      else
+        TelegramClient.new.send_message(chat_id, "❌ Invalid link. Please use the button in your profile.")
+      end
+    end
+  end
+end
+```
+
+### "Connect Telegram" flow
+
+1. **Profile page:** User clicks "Connect Telegram" button
+2. **Backend:** Generates one-time `telegram_link_token` (SecureRandom.hex), saves to user
+3. **Frontend:** Opens `https://t.me/YourBotName?start={telegram_link_token}` in new tab
+4. **Telegram:** User sees bot, clicks "Start"
+5. **Webhook:** Bot receives `/start {token}`, matches user, saves `chat_id`
+6. **Profile page:** Shows "Telegram connected ✅" (poll or refresh)
+
+### Route
+
+```ruby
+post "/telegram/webhook", to: "telegram#webhook"
+```
+
+### User model fields
+
+```ruby
+# Add to users table:
+# telegram_chat_id      :string   — Telegram chat ID (set by bot webhook)
+# telegram_link_token   :string   — One-time token for linking (generated when user clicks "Connect")
+# notification_telegram :boolean  — default: false
+# notification_email    :boolean  — default: true
+```
+
+### Message formatting (HTML)
+
+```ruby
+# In NotificationJob:
+def telegram_text(notification)
+  "<b>#{notification.title}</b>\n#{notification.body}"
+end
+```
+
+Telegram supports basic HTML: `<b>`, `<i>`, `<a href="">`, `<code>`, `<pre>`. No Markdown conflicts.

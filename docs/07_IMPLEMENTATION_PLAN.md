@@ -306,6 +306,10 @@ class AddFieldsToUsers < ActiveRecord::Migration[8.0]
     add_column :users, :guardian_phone, :string
     add_column :users, :guardian_whatsapp, :string
     add_column :users, :guardian_user_id, :integer
+    add_column :users, :telegram_chat_id, :string
+    add_column :users, :telegram_link_token, :string
+    add_column :users, :notification_telegram, :boolean, null: false, default: false
+    add_column :users, :notification_email, :boolean, null: false, default: true
     add_column :users, :amo_crm_contact_id, :string
     add_column :users, :privacy_accepted_at, :datetime
 
@@ -1856,11 +1860,94 @@ end
 
 ---
 
-## Step 8: Notifications (In-app + Email)
+## Step 8: Notifications (In-app + Email + Telegram)
 
-**Goal:** Bell icon with real-time unread count. Notification list page. Email for key events. All triggered by background jobs.
+**Goal:** In-app bell with real-time count. Email notifications (default on). Telegram Bot notifications (opt-in via profile button). Notification preferences. All triggered by background jobs. **Telegram is free — no providers, no message templates, no cost.**
 
-### 8.1 — Create NotificationsController
+### 8.1 — Add Telegram fields to users table
+
+Create migration:
+```ruby
+class AddTelegramAndNotificationPrefsToUsers < ActiveRecord::Migration[8.0]
+  def change
+    add_column :users, :telegram_chat_id, :string
+    add_column :users, :telegram_link_token, :string
+    add_column :users, :notification_telegram, :boolean, null: false, default: false
+    add_column :users, :notification_email, :boolean, null: false, default: true
+  end
+end
+```
+
+### 8.2 — Create TelegramClient service
+
+**`app/services/telegram_client.rb`:**
+```ruby
+class TelegramClient
+  API_BASE = "https://api.telegram.org/bot#{Rails.application.credentials.dig(:telegram, :bot_token)}"
+
+  def initialize
+    @conn = Faraday.new(url: API_BASE) do |f|
+      f.request :json
+      f.response :json
+      f.request :retry, max: 2, interval: 1
+    end
+  end
+
+  def send_message(chat_id, text)
+    response = @conn.post("/sendMessage", {
+      chat_id: chat_id,
+      text: text,
+      parse_mode: "HTML"
+    })
+    Rails.logger.warn("Telegram API error: #{response.body}") unless response.success?
+    response
+  end
+end
+```
+
+No gem needed — reuses Faraday (already in Gemfile for AmoCRM).
+
+### 8.3 — Create Telegram webhook controller
+
+**`app/controllers/telegram_controller.rb`:**
+```ruby
+class TelegramController < ApplicationController
+  skip_before_action :verify_authenticity_token
+  skip_after_action :verify_authorized
+
+  def webhook
+    # Verify webhook secret from Telegram
+    secret = request.headers["X-Telegram-Bot-Api-Secret-Token"]
+    unless secret == Rails.application.credentials.dig(:telegram, :webhook_secret)
+      return head :forbidden
+    end
+
+    data = JSON.parse(request.body.read)
+    handle_message(data["message"]) if data["message"]
+    head :ok
+  end
+
+  private
+
+  def handle_message(message)
+    text = message["text"]
+    chat_id = message["chat"]["id"]
+
+    if text&.start_with?("/start")
+      user_token = text.split(" ")[1]
+      user = User.find_by(telegram_link_token: user_token)
+      if user
+        user.update!(telegram_chat_id: chat_id.to_s, notification_telegram: true, telegram_link_token: nil)
+        TelegramClient.new.send_message(chat_id, "✅ ¡Telegram conectado! Recibirás notificaciones aquí.\n\n✅ Telegram connected! You will receive notifications here.\n\n✅ Telegram подключён! Уведомления будут приходить сюда.")
+      else
+        TelegramClient.new.send_message(chat_id, "❌ Invalid link. Use the button in your profile / Usa el botón en tu perfil.")
+      end
+    end
+  end
+end
+```
+
+### 8.4 — Create NotificationsController
 
 **`app/controllers/notifications_controller.rb`:**
 - `index` — user's notifications, newest first. Render `notifications/Index`.
@@ -1868,36 +1955,52 @@ end
 - `mark_all_read` — `current_user.notifications.unread.update_all(read_at: Time.current)`
 - Authorize: user can only see/update own notifications
 
-### 8.2 — Create NotificationJob
+### 8.5 — Create NotificationJob (multi-channel)
 
 **`app/jobs/notification_job.rb`:**
 ```ruby
 class NotificationJob < ApplicationJob
   queue_as :default
 
-  def perform(user_id:, title:, body: nil, notifiable:, send_email: true)
+  def perform(user_id:, title:, body: nil, notifiable:)
+    user = User.find(user_id)
+
+    # 1. Always create in-app notification
     notification = Notification.create!(
       user_id: user_id, title: title, body: body, notifiable: notifiable
     )
-    # Broadcast to user's notification channel
-    NotificationChannel.broadcast_to(User.find(user_id), {
+
+    # 2. Always broadcast to Action Cable (real-time bell update)
+    NotificationChannel.broadcast_to(user, {
       id: notification.id, title: title, body: body,
-      createdAt: notification.created_at.iso8601, unreadCount: User.find(user_id).notifications.unread.count
+      createdAt: notification.created_at.iso8601,
+      unreadCount: user.notifications.unread.count
     })
-    # Send email
-    NotificationMailer.notify(notification).deliver_later if send_email
+
+    # 3. Email (if user has it enabled — default: true)
+    if user.notification_email?
+      NotificationMailer.notify(notification).deliver_later
+    end
+
+    # 4. Telegram (if user connected and enabled)
+    if user.notification_telegram? && user.telegram_chat_id.present?
+      TelegramClient.new.send_message(
+        user.telegram_chat_id,
+        "<b>#{title}</b>\n#{body}"
+      )
+    end
   end
 end
 ```
 
-### 8.3 — Create NotificationMailer
+### 8.6 — Create NotificationMailer
 
 **`app/mailers/notification_mailer.rb`:**
 - `notify(notification)` — generic email with title + body
 - Specific methods: `new_request`, `new_message`, `status_changed`, `payment_confirmed`
-- All subjects via Rails I18n
+- All subjects via Rails I18n (use recipient's locale)
 
-### 8.4 — Wire up notification triggers
+### 8.7 — Wire up notification triggers
 
 Add `NotificationJob.perform_later(...)` calls to:
 - **`HomologationRequestsController#create`** (when submitted) → notify all coordinators
@@ -1907,15 +2010,47 @@ Add `NotificationJob.perform_later(...)` calls to:
 - **`LessonsController#create`** → notify student
 - **`LessonsController#update`** (cancelled) → notify student + teacher
 
-### 8.5 — Update NotificationBell component
+### 8.8 — Add "Connect Telegram" to profile page
+
+**Update `app/controllers/profiles_controller.rb`:**
+Add action `connect_telegram`:
+```ruby
+def connect_telegram
+  token = SecureRandom.hex(16)
+  current_user.update!(telegram_link_token: token)
+  bot_name = Rails.application.credentials.dig(:telegram, :bot_name)
+  redirect_to "https://t.me/#{bot_name}?start=#{token}", allow_other_host: true
+end
+
+def disconnect_telegram
+  current_user.update!(telegram_chat_id: nil, notification_telegram: false)
+  redirect_to edit_profile_path, notice: t("flash.telegram_disconnected")
+end
+```
+
+**Update routes:**
+```ruby
+resource :profile, only: [:show, :edit, :update] do
+  post :connect_telegram
+  delete :disconnect_telegram
+end
+```
+
+**Update `app/frontend/pages/profile/Edit.tsx`:**
+- Section: "Notification Preferences"
+- Toggle: "Email notifications" (checked by default)
+- Button: "Connect Telegram" → if not connected, opens bot link. If connected, show "Telegram connected ✅" + "Disconnect" button.
+- Toggle: "Telegram notifications" (visible only when connected, enabled when connected)
+
+### 8.9 — Update NotificationBell component
 
 Update `app/frontend/components/common/NotificationBell.tsx`:
 - Subscribe to `NotificationChannel` via `useChannel`
-- On receive: update unread count, optionally show toast
+- On receive: update unread count, optionally show toast (sonner)
 - Click: dropdown with 5 latest notifications
 - "View all" link → `routes.notifications`
 
-### 8.6 — Create notification page
+### 8.10 — Create notification page
 
 **`app/frontend/pages/notifications/Index.tsx`:**
 - List of all notifications (newest first)
@@ -1924,7 +2059,7 @@ Update `app/frontend/components/common/NotificationBell.tsx`:
 - "Mark all as read" button
 - Empty state: `t("notifications.no_notifications")`
 
-### 8.7 — Update routes
+### 8.11 — Update routes
 
 ```ruby
 resources :notifications, only: [:index, :update] do
@@ -1932,9 +2067,45 @@ resources :notifications, only: [:index, :update] do
     post :mark_all_read
   end
 end
+post "/telegram/webhook", to: "telegram#webhook"
 ```
 
-### 8.8 — Write tests
+### 8.12 — Add i18n keys for notifications/telegram
+
+Add to all 3 locale files (es.json, en.json, ru.json):
+```json
+{
+  "profile": {
+    "notifications_section": "Notification preferences",
+    "email_notifications": "Email notifications",
+    "telegram_notifications": "Telegram notifications",
+    "connect_telegram": "Connect Telegram",
+    "disconnect_telegram": "Disconnect Telegram",
+    "telegram_connected": "Telegram connected",
+    "telegram_hint": "Receive instant notifications in Telegram — free"
+  }
+}
+```
+
+### 8.13 — Add credentials
+
+```bash
+bin/rails credentials:edit
+```
+```yaml
+telegram:
+  bot_token: "123456:ABC-DEF..."  # From @BotFather
+  bot_name: "YourHomologationBot"  # Without @
+  webhook_secret: "random_secret_string"
+```
+
+One-time setup after deploy:
+```bash
+curl -X POST "https://api.telegram.org/bot{TOKEN}/setWebhook" \
+  -d "url=https://yourapp.com/telegram/webhook&secret_token=random_secret_string"
+```
+
+### 8.14 — Write tests
 
 **`test/controllers/notifications_controller_test.rb`:**
 ```ruby
@@ -1969,18 +2140,104 @@ test "creates notification record" do
     )
   end
 end
+
+test "sends telegram when user has it enabled" do
+  WebMock.enable!
+  stub_request(:post, /api.telegram.org/).to_return(status: 200, body: '{"ok":true}')
+
+  user = users(:student_ana)
+  user.update!(telegram_chat_id: "123456", notification_telegram: true)
+
+  NotificationJob.perform_now(
+    user_id: user.id,
+    title: "Test",
+    notifiable: homologation_requests(:ana_equivalencia)
+  )
+
+  assert_requested :post, /api.telegram.org\/bot.*\/sendMessage/
+  WebMock.disable!
+end
+
+test "does not send telegram when user has it disabled" do
+  WebMock.enable!
+
+  user = users(:student_ana)
+  user.update!(telegram_chat_id: nil, notification_telegram: false)
+
+  NotificationJob.perform_now(
+    user_id: user.id,
+    title: "Test",
+    notifiable: homologation_requests(:ana_equivalencia)
+  )
+
+  assert_not_requested :post, /api.telegram.org/
+  WebMock.disable!
+end
+```
+
+**`test/controllers/telegram_controller_test.rb`:**
+```ruby
+test "webhook links telegram to user" do
+  user = users(:student_ana)
+  user.update!(telegram_link_token: "abc123")
+
+  post "/telegram/webhook",
+    params: { message: { text: "/start abc123", chat: { id: 999 } } }.to_json,
+    headers: {
+      "Content-Type" => "application/json",
+      "X-Telegram-Bot-Api-Secret-Token" => Rails.application.credentials.dig(:telegram, :webhook_secret)
+    }
+
+  assert_response :ok
+  assert_equal "999", user.reload.telegram_chat_id
+  assert user.notification_telegram?
+  assert_nil user.telegram_link_token  # Token consumed
+end
+
+test "webhook rejects invalid secret" do
+  post "/telegram/webhook",
+    params: { message: { text: "/start abc", chat: { id: 1 } } }.to_json,
+    headers: { "Content-Type" => "application/json", "X-Telegram-Bot-Api-Secret-Token" => "wrong" }
+
+  assert_response :forbidden
+end
+```
+
+**`test/controllers/profiles_controller_test.rb`** (add to existing):
+```ruby
+test "connect_telegram generates token and redirects to bot" do
+  sign_in users(:student_ana)
+  post connect_telegram_profile_path
+  assert users(:student_ana).reload.telegram_link_token.present?
+  assert_response :redirect
+end
+
+test "disconnect_telegram clears chat_id" do
+  user = users(:student_ana)
+  user.update!(telegram_chat_id: "123", notification_telegram: true)
+  sign_in user
+  delete disconnect_telegram_profile_path
+  assert_nil user.reload.telegram_chat_id
+  refute user.notification_telegram?
+end
 ```
 
 ### Done criteria for Step 8
 
-- [ ] `bin/rails test` — all notification tests pass (minimum 4 tests)
+- [ ] `bin/rails test` — all notification tests pass (minimum 8 tests)
 - [ ] `npm run check` — TypeScript compiles
 - [ ] Bell icon shows correct unread count
 - [ ] New notification appears in real-time (count updates without refresh)
 - [ ] Click notification → navigates to correct page
 - [ ] Mark as read / mark all works
-- [ ] Email sent for new request submission (check test mailbox / logs)
+- [ ] Email sent for new request submission (check logs)
 - [ ] Emails use correct locale for recipient
+- [ ] "Connect Telegram" button in profile generates link and opens bot
+- [ ] After /start in bot → `telegram_chat_id` saved to user
+- [ ] Telegram notification sent when user has it enabled
+- [ ] Telegram notification NOT sent when disabled or no chat_id
+- [ ] "Disconnect Telegram" clears chat_id and disables toggle
+- [ ] Notification preferences (email/telegram toggles) save correctly
 
 ---
 
@@ -2401,3 +2658,13 @@ npm install react-i18next i18next i18next-browser-languagedetector
 npm install react-dropzone @rails/activestorage @rails/actioncable
 npm install recharts lucide-react date-fns
 ```
+
+## External Services
+
+| Service | Purpose | Cost | Setup |
+|---|---|---|---|
+| Google OAuth | Social login | Free | Google Cloud Console → credentials |
+| Apple OAuth | Social login | Free | Apple Developer → Services IDs |
+| AmoCRM API | CRM sync after payment | Included in AmoCRM plan | Integration in AmoCRM settings |
+| Telegram Bot API | Push notifications | **Free forever** | @BotFather → create bot → set webhook |
+| Stripe | Invoicing (future) | Per transaction | Stripe Dashboard |

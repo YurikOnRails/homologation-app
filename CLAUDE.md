@@ -21,6 +21,7 @@ Super admin manages everything including Stripe billing.
 - **Real-time:** Action Cable (Solid Cable adapter, SQLite-backed, no Redis)
 - **Background jobs:** Solid Queue (SQLite-backed, no Redis)
 - **CRM:** AmoCRM API via Faraday
+- **Notifications:** In-app (Action Cable) + Email + Telegram Bot API (free, opt-in)
 - **Testing:** Minitest
 - **i18n:** 3 languages (es, en, ru) — react-i18next + Rails I18n
 
