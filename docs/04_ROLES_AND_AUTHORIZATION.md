@@ -74,21 +74,28 @@ end
 ### Inertia Shared Data
 
 ```ruby
-current_user: {
-  id: u.id,
-  name: u.name,
-  email: u.email_address,
-  roles: u.roles.pluck(:name),
-  avatar_url: u.avatar_url
+auth: {
+  user: {
+    id: u.id,
+    name: u.name,
+    email: u.email_address,
+    roles: u.roles.pluck(:name),
+    avatarUrl: u.avatar_url
+  }
 }
 ```
 
-### Frontend RoleGuard
+### Frontend Authorization — Feature Flags Only
+
+**IMPORTANT:** Never check roles directly in React components. Use `features.*` flags from Inertia shared props instead.
 
 ```tsx
-function RoleGuard({ roles, children }) {
-  const { current_user } = usePage().props
-  if (!current_user?.roles?.some(r => roles.includes(r))) return null
-  return <>{children}</>
-}
+// ❌ WRONG — role check in React (BANNED)
+{currentUser.roles.includes('coordinator') && <Button />}
+
+// ✅ CORRECT — feature flag
+const { features } = usePage<SharedProps>().props
+{features.canConfirmPayment && <Button />}
 ```
+
+Feature flags are defined in `ApplicationController#build_features(user)` and passed via Inertia shared data on every request.

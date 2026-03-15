@@ -210,22 +210,31 @@ end
 
 ```json
 {
-  "current_user": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "roles": ["student"],
-    "avatar_url": "https://...",
-    "locale": "es",
-    "profile_complete": true
+  "auth": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "roles": ["student"],
+      "avatarUrl": "https://...",
+      "locale": "es",
+      "profileComplete": true
+    }
   },
   "flash": {
     "notice": "...",
     "alert": "..."
   },
-  "unread_notifications_count": 3,
-  "select_options": { "...loaded from config/select_options.yml..." }
+  "features": {
+    "canConfirmPayment": false,
+    "canManageUsers": false,
+    "canAccessInbox": false,
+    "canAccessAdmin": false,
+    "canCreateRequest": true
+  },
+  "unreadNotificationsCount": 3,
+  "selectOptions": { "...loaded from config/select_options.yml..." }
 }
 ```
 
-**Note:** If `profile_complete` is `false`, the app should redirect to `/profile/edit` to complete profile (WhatsApp, birthday, country).
+**Note:** If `auth.user.profileComplete` is `false`, the app should redirect to `/profile/edit` to complete profile (WhatsApp, birthday, country).

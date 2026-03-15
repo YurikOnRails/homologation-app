@@ -1114,6 +1114,20 @@ es:
           attributes:
             privacy_accepted:
               accepted: "debe aceptar la política de privacidad"
+  flash:
+    signed_in: "Sesión iniciada"
+    signed_out: "Sesión cerrada"
+    auth_failed: "Error de autenticación"
+    profile_updated: "Perfil actualizado"
+    complete_profile: "Por favor completa tu perfil"
+    teacher_updated: "Profesor actualizado"
+    student_assigned: "Alumno asignado"
+    student_removed: "Alumno eliminado"
+    telegram_disconnected: "Telegram desconectado"
+    payment_confirmed: "Pago confirmado. Sincronizando con AmoCRM..."
+    request_created: "Solicitud creada"
+    request_submitted: "Solicitud enviada"
+    status_updated: "Estado actualizado"
   mailers:
     request_mailer:
       new_request:
@@ -1149,6 +1163,20 @@ en:
           attributes:
             privacy_accepted:
               accepted: "you must accept the privacy policy"
+  flash:
+    signed_in: "Signed in successfully"
+    signed_out: "Signed out"
+    auth_failed: "Authentication failed"
+    profile_updated: "Profile updated"
+    complete_profile: "Please complete your profile"
+    teacher_updated: "Teacher updated"
+    student_assigned: "Student assigned"
+    student_removed: "Student removed"
+    telegram_disconnected: "Telegram disconnected"
+    payment_confirmed: "Payment confirmed. Syncing to AmoCRM..."
+    request_created: "Request created"
+    request_submitted: "Request submitted"
+    status_updated: "Status updated"
   mailers:
     request_mailer:
       new_request:
@@ -1168,7 +1196,7 @@ en:
 ru:
   activerecord:
     models:
-      homologation_request: "Заявка на омологацию"
+      homologation_request: "Заявка на гомологацию"
       user: "Пользователь"
     attributes:
       homologation_request:
@@ -1184,6 +1212,20 @@ ru:
           attributes:
             privacy_accepted:
               accepted: "необходимо принять политику конфиденциальности"
+  flash:
+    signed_in: "Вход выполнен"
+    signed_out: "Выход выполнен"
+    auth_failed: "Ошибка авторизации"
+    profile_updated: "Профиль обновлён"
+    complete_profile: "Пожалуйста, заполните профиль"
+    teacher_updated: "Учитель обновлён"
+    student_assigned: "Ученик назначен"
+    student_removed: "Ученик удалён"
+    telegram_disconnected: "Telegram отключён"
+    payment_confirmed: "Оплата подтверждена. Синхронизация с AmoCRM..."
+    request_created: "Заявка создана"
+    request_submitted: "Заявка отправлена"
+    status_updated: "Статус обновлён"
   mailers:
     request_mailer:
       new_request:
