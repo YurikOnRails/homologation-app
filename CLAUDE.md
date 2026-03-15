@@ -34,19 +34,9 @@ bin/rails db:migrate          # Migrations  |  bin/rails db:seed      # Seed 4 r
 bin/rails generate model Foo  # New model   |  bin/rails generate channel Foo  # Action Cable
 ```
 
-## Current State (see `docs/07_IMPLEMENTATION_PLAN.md`)
+## Current State
 
-- [ ] Step 0: Foundation — shadcn/ui init, i18n setup, layouts, select_options.yml, routes.ts
-- [ ] Step 1: Authentication — Rails 8 generator, OmniAuth (Google/Apple), CompleteProfile
-- [ ] Step 2: Roles & Authorization — Pundit, 4 roles seeded, RoleGuard component
-- [ ] Step 3: Homologation Requests — CRUD, Active Storage uploads, FileDropZone
-- [ ] Step 4: Chat — Conversations, Messages, Action Cable, real-time UI
-- [ ] Step 5: Notifications — in-app bell, NotificationChannel, email (later)
-- [ ] Step 6: Teachers & Lessons — profiles, assignments, calendar, lesson CRUD
-- [ ] Step 7: Coordinator Workspace — Inbox (unified chat), Teachers management panel
-- [ ] Step 8: Admin Dashboard — stats, charts, user management, lessons overview
-- [ ] Step 9: AmoCRM Integration — Faraday client, sync job, token refresh
-- [ ] Step 10: Polish — privacy policy, profile edit, email notifications, brakeman scan
+See `docs/07_IMPLEMENTATION_PLAN.md` for the full step-by-step checklist (Steps 0–10).
 
 ## Project Structure
 
@@ -79,7 +69,7 @@ config/
 4. **Files** — Active Storage direct upload via `FileDropZone`. Three categories: `:application` (one), `:originals` (many), `:documents` (many).
 5. **Chat** — Send via `router.post()` (Inertia), receive via `useChannel()` hook (Action Cable).
 6. **AmoCRM sync** — ONLY on payment confirmation. No data to CRM before `payment_confirmed`.
-7. **Select options** — `config/select_options.yml` → `inertia_share` → `selectOptions` in every page.
+7. **Select options** — `config/select_options.yml` → `inertia_share` → `selectOptions` in every page. Never hardcode — always `opt[label_${locale}] || opt.label`.
 8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs.
 9. **Mobile-first** — Every page works at 360px+. See `docs/15_MOBILE_PATTERNS.md`.
 10. **Keep it simple** — `<textarea>` not rich text, light mode only, no command menu/audit log/dark mode.
@@ -146,11 +136,16 @@ For lookups: `User.where(id: ids).index_by(&:id)` — one query, O(1) access.
 - **Fixtures only** — no FactoryBot, no mocks for ActiveRecord. Fixtures in `test/fixtures/*.yml`.
 - **Every new controller action gets a test before merge.** No exceptions.
 - Run `bin/rails test && npm run check` before committing.
-- Full patterns, test matrix, and examples: `docs/16_TESTING.md`.
+- Full patterns, test matrix: `docs/16_TESTING.md`.
 
-## Dropdown Options
-
-Source: `config/select_options.yml`. Delivered via `inertia_share`. Never hardcode — always `opt[label_${locale}] || opt.label`. See `docs/10_TECHNICAL_DETAILS.md`.
+```ruby
+test "student sees own requests" do
+  sign_in users(:student_ana)
+  get homologation_requests_path
+  assert_response :ok
+  assert_inertia component: "Requests/Index"
+end
+```
 
 ## Status Flow
 
@@ -182,19 +177,6 @@ Source: `config/select_options.yml`. Delivered via `inertia_share`. Never hardco
 | Writing tests or test conventions | `docs/16_TESTING.md` |
 | Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
 
-## What Claude Should Never Do
+## Banned Patterns
 
-- [ ] Use `.as_json` in controllers — always private `_json` methods with explicit camelCase
-- [ ] Hardcode visible text — always `t()` via react-i18next or Rails I18n
-- [ ] Use `react-hook-form`, `zod`, or any form library — only Inertia `useForm()`
-- [ ] Use `<a href>` for internal links — only Inertia `<Link>`
-- [ ] Use `fetch()`, `axios`, or `window.location` for mutations — only `router.post/patch/delete`
-- [ ] Check roles in React components — use `features.*` from shared props
-- [ ] Hardcode URL paths in components — use `routes.*` from `lib/routes.ts`
-- [ ] Skip `authorize` in any controller action — `verify_authorized` will catch it
-- [ ] Add N+1 queries inside `_json` methods — `.includes()` in the controller
-- [ ] Use `@tanstack/react-table`, Tiptap, zustand, or dark mode — see Core Rule 10
-- [ ] Add a rich text editor — always `<textarea>` from shadcn/ui
-- [ ] Sync data to AmoCRM before payment confirmation — CRM stays clean until `payment_confirmed`
-- [ ] Hardcode flash messages — always `t("flash.entity_action")` through I18n
-- [ ] Skip `bin/rails test && npm run check` before considering work done
+`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · `@tanstack/react-table` · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests
