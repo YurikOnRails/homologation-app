@@ -25,7 +25,10 @@
     "error": "Error",
     "success": "Success",
     "create": "Create",
-    "clear": "Clear"
+    "clear": "Clear",
+    "name": "Name",
+    "created_at": "Created",
+    "actions": "Actions"
   },
   "auth": {
     "sign_in": "Sign In",
@@ -41,7 +44,13 @@
     "no_account": "Don't have an account?",
     "has_account": "Already have an account?",
     "accept_privacy": "I have read and accept the privacy policy",
-    "name": "Full Name"
+    "name": "Full Name",
+    "roles": {
+      "super_admin": "Super Admin",
+      "coordinator": "Coordinator",
+      "teacher": "Teacher",
+      "student": "Student"
+    }
   },
   "profile": {
     "complete_title": "Complete Your Profile",
@@ -166,7 +175,9 @@
       "total_requests": "Total Requests",
       "open_requests": "Open",
       "awaiting_payment": "Awaiting Payment",
-      "resolved": "Resolved"
+      "resolved": "Resolved",
+      "total_users": "Total Users",
+      "total_teachers": "Total Teachers"
     },
     "user_management": {
       "add_user": "Add User",
@@ -175,13 +186,19 @@
       "roles": "Roles",
       "assign_role": "Assign Role",
       "remove_role": "Remove Role",
-      "deactivate": "Deactivate"
+      "deactivate": "Deactivate",
+      "deactivate_confirm": "Are you sure you want to deactivate {{name}}? You can reactivate them later.",
+      "deactivated": "Deactivated"
     },
     "charts": {
       "requests_over_time": "Requests Over Time",
       "by_status": "By Status",
       "avg_response_time": "Average Response Time"
-    }
+    },
+    "failed_syncs": "{{count}} failed sync(s)",
+    "view_failed_syncs": "View requests",
+    "recent_requests": "Recent Requests",
+    "no_users": "No users found"
   },
   "inbox": {
     "title": "Inbox",
@@ -262,5 +279,14 @@
     "profile": "Profile",
     "admin": "Admin",
     "language": "Language"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "data_collected_title": "Data We Collect",
+    "data_collected_body": "We collect your name, email, phone number, WhatsApp, date of birth, and country to manage your homologation request. This information is stored securely and encrypted.",
+    "amocrm_title": "Transfer to AmoCRM",
+    "amocrm_body": "Once payment is confirmed, your request data (name, contact, service type, documents) is synced with our CRM system (AmoCRM) to manage the homologation process. We do not sell or share your data with third parties.",
+    "deletion_title": "Request Data Deletion",
+    "deletion_body": "To request the deletion of your data, contact us by email. We will process your request within 30 days in accordance with GDPR."
   }
 }

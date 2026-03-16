@@ -222,3 +222,37 @@ export interface AdminLessonsProps {
   teachers: Array<{ id: number; name: string }>
   students: Array<{ id: number; name: string }>
 }
+
+// admin/Dashboard
+export interface AdminUser {
+  id: number
+  name: string
+  email: string
+  roles: string[]
+  locale: string
+  avatarUrl: string | null
+  createdAt: string
+  discarded: boolean
+}
+
+export interface AdminDashboardProps {
+  stats: {
+    totalRequests: number
+    openRequests: number
+    awaitingPayment: number
+    resolved: number
+    totalUsers: number
+    totalTeachers: number
+  }
+  requestsByMonth: Record<string, number>
+  requestsByStatus: Record<string, number>
+  recentRequests: RequestListItem[]
+  failedSyncs: number
+}
+
+// admin/Users
+export interface AdminUsersProps {
+  users: AdminUser[]
+  newUser?: boolean
+  editUser?: AdminUser
+}

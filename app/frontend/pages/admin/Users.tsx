@@ -1,0 +1,416 @@
+import { useState } from "react"
+import { usePage, router, useForm } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
+import { Plus, Trash2, X } from "lucide-react"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { routes } from "@/lib/routes"
+import type { SharedProps } from "@/types"
+import type { AdminUsersProps, AdminUser } from "@/types/pages"
+
+const ROLE_COLORS: Record<string, string> = {
+  super_admin: "bg-red-100 text-red-700",
+  coordinator: "bg-blue-100 text-blue-700",
+  teacher: "bg-green-100 text-green-700",
+  student: "bg-gray-100 text-gray-600",
+}
+
+const ALL_ROLES = ["super_admin", "coordinator", "teacher", "student"]
+
+export default function AdminUsers() {
+  const { t } = useTranslation()
+  const { users } = usePage<SharedProps & AdminUsersProps>().props
+  const [showAddUser, setShowAddUser] = useState(false)
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
+  const [deactivatingUser, setDeactivatingUser] = useState<AdminUser | null>(null)
+
+  return (
+    <AuthenticatedLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-2xl font-bold">{t("admin.users")}</h1>
+          <Button onClick={() => setShowAddUser(true)} className="min-h-[44px]">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("admin.user_management.add_user")}
+          </Button>
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto rounded-lg border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/30">
+                <th className="p-3 text-left font-medium">{t("common.name")}</th>
+                <th className="p-3 text-left font-medium">{t("auth.email")}</th>
+                <th className="p-3 text-left font-medium">{t("admin.user_management.roles")}</th>
+                <th className="p-3 text-left font-medium">{t("common.created_at")}</th>
+                <th className="p-3 text-left font-medium">{t("common.actions")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <UserRow
+                  key={user.id}
+                  user={user}
+                  onEdit={() => setEditingUser(user)}
+                  onDeactivate={() => setDeactivatingUser(user)}
+                />
+              ))}
+            </tbody>
+          </table>
+          {users.length === 0 && (
+            <p className="p-6 text-center text-muted-foreground">{t("admin.no_users")}</p>
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {users.map((user) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              onEdit={() => setEditingUser(user)}
+              onDeactivate={() => setDeactivatingUser(user)}
+            />
+          ))}
+        </div>
+
+        <AddUserDialog open={showAddUser} onClose={() => setShowAddUser(false)} />
+
+        {editingUser && (
+          <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
+        )}
+
+        {deactivatingUser && (
+          <DeactivateDialog
+            user={deactivatingUser}
+            onClose={() => setDeactivatingUser(null)}
+          />
+        )}
+      </div>
+    </AuthenticatedLayout>
+  )
+}
+
+function RoleBadge({ role, userId }: { role: string; userId: number }) {
+  const { t } = useTranslation()
+  return (
+    <span className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium ${ROLE_COLORS[role] ?? "bg-gray-100 text-gray-600"}`}>
+      {t(`auth.roles.${role}`, { defaultValue: role })}
+      <button
+        className="ml-0.5 hover:opacity-70 min-w-[20px] min-h-[20px] flex items-center justify-center"
+        onClick={() =>
+          router.delete(routes.admin.removeRole(userId), {
+            data: { role_name: role },
+            preserveScroll: true,
+          })
+        }
+        aria-label={`Remove ${role} role`}
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  )
+}
+
+function AssignRoleButtons({ user }: { user: AdminUser }) {
+  const { t } = useTranslation()
+  const unassigned = ALL_ROLES.filter((r) => !user.roles.includes(r))
+  if (unassigned.length === 0) return null
+  return (
+    <div className="flex flex-wrap gap-1 mt-1">
+      {unassigned.map((role) => (
+        <button
+          key={role}
+          className="text-xs text-muted-foreground border rounded px-1.5 py-0.5 hover:bg-muted min-h-[28px]"
+          onClick={() =>
+            router.post(routes.admin.assignRole(user.id), { role_name: role }, { preserveScroll: true })
+          }
+        >
+          + {t(`auth.roles.${role}`, { defaultValue: role })}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function UserRow({
+  user,
+  onEdit,
+  onDeactivate,
+}: {
+  user: AdminUser
+  onEdit: () => void
+  onDeactivate: () => void
+}) {
+  const { t, i18n } = useTranslation()
+  return (
+    <tr className={`border-b ${user.discarded ? "opacity-50" : "hover:bg-muted/30"}`}>
+      <td className="p-3 font-medium">{user.name}</td>
+      <td className="p-3 text-muted-foreground">{user.email}</td>
+      <td className="p-3">
+        <div className="flex flex-wrap gap-1">
+          {user.roles.map((role) => (
+            <RoleBadge key={role} role={role} userId={user.id} />
+          ))}
+        </div>
+        {!user.discarded && <AssignRoleButtons user={user} />}
+      </td>
+      <td className="p-3 text-muted-foreground">
+        {new Date(user.createdAt).toLocaleDateString(i18n.language)}
+      </td>
+      <td className="p-3">
+        <div className="flex gap-2">
+          {!user.discarded && (
+            <>
+              <Button variant="outline" size="sm" onClick={onEdit} className="min-h-[36px]">
+                {t("admin.user_management.edit_user")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onDeactivate}
+                className="min-h-[36px] text-destructive border-destructive/30 hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          {user.discarded && (
+            <Badge variant="secondary">{t("admin.user_management.deactivated")}</Badge>
+          )}
+        </div>
+      </td>
+    </tr>
+  )
+}
+
+function UserCard({
+  user,
+  onEdit,
+  onDeactivate,
+}: {
+  user: AdminUser
+  onEdit: () => void
+  onDeactivate: () => void
+}) {
+  const { t, i18n } = useTranslation()
+  return (
+    <div className={`rounded-lg border p-3 space-y-2 ${user.discarded ? "opacity-50" : ""}`}>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="font-medium">{user.name}</p>
+          <p className="text-sm text-muted-foreground">{user.email}</p>
+        </div>
+        {user.discarded && (
+          <Badge variant="secondary">{t("admin.user_management.deactivated")}</Badge>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {user.roles.map((role) => (
+          <RoleBadge key={role} role={role} userId={user.id} />
+        ))}
+      </div>
+      {!user.discarded && <AssignRoleButtons user={user} />}
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          {new Date(user.createdAt).toLocaleDateString(i18n.language)}
+        </p>
+        {!user.discarded && (
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={onEdit} className="min-h-[44px]">
+              {t("admin.user_management.edit_user")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDeactivate}
+              className="min-h-[44px] text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function AddUserDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useTranslation()
+  const { data, setData, post, processing, errors, reset } = useForm({
+    name: "",
+    email_address: "",
+    password: "",
+  })
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    post(routes.admin.users, {
+      onSuccess: () => {
+        reset()
+        onClose()
+      },
+    })
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("admin.user_management.add_user")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="add-name">{t("common.name")}</Label>
+            <Input
+              id="add-name"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+              className="mt-1"
+              required
+            />
+            {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
+          </div>
+          <div>
+            <Label htmlFor="add-email">{t("auth.email")}</Label>
+            <Input
+              id="add-email"
+              type="email"
+              value={data.email_address}
+              onChange={(e) => setData("email_address", e.target.value)}
+              className="mt-1"
+              required
+            />
+            {errors.email_address && (
+              <p className="text-sm text-destructive mt-1">{errors.email_address}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="add-password">{t("auth.password")}</Label>
+            <Input
+              id="add-password"
+              type="password"
+              value={data.password}
+              onChange={(e) => setData("password", e.target.value)}
+              className="mt-1"
+              required
+              minLength={8}
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t("common.cancel")}
+            </Button>
+            <Button type="submit" disabled={processing}>
+              {t("common.save")}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function EditUserDialog({
+  user,
+  onClose,
+}: {
+  user: AdminUser
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  const { data, setData, patch, processing, errors } = useForm({
+    name: user.name,
+  })
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    patch(routes.admin.user(user.id), {
+      onSuccess: onClose,
+    })
+  }
+
+  return (
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("admin.user_management.edit_user")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="edit-name">{t("common.name")}</Label>
+            <Input
+              id="edit-name"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+              className="mt-1"
+              required
+            />
+            {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t("common.cancel")}
+            </Button>
+            <Button type="submit" disabled={processing}>
+              {t("common.save")}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function DeactivateDialog({
+  user,
+  onClose,
+}: {
+  user: AdminUser
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  function handleConfirm() {
+    router.delete(routes.admin.user(user.id), { onSuccess: onClose })
+  }
+
+  return (
+    <AlertDialog open onOpenChange={onClose}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("admin.user_management.deactivate")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("admin.user_management.deactivate_confirm", { name: user.name })}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
+            {t("admin.user_management.deactivate")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}

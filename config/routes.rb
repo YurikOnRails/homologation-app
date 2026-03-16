@@ -34,8 +34,17 @@ Rails.application.routes.draw do
   resources :inbox, only: [ :index, :show ]
   resources :lessons, only: [ :index, :create, :show, :update, :destroy ]
   namespace :admin do
+    root "dashboard#index"
+    resources :users do
+      member do
+        post :assign_role
+        delete :remove_role
+      end
+    end
     resources :lessons, only: [ :index ]
   end
+
+  get "privacy-policy", to: "pages#privacy_policy"
   resources :notifications, only: [ :index, :update ] do
     collection do
       post :mark_all_read

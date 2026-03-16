@@ -25,7 +25,10 @@
     "error": "Error",
     "success": "Éxito",
     "create": "Crear",
-    "clear": "Limpiar"
+    "clear": "Limpiar",
+    "name": "Nombre",
+    "created_at": "Creado",
+    "actions": "Acciones"
   },
   "auth": {
     "sign_in": "Iniciar sesión",
@@ -41,7 +44,13 @@
     "no_account": "¿No tienes cuenta?",
     "has_account": "¿Ya tienes cuenta?",
     "accept_privacy": "He leído y acepto la política de privacidad",
-    "name": "Nombre completo"
+    "name": "Nombre completo",
+    "roles": {
+      "super_admin": "Super Admin",
+      "coordinator": "Coordinador",
+      "teacher": "Profesor",
+      "student": "Estudiante"
+    }
   },
   "profile": {
     "complete_title": "Completa tu perfil",
@@ -166,7 +175,9 @@
       "total_requests": "Total solicitudes",
       "open_requests": "Abiertas",
       "awaiting_payment": "Pendientes de pago",
-      "resolved": "Resueltas"
+      "resolved": "Resueltas",
+      "total_users": "Total usuarios",
+      "total_teachers": "Total profesores"
     },
     "user_management": {
       "add_user": "Añadir usuario",
@@ -175,13 +186,19 @@
       "roles": "Roles",
       "assign_role": "Asignar rol",
       "remove_role": "Quitar rol",
-      "deactivate": "Desactivar"
+      "deactivate": "Desactivar",
+      "deactivate_confirm": "¿Estás seguro de que quieres desactivar a {{name}}? Podrás reactivarlo más tarde.",
+      "deactivated": "Desactivado"
     },
     "charts": {
       "requests_over_time": "Solicitudes a lo largo del tiempo",
       "by_status": "Por estado",
       "avg_response_time": "Tiempo medio de respuesta"
-    }
+    },
+    "failed_syncs": "{{count}} sincronización(es) fallida(s)",
+    "view_failed_syncs": "Ver solicitudes",
+    "recent_requests": "Solicitudes recientes",
+    "no_users": "No se encontraron usuarios"
   },
   "inbox": {
     "title": "Bandeja de entrada",
@@ -262,5 +279,14 @@
     "profile": "Perfil",
     "admin": "Administración",
     "language": "Idioma"
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "data_collected_title": "Datos que recopilamos",
+    "data_collected_body": "Recopilamos su nombre, correo electrónico, número de teléfono, WhatsApp, fecha de nacimiento y país para gestionar su solicitud de homologación. Esta información se almacena de forma segura y encriptada.",
+    "amocrm_title": "Transferencia a AmoCRM",
+    "amocrm_body": "Una vez confirmado el pago, sus datos de solicitud (nombre, contacto, tipo de servicio, documentos) se sincronizan con nuestro sistema CRM (AmoCRM) para gestionar el proceso de homologación. No vendemos ni compartimos sus datos con terceros.",
+    "deletion_title": "Solicitar eliminación de datos",
+    "deletion_body": "Para solicitar la eliminación de sus datos, contacte con nosotros por correo electrónico. Procesaremos su solicitud en un plazo de 30 días conforme al RGPD."
   }
 }

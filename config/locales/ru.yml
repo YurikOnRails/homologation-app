@@ -44,6 +44,11 @@ ru:
     password_reset: "Пароль сброшен"
     password_mismatch: "Пароли не совпадают"
     password_reset_invalid: "Ссылка для сброса пароля недействительна или истекла"
+    user_created: "Пользователь создан успешно"
+    user_updated: "Пользователь обновлён успешно"
+    user_deactivated: "Пользователь деактивирован успешно"
+    role_assigned: "Роль назначена успешно"
+    role_removed: "Роль удалена успешно"
   mailers:
     request_mailer:
       new_request:
