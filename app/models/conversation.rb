@@ -13,6 +13,21 @@ class Conversation < ApplicationRecord
     conversation_participants.find_or_create_by!(user: user)
   end
 
+  def title
+    if homologation_request_id?
+      homologation_request&.subject || "Request ##{homologation_request_id}"
+    else
+      ts = teacher_student_link
+      "#{ts&.teacher&.name} — #{ts&.student&.name}"
+    end
+  end
+
+  def unread_for?(user)
+    cp = conversation_participants.detect { |p| p.user_id == user.id }
+    return true unless cp&.last_read_at
+    last_message_at && cp.last_read_at < last_message_at
+  end
+
   private
 
   def must_have_one_association

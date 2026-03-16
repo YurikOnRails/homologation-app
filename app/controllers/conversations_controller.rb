@@ -45,10 +45,10 @@ class ConversationsController < InertiaController
     {
       id: c.id,
       type: c.homologation_request_id.present? ? "request" : "teacher_student",
-      title: conversation_title(c),
+      title: c.title,
       otherUser: other ? { id: other.id, name: other.name, avatarUrl: other.avatar_url } : nil,
       lastMessage: last_msg ? { body: last_msg.body.truncate(80), createdAt: last_msg.created_at.iso8601 } : nil,
-      unread: unread?(c),
+      unread: c.unread_for?(current_user),
       lastMessageAt: c.last_message_at&.iso8601
     }
   end
@@ -57,27 +57,8 @@ class ConversationsController < InertiaController
     {
       id: c.id,
       type: c.homologation_request_id.present? ? "request" : "teacher_student",
-      title: conversation_title(c),
-      messages: c.messages.order(:created_at).map { |m| message_json(m) }
+      title: c.title,
+      messages: c.messages.sort_by(&:created_at).map(&:as_json_for_cable)
     }
-  end
-
-  def message_json(m)
-    m.as_json_for_cable
-  end
-
-  def conversation_title(c)
-    if c.homologation_request_id?
-      c.homologation_request&.subject || "Request ##{c.homologation_request_id}"
-    else
-      ts = c.teacher_student_link
-      "#{ts&.teacher&.name} — #{ts&.student&.name}"
-    end
-  end
-
-  def unread?(c)
-    cp = c.conversation_participants.detect { |p| p.user_id == current_user.id }
-    return true unless cp&.last_read_at
-    c.last_message_at && cp.last_read_at < c.last_message_at
   end
 end

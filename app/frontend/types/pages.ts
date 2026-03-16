@@ -91,6 +91,61 @@ export interface ChatShowProps {
   conversation: import("@/types/models.d").ConversationFull
 }
 
+// inbox/Index + inbox/Show
+export interface InboxConversation {
+  id: number
+  type: "request" | "teacher_student"
+  title: string
+  lastMessage: { body: string; createdAt: string } | null
+  unread: boolean
+  lastMessageAt: string | null
+}
+
+export interface InboxConversationDetail extends InboxConversation {
+  messages: import("@/types/models.d").ChatMessage[]
+  context:
+    | {
+        type: "request"
+        requestId: number
+        subject: string
+        serviceType: string | null
+        university: string | null
+        status: string
+        paymentAmount: number | null
+        amoCrmLeadId: string | null
+        amoCrmSyncedAt: string | null
+      }
+    | {
+        type: "teacher_student"
+        teacherName: string | null
+        studentName: string | null
+      }
+}
+
+export interface InboxIndexProps {
+  conversations: InboxConversation[]
+  selectedConversation?: InboxConversationDetail | null
+}
+
+// teachers/Index
+export interface TeacherItem {
+  id: number
+  name: string
+  avatarUrl: string | null
+  level: string | null
+  hourlyRate: number | null
+  bio: string | null
+  permanentMeetingLink: string | null
+  studentsCount: number
+  lessonsThisWeek: number
+  students: Array<{ id: number; name: string }>
+}
+
+export interface TeachersIndexProps {
+  teachers: TeacherItem[]
+  availableStudents: Array<{ id: number; name: string }>
+}
+
 // dashboard/Index
 export interface DashboardStudentStats {
   myRequests: number

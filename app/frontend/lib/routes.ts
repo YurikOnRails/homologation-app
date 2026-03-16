@@ -22,6 +22,7 @@ export const routes = {
   inbox: "/inbox",
   inboxConversation: (id: number) => `/inbox/${id}`,
   teachers: "/teachers",
+  teacher: (id: number) => `/teachers/${id}`,
   assignStudent: (id: number) => `/teachers/${id}/assign_student`,
   removeStudent: (id: number) => `/teachers/${id}/remove_student`,
   lessons: "/lessons",
