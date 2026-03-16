@@ -38,6 +38,10 @@ class HomologationRequest < ApplicationRecord
     attrs = { status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id }
     attrs[:payment_confirmed_at] = Time.current if new_status == "payment_confirmed"
     update!(attrs)
+
+    if amo_crm_lead_id.present? && %w[in_progress resolved closed].include?(new_status)
+      AmoCrmStatusSyncJob.perform_later(id)
+    end
   end
 
   private

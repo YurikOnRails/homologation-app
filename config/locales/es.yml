@@ -28,6 +28,7 @@ es:
     student_removed: "Alumno eliminado"
     telegram_disconnected: "Telegram desconectado"
     payment_confirmed: "Pago confirmado. Sincronizando con AmoCRM..."
+    sync_retried: "Sincronización con AmoCRM reintentada"
     request_created: "Solicitud creada"
     request_submitted: "Solicitud enviada"
     request_updated: "Solicitud actualizada correctamente"

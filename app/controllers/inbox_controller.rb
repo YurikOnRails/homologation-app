@@ -61,7 +61,8 @@ class InboxController < InertiaController
         status: r.status,
         paymentAmount: r.payment_amount&.to_f,
         amoCrmLeadId: r.amo_crm_lead_id,
-        amoCrmSyncedAt: r.amo_crm_synced_at&.iso8601
+        amoCrmSyncedAt: r.amo_crm_synced_at&.iso8601,
+        amoCrmSyncError: r.amo_crm_sync_error
       }
     else
       ts = c.teacher_student_link

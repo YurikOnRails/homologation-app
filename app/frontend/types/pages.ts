@@ -132,6 +132,7 @@ export interface InboxConversationDetail extends InboxConversation {
         paymentAmount: number | null
         amoCrmLeadId: string | null
         amoCrmSyncedAt: string | null
+        amoCrmSyncError: string | null
       }
     | {
         type: "teacher_student"

@@ -131,14 +131,29 @@ export default function RequestsShow() {
 
                 {/* CRM sync indicator */}
                 {request.status !== "draft" && (
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      {t(`coordinator.crm_${crmStatus}`)}
-                    </Badge>
-                    {request.amoCrmSyncedAt && (
-                      <span className="text-xs text-muted-foreground">
-                        <FormattedDate date={request.amoCrmSyncedAt} />
-                      </span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {t(`coordinator.crm_${crmStatus}`)}
+                      </Badge>
+                      {request.amoCrmSyncedAt && (
+                        <span className="text-xs text-muted-foreground">
+                          <FormattedDate date={request.amoCrmSyncedAt} />
+                        </span>
+                      )}
+                    </div>
+                    {request.amoCrmSyncError && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-destructive">{request.amoCrmSyncError}</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="min-h-[44px]"
+                          onClick={() => router.post(routes.retrySync(request.id))}
+                        >
+                          {t("coordinator.crm_retry")}
+                        </Button>
+                      </div>
                     )}
                   </div>
                 )}

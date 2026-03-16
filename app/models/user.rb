@@ -52,6 +52,14 @@ class User < ApplicationRecord
     birthday.present? && country.present? && whatsapp.present?
   end
 
+  def age
+    return nil unless birthday.present?
+    now = Date.current
+    age = now.year - birthday.year
+    age -= 1 if now < birthday + age.years
+    age
+  end
+
   def super_admin? = has_role?("super_admin")
   def coordinator? = has_role?("coordinator")
   def teacher?     = has_role?("teacher")

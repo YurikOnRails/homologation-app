@@ -151,6 +151,25 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "coordinator can retry AmoCRM sync" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "payment_confirmed", amo_crm_sync_error: "API timeout")
+
+    post retry_sync_homologation_request_path(request)
+    assert_redirected_to homologation_request_path(request)
+    assert_nil request.reload.amo_crm_sync_error
+  end
+
+  test "student cannot retry AmoCRM sync" do
+    sign_in users(:student_ana)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "payment_confirmed", amo_crm_sync_error: "API timeout")
+
+    post retry_sync_homologation_request_path(request)
+    assert_response :forbidden
+  end
+
   test "coordinator is added as conversation participant on show" do
     sign_in users(:coordinator_maria)
     request = homologation_requests(:ana_equivalencia)

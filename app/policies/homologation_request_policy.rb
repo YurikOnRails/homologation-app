@@ -4,6 +4,7 @@ class HomologationRequestPolicy < ApplicationPolicy
   def create?  = user.student?
   def update?  = coordinator_or_admin?
   def confirm_payment? = coordinator_or_admin? && record.status == "awaiting_payment"
+  def retry_sync? = coordinator_or_admin?
   def download_document? = show?
 
   class Scope < ApplicationPolicy::Scope

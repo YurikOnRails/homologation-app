@@ -114,10 +114,23 @@ function RequestContext({ context }: {
         </Dialog>
       )}
 
-      <div>
-        <p className="text-xs text-muted-foreground">{t("coordinator.crm_synced")}</p>
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground">AmoCRM</p>
         {context.amoCrmLeadId ? (
           <Badge variant="secondary" className="mt-1 text-xs">{t("coordinator.crm_synced")}</Badge>
+        ) : context.amoCrmSyncError ? (
+          <>
+            <Badge variant="destructive" className="mt-1 text-xs">{t("coordinator.crm_error")}</Badge>
+            <p className="text-xs text-destructive">{context.amoCrmSyncError}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={() => router.post(routes.retrySync(context.requestId))}
+            >
+              {t("coordinator.crm_retry")}
+            </Button>
+          </>
         ) : (
           <Badge variant="outline" className="mt-1 text-xs">{t("coordinator.crm_not_synced")}</Badge>
         )}

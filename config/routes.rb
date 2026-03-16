@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     member do
       get  :download_document
       post :confirm_payment
+      post :retry_sync
     end
   end
 

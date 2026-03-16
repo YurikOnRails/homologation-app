@@ -1,6 +1,8 @@
 require "test_helper"
 
 class HomologationRequestTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   test "valid transition from draft to submitted" do
     request = homologation_requests(:ana_draft)
     request.transition_to!("submitted", changed_by: users(:student_ana))
@@ -128,5 +130,21 @@ class HomologationRequestTest < ActiveSupport::TestCase
     request = homologation_requests(:ana_equivalencia)
     request.transition_to!("in_review", changed_by: users(:coordinator_maria))
     assert_not_nil request.status_changed_at
+  end
+
+  test "post-payment status transition enqueues AmoCrmStatusSyncJob" do
+    request = homologation_requests(:ana_equivalencia)
+    request.update_columns(status: "payment_confirmed", amo_crm_lead_id: "888")
+
+    assert_enqueued_with(job: AmoCrmStatusSyncJob) do
+      request.transition_to!("in_progress", changed_by: users(:coordinator_maria))
+    end
+  end
+
+  test "pre-payment status transition does not enqueue AmoCrmStatusSyncJob" do
+    request = homologation_requests(:ana_equivalencia) # submitted
+    assert_no_enqueued_jobs(only: AmoCrmStatusSyncJob) do
+      request.transition_to!("in_review", changed_by: users(:coordinator_maria))
+    end
   end
 end

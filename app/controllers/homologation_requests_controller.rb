@@ -1,5 +1,5 @@
 class HomologationRequestsController < InertiaController
-  before_action :set_request, only: [ :show, :update, :confirm_payment, :download_document ]
+  before_action :set_request, only: [ :show, :update, :confirm_payment, :download_document, :retry_sync ]
 
   def index
     authorize HomologationRequest
@@ -68,6 +68,13 @@ class HomologationRequestsController < InertiaController
     AmoCrmSyncJob.perform_later(@request.id)
     notify_student_payment_confirmed(@request)
     redirect_to homologation_request_path(@request), notice: t("flash.payment_confirmed")
+  end
+
+  def retry_sync
+    authorize @request, :retry_sync?
+    @request.update!(amo_crm_sync_error: nil)
+    AmoCrmSyncJob.perform_later(@request.id)
+    redirect_to homologation_request_path(@request), notice: t("flash.sync_retried")
   end
 
   def download_document
