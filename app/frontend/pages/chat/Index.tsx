@@ -1,5 +1,6 @@
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +15,7 @@ export default function ChatIndex() {
   const { conversations } = usePage<SharedProps & ChatIndexProps>().props
 
   return (
+    <AuthenticatedLayout>
     <div className="space-y-4">
       <h1 className="text-xl font-bold">{t("nav.chat")}</h1>
 
@@ -66,5 +68,6 @@ export default function ChatIndex() {
         </div>
       )}
     </div>
+    </AuthenticatedLayout>
   )
 }

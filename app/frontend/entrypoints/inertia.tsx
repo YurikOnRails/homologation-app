@@ -2,7 +2,6 @@ import "@/lib/i18n" // Must be imported BEFORE any components
 import { createInertiaApp, type ResolvedComponent } from "@inertiajs/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { AuthLayout } from "@/components/layout/AuthLayout"
 
 void createInertiaApp({
@@ -16,17 +15,16 @@ void createInertiaApp({
       console.error(`Missing Inertia page component: '${name}.tsx'`)
     }
 
-    // Auth pages use AuthLayout, all others use AuthenticatedLayout
+    // Auth pages get AuthLayout as default persistent layout.
+    // Authenticated pages manage their own layout (AuthenticatedLayout)
+    // in the component JSX — this avoids double-rendering.
     if (page?.default) {
       const isAuthPage = name.startsWith("auth/")
-      page.default.layout =
-        page.default.layout ??
-        ((children: React.ReactNode) =>
-          isAuthPage ? (
-            <AuthLayout>{children}</AuthLayout>
-          ) : (
-            <AuthenticatedLayout>{children}</AuthenticatedLayout>
-          ))
+      if (isAuthPage && !page.default.layout) {
+        page.default.layout = (children: React.ReactNode) => (
+          <AuthLayout>{children}</AuthLayout>
+        )
+      }
     }
 
     return page

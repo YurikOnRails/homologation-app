@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { LessonDialog } from "@/components/lessons/LessonDialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,6 +19,7 @@ export default function LessonsShow() {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
+    <AuthenticatedLayout>
     <div className="max-w-lg space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h1 className="text-xl font-bold">{t("lessons.title")}</h1>
@@ -85,5 +87,6 @@ export default function LessonsShow() {
         />
       )}
     </div>
+    </AuthenticatedLayout>
   )
 }

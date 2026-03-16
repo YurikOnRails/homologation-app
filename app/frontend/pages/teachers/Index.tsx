@@ -1,5 +1,6 @@
 import { usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { TeacherCard } from "@/components/teachers/TeacherCard"
 import type { SharedProps } from "@/types/index"
 import type { TeachersIndexProps } from "@/types/pages"
@@ -9,6 +10,7 @@ export default function TeachersIndex() {
   const { teachers, availableStudents } = usePage<SharedProps & TeachersIndexProps>().props
 
   return (
+    <AuthenticatedLayout>
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">{t("teachers.title")}</h1>
@@ -28,5 +30,6 @@ export default function TeachersIndex() {
         </div>
       )}
     </div>
+    </AuthenticatedLayout>
   )
 }

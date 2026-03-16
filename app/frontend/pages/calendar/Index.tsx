@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { WeekGrid } from "@/components/lessons/WeekGrid"
@@ -31,6 +32,7 @@ export default function CalendarIndex() {
   }
 
   return (
+    <AuthenticatedLayout>
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h1 className="text-xl font-bold">{t("calendar.title")}</h1>
@@ -50,5 +52,6 @@ export default function CalendarIndex() {
         assignedStudents={assignedStudents}
       />
     </div>
+    </AuthenticatedLayout>
   )
 }

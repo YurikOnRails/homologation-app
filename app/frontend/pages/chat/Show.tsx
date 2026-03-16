@@ -1,4 +1,5 @@
 import { usePage, Link } from "@inertiajs/react"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { ChatWindow } from "@/components/chat/ChatWindow"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ export default function ChatShow() {
   const { conversation } = usePage<SharedProps & ChatShowProps>().props
 
   return (
+    <AuthenticatedLayout>
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
@@ -31,5 +33,6 @@ export default function ChatShow() {
         </CardContent>
       </Card>
     </div>
+    </AuthenticatedLayout>
   )
 }

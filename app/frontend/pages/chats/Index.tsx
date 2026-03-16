@@ -61,7 +61,7 @@ export default function ChatsIndex() {
     : null
 
   return (
-    <section className="flex h-[calc(100vh-3.5rem)] gap-6">
+    <section className="flex h-full gap-6">
       {/* Left Side — Conversation List */}
       <div className={cn(
         "flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80",
