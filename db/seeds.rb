@@ -1,13 +1,17 @@
-# This file should ensure the existence of records required to run the application in every environment.
-# The code here should be idempotent so that it can be executed at any point in every environment.
+# =============================================================================
+# seeds.rb — обязательные данные для ВСЕХ окружений (roles)
+# =============================================================================
+# Запуск:  bin/rails db:seed
+# Сброс:   bin/rails db:reset   (удаляет БД, заново мигрирует + сидит)
+# =============================================================================
 
-# Roles — required in all environments
+# --- Роли (нужны везде: dev, test, production) --------------------------------
 %w[super_admin coordinator teacher student].each do |role_name|
   Role.find_or_create_by!(name: role_name)
 end
 puts "✅ #{Role.count} roles"
 
-# Rich fake data for local development only
+# --- Реалистичные тестовые данные (только development) -----------------------
 if Rails.env.development?
   require_relative "seeds/development"
 end
