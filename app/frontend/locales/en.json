@@ -23,7 +23,9 @@
     "required": "Required",
     "optional": "Optional",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "create": "Create",
+    "clear": "Clear"
   },
   "auth": {
     "sign_in": "Sign In",
@@ -225,6 +227,9 @@
     "meeting_link_hint": "Leave empty to use teacher's permanent link",
     "notes": "Notes (private, after lesson)",
     "cancel_lesson": "Cancel Lesson",
+    "edit_lesson": "Edit Lesson",
+    "select_student": "Select Student",
+    "status_label": "Status",
     "status": {
       "scheduled": "Scheduled",
       "completed": "Completed",

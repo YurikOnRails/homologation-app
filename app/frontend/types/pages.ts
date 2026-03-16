@@ -162,3 +162,44 @@ export interface DashboardAdminStats {
 export interface DashboardIndexProps {
   stats: DashboardStudentStats | DashboardAdminStats
 }
+
+// Shared lesson item for calendar/lessons/admin pages
+export interface LessonItem {
+  id: number
+  teacherId: number
+  studentId: number
+  teacherName: string
+  studentName: string
+  scheduledAt: string
+  durationMinutes: number
+  meetingLink: string | null
+  effectiveMeetingLink: string | null
+  meetingLinkReady: boolean
+  status: "scheduled" | "completed" | "cancelled"
+  notes: string | null
+}
+
+// calendar/Index (teacher)
+export interface CalendarIndexProps {
+  lessons: LessonItem[]
+  weekStart: string
+  assignedStudents: Array<{ id: number; name: string }>
+}
+
+// lessons/Index (student)
+export interface LessonsIndexProps {
+  upcoming: LessonItem[]
+  past: LessonItem[]
+}
+
+// lessons/Show
+export interface LessonsShowProps {
+  lesson: LessonItem
+}
+
+// admin/Lessons
+export interface AdminLessonsProps {
+  lessons: LessonItem[]
+  teachers: Array<{ id: number; name: string }>
+  students: Array<{ id: number; name: string }>
+}

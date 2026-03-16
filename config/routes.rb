@@ -28,6 +28,10 @@ Rails.application.routes.draw do
   end
 
   resources :inbox, only: [ :index, :show ]
+  resources :lessons, only: [ :index, :create, :show, :update, :destroy ]
+  namespace :admin do
+    resources :lessons, only: [ :index ]
+  end
   resources :teachers, only: [ :index, :update ] do
     member do
       post :assign_student

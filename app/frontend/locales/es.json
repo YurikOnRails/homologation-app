@@ -23,7 +23,9 @@
     "required": "Obligatorio",
     "optional": "Opcional",
     "error": "Error",
-    "success": "Éxito"
+    "success": "Éxito",
+    "create": "Crear",
+    "clear": "Limpiar"
   },
   "auth": {
     "sign_in": "Iniciar sesión",
@@ -225,6 +227,9 @@
     "meeting_link_hint": "Dejar vacío para usar el enlace permanente del profesor",
     "notes": "Notas (privadas, después de la clase)",
     "cancel_lesson": "Cancelar clase",
+    "edit_lesson": "Editar clase",
+    "select_student": "Seleccionar alumno",
+    "status_label": "Estado",
     "status": {
       "scheduled": "Programada",
       "completed": "Completada",

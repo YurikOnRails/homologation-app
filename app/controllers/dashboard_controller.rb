@@ -1,7 +1,7 @@
 class DashboardController < InertiaController
   def index
     authorize :dashboard, :index?
-    # TODO Step 6: redirect teachers to lessons_path
+    return redirect_to lessons_path if current_user.teacher? && !current_user.coordinator?
     render inertia: "dashboard/Index", props: { stats: build_stats }
   end
 
