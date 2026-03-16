@@ -1,27 +1,9 @@
 import "@/lib/i18n" // Must be imported BEFORE any components
-import { createInertiaApp, type ResolvedComponent, usePage } from "@inertiajs/react"
-import { useEffect } from "react"
-import { useTranslation } from "react-i18next"
+import { createInertiaApp, type ResolvedComponent } from "@inertiajs/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { AuthLayout } from "@/components/layout/AuthLayout"
-import type { SharedProps } from "@/types"
-
-// Syncs i18n language with the user's saved locale from the server
-function LocaleSync({ children }: { children: React.ReactNode }) {
-  const { i18n } = useTranslation()
-  const { auth } = usePage<SharedProps>().props
-
-  useEffect(() => {
-    const locale = auth.user?.locale
-    if (locale && i18n.language !== locale) {
-      void i18n.changeLanguage(locale)
-    }
-  }, [auth.user?.locale, i18n])
-
-  return <>{children}</>
-}
 
 void createInertiaApp({
   resolve: (name) => {
@@ -53,9 +35,7 @@ void createInertiaApp({
   setup({ el, App, props }) {
     createRoot(el).render(
       <StrictMode>
-        <LocaleSync>
-          <App {...props} />
-        </LocaleSync>
+        <App {...props} />
       </StrictMode>
     )
   },

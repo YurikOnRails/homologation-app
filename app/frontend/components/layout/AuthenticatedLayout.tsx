@@ -1,12 +1,26 @@
+import { useEffect } from "react"
+import { usePage } from "@inertiajs/react"
+import { useTranslation } from "react-i18next"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/AppSidebar"
 import { Header } from "@/components/layout/Header"
+import type { SharedProps } from "@/types"
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode
 }
 
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
+  const { auth } = usePage<SharedProps>().props
+  const { i18n } = useTranslation()
+
+  useEffect(() => {
+    const locale = auth.user?.locale
+    if (locale && i18n.language !== locale) {
+      void i18n.changeLanguage(locale)
+    }
+  }, [auth.user?.locale, i18n])
+
   return (
     <SidebarProvider>
       <AppSidebar />
