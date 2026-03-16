@@ -77,4 +77,56 @@ class HomologationRequestTest < ActiveSupport::TestCase
       request.transition_to!("submitted", changed_by: users(:student_ana))
     end
   end
+
+  # === Status machine: invalid transitions blocked ===
+
+  test "cannot skip from submitted directly to payment_confirmed" do
+    request = homologation_requests(:ana_equivalencia) # status: submitted
+    assert_raises(HomologationRequest::InvalidTransition) do
+      request.transition_to!("payment_confirmed", changed_by: users(:coordinator_maria))
+    end
+  end
+
+  test "cannot go backwards from in_review to submitted" do
+    request = homologation_requests(:ana_equivalencia)
+    request.update_columns(status: "in_review")
+    assert_raises(HomologationRequest::InvalidTransition) do
+      request.transition_to!("submitted", changed_by: users(:coordinator_maria))
+    end
+  end
+
+  test "awaiting_reply can return to in_review" do
+    request = homologation_requests(:ana_equivalencia)
+    request.update_columns(status: "awaiting_reply")
+    request.transition_to!("in_review", changed_by: users(:coordinator_maria))
+    assert_equal "in_review", request.status
+  end
+
+  test "in_progress can transition to closed" do
+    request = homologation_requests(:ana_equivalencia)
+    request.update_columns(status: "in_progress")
+    request.transition_to!("closed", changed_by: users(:coordinator_maria))
+    assert_equal "closed", request.status
+  end
+
+  test "resolved is a terminal state" do
+    request = homologation_requests(:ana_equivalencia)
+    request.update_columns(status: "resolved")
+    assert_raises(HomologationRequest::InvalidTransition) do
+      request.transition_to!("in_progress", changed_by: users(:coordinator_maria))
+    end
+  end
+
+  test "transition sets status_changed_by" do
+    request = homologation_requests(:ana_equivalencia) # submitted
+    coordinator = users(:coordinator_maria)
+    request.transition_to!("in_review", changed_by: coordinator)
+    assert_equal coordinator.id, request.status_changed_by
+  end
+
+  test "transition sets status_changed_at" do
+    request = homologation_requests(:ana_equivalencia)
+    request.transition_to!("in_review", changed_by: users(:coordinator_maria))
+    assert_not_nil request.status_changed_at
+  end
 end

@@ -91,4 +91,72 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     patch homologation_request_path(request), params: { status: "in_review" }
     assert_response :forbidden
   end
+
+  test "student can access new request form" do
+    sign_in users(:student_ana)
+    get new_homologation_request_path
+    assert_response :ok
+    assert_equal "Requests/New", inertia.component
+  end
+
+  test "coordinator cannot create request (only students can)" do
+    sign_in users(:coordinator_maria)
+    assert_no_difference "HomologationRequest.count" do
+      post homologation_requests_path, params: {
+        subject: "Test", service_type: "equivalencia", privacy_accepted: true
+      }
+    end
+    assert_response :forbidden
+  end
+
+  test "soft-deleted request is not accessible via show" do
+    sign_in users(:student_ana)
+    request = homologation_requests(:ana_equivalencia)
+    request.discard
+
+    get homologation_request_path(request)
+    assert_response :not_found
+  end
+
+  test "submitted request auto-creates conversation" do
+    sign_in users(:student_ana)
+    assert_difference "Conversation.count", 1 do
+      post homologation_requests_path, params: {
+        subject: "With conversation", service_type: "equivalencia",
+        privacy_accepted: true
+      }
+    end
+    new_request = HomologationRequest.last
+    assert_not_nil new_request.conversation
+    assert_includes new_request.conversation.participants, users(:student_ana)
+  end
+
+  test "draft request does not create conversation" do
+    sign_in users(:student_ana)
+    assert_no_difference "Conversation.count" do
+      post homologation_requests_path, params: {
+        commit: "draft",
+        subject: "Draft only", service_type: "equivalencia"
+      }
+    end
+  end
+
+  test "payment confirmation triggers AmoCRM sync job" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "awaiting_payment")
+
+    assert_enqueued_with(job: AmoCrmSyncJob) do
+      post confirm_payment_homologation_request_path(request), params: { payment_amount: 150 }
+    end
+  end
+
+  test "coordinator is added as conversation participant on show" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    conv = request.conversation
+
+    get homologation_request_path(request)
+    assert_includes conv.participants, users(:coordinator_maria)
+  end
 end
