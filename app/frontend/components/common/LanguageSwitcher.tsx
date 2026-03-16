@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { router } from "@inertiajs/react"
 import { usePage } from "@inertiajs/react"
+import { Check, ChevronDown } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +13,26 @@ import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 
 const LANGUAGES = [
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "ru", label: "Русский", flag: "🇷🇺" },
+  { code: "es", label: "Español",  countryCode: "es" },
+  { code: "en", label: "English",  countryCode: "gb" },
+  { code: "ru", label: "Русский",  countryCode: "ru" },
 ]
 
-export function LanguageSwitcher() {
+function Flag({ countryCode, className = "" }: { countryCode: string; className?: string }) {
+  return (
+    <span
+      className={`fi fi-${countryCode} rounded-sm shrink-0 ${className}`}
+      style={{ width: "1.25em", height: "1em", display: "inline-block", backgroundSize: "cover" }}
+    />
+  )
+}
+
+interface LanguageSwitcherProps {
+  /** Use on dark backgrounds (e.g. sidebar, dark panel) */
+  variant?: "default" | "ghost-dark"
+}
+
+export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
   const { auth } = usePage<SharedProps>().props
 
@@ -28,25 +43,42 @@ export function LanguageSwitcher() {
     }
   }
 
-  const current = LANGUAGES.find((l) => l.code === i18n.language)
+  const current = LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[0]
+
+  const buttonClass =
+    variant === "ghost-dark"
+      ? "text-zinc-300 hover:text-white hover:bg-white/10 border-transparent"
+      : ""
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 px-0">
-          <span>{current?.flag ?? "🌐"}</span>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`h-9 gap-2 px-3 font-normal ${buttonClass}`}
+        >
+          <Flag countryCode={current.countryCode} />
+          <span className="text-sm">{current.code.toUpperCase()}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {LANGUAGES.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => changeLanguage(lang.code)}
-            className={i18n.language === lang.code ? "font-semibold" : ""}
-          >
-            {lang.flag} {lang.label}
-          </DropdownMenuItem>
-        ))}
+
+      <DropdownMenuContent align="end" className="min-w-[10rem]">
+        {LANGUAGES.map((lang) => {
+          const isActive = i18n.language === lang.code
+          return (
+            <DropdownMenuItem
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code)}
+              className="gap-3 cursor-pointer"
+            >
+              <Flag countryCode={lang.countryCode} className="shadow-sm" />
+              <span className="flex-1">{lang.label}</span>
+              {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
+            </DropdownMenuItem>
+          )
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   )
