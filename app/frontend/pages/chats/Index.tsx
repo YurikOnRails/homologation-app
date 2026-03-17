@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Fragment } from "react/jsx-runtime"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { format, isToday, isYesterday } from "date-fns"
-import { es, enUS, ru } from "date-fns/locale"
+import { format } from "date-fns"
+import { es } from "date-fns/locale"
 import { ArrowLeft, MessagesSquare, Info, Send, Search as SearchIcon } from "lucide-react"
-import { cn, getInitials } from "@/lib/utils"
+import { cn, getInitials, formatDate, DATE_LOCALES } from "@/lib/utils"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -20,18 +20,7 @@ import type { SharedProps } from "@/types/index"
 import type { InboxIndexProps, InboxConversation, InboxConversationDetail } from "@/types/pages"
 import type { ChatMessage } from "@/types/models.d"
 
-const DATE_LOCALES: Record<string, typeof es> = { es, en: enUS, ru }
-
 type FilterType = "all" | "requests" | "teacher_chats" | "unread"
-
-/** Format last message time: "14:30" today, "Yesterday" yesterday, "12 mar" otherwise */
-function formatShortDate(dateStr: string, locale: string, t: (key: string) => string): string {
-  const d = new Date(dateStr)
-  const loc = DATE_LOCALES[locale] ?? es
-  if (isToday(d)) return format(d, "HH:mm", { locale: loc })
-  if (isYesterday(d)) return t("chats.yesterday")
-  return format(d, "d MMM", { locale: loc })
-}
 
 export default function ChatsIndex() {
   const { t, i18n } = useTranslation()
@@ -190,7 +179,7 @@ export default function ChatsIndex() {
   return (
     <AuthenticatedLayout breadcrumbs={[{ label: t("nav.chats") }]} fixedHeight>
       <Main fixed>
-        <section className="flex flex-1 min-h-0 gap-0 sm:gap-0">
+        <section className="flex flex-1 min-h-0">
           {/* ─── Left: Conversation List ─── */}
           <div className={cn(
             "flex w-full flex-col sm:w-64 lg:w-72 2xl:w-80 min-h-0 sm:border-r",
@@ -275,7 +264,7 @@ export default function ChatsIndex() {
                             </span>
                             {c.lastMessage && (
                               <span className="shrink-0 text-[11px] text-muted-foreground">
-                                {formatShortDate(c.lastMessage.createdAt, i18n.language, t)}
+                                {formatDate(c.lastMessage.createdAt, "short", i18n.language, t("chats.yesterday"))}
                               </span>
                             )}
                           </div>

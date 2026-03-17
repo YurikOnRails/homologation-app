@@ -32,7 +32,7 @@ class HomologationRequestsController < InertiaController
 
   def show
     authorize @request
-    if current_user.coordinator? || current_user.super_admin?
+    if current_user.super_admin?
       begin
         @request.conversation&.add_participant!(current_user)
       rescue ActiveRecord::RecordNotUnique
@@ -143,7 +143,7 @@ class HomologationRequestsController < InertiaController
   end
 
   def notify_coordinators_new_request(request)
-    coordinators = User.joins(:roles).where(roles: { name: [ "coordinator", "super_admin" ] })
+    coordinators = User.joins(:roles).where(roles: { name: "super_admin" })
     coordinators.find_each do |coordinator|
       NotificationJob.perform_later(
         user_id: coordinator.id,

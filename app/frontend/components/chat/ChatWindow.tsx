@@ -2,14 +2,13 @@ import { useState, useEffect, useRef, Fragment } from "react"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { format } from "date-fns"
-import { es, enUS, ru } from "date-fns/locale"
+import { es } from "date-fns/locale"
+import { DATE_LOCALES } from "@/lib/utils"
 import { useChannel } from "@/hooks/useActionCable"
 import { MessageBubble } from "./MessageBubble"
 import { MessageInput } from "./MessageInput"
 import type { SharedProps } from "@/types/index"
 import type { ChatMessage } from "@/types/models.d"
-
-const DATE_LOCALES: Record<string, typeof es> = { es, en: enUS, ru }
 
 interface ChatWindowProps {
   conversationId: number

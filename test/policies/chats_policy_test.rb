@@ -1,14 +1,16 @@
 require "test_helper"
 
 class ChatsPolicyTest < ActiveSupport::TestCase
-  test "coordinator can access chats" do
+  test "coordinator cannot access chats" do
     policy = ChatsPolicy.new(users(:coordinator_maria), :chats)
-    assert policy.index?
-    assert policy.show?
+    refute policy.index?
+    refute policy.show?
   end
 
   test "super_admin can access chats" do
-    assert ChatsPolicy.new(users(:super_admin_boss), :chats).index?
+    policy = ChatsPolicy.new(users(:super_admin_boss), :chats)
+    assert policy.index?
+    assert policy.show?
   end
 
   test "student cannot access chats" do

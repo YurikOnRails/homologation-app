@@ -1,11 +1,10 @@
 require "test_helper"
 
 class ChatsControllerTest < ActionDispatch::IntegrationTest
-  test "coordinator can access chats" do
+  test "coordinator cannot access chats" do
     sign_in users(:coordinator_maria)
     get chats_path
-    assert_response :ok
-    assert_equal "chats/Index", inertia.component
+    assert_response :forbidden
   end
 
   test "super_admin can access chats" do
@@ -27,15 +26,15 @@ class ChatsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "coordinator can view conversation in chats" do
-    sign_in users(:coordinator_maria)
+  test "super_admin can view conversation in chats" do
+    sign_in users(:super_admin_boss)
     get chat_path(conversations(:ana_equivalencia_conversation))
     assert_response :ok
     assert_equal "chats/Index", inertia.component
   end
 
   test "chats index includes conversations list" do
-    sign_in users(:coordinator_maria)
+    sign_in users(:super_admin_boss)
     get chats_path
     assert_response :ok
     props = inertia.props

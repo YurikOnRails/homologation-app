@@ -6,7 +6,7 @@ class ConversationPolicy < ApplicationPolicy
   end
 
   def show?
-    record.participants.include?(user) || user.coordinator? || user.super_admin?
+    record.participants.include?(user) || user.super_admin?
   end
 
   class Scope < ApplicationPolicy::Scope

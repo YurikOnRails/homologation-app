@@ -1,17 +1,17 @@
 class HomologationRequestPolicy < ApplicationPolicy
-  def index?   = user.student? || coordinator_or_admin?
-  def show?    = owner? || coordinator_or_admin?
+  def index?   = user.student? || user.super_admin?
+  def show?    = owner? || user.super_admin?
   def create?  = user.student?
-  def update?  = coordinator_or_admin?
-  def confirm_payment? = coordinator_or_admin? && record.status == "awaiting_payment"
-  def retry_sync? = coordinator_or_admin?
+  def update?  = user.super_admin?
+  def confirm_payment? = user.super_admin? && record.status == "awaiting_payment"
+  def retry_sync? = user.super_admin?
   def download_document? = show?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
       if user.student?
         scope.kept.where(user: user)
-      elsif user.coordinator? || user.super_admin?
+      elsif user.super_admin?
         scope.kept
       else
         scope.none

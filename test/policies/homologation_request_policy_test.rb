@@ -16,8 +16,8 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
     assert HomologationRequestPolicy.new(@ana, HomologationRequest).index?
   end
 
-  test "coordinator can list requests" do
-    assert HomologationRequestPolicy.new(@maria, HomologationRequest).index?
+  test "coordinator cannot list requests" do
+    refute HomologationRequestPolicy.new(@maria, HomologationRequest).index?
   end
 
   test "super_admin can list requests" do
@@ -38,8 +38,12 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
     refute HomologationRequestPolicy.new(@pedro, @ana_request).show?
   end
 
-  test "coordinator can see any request" do
-    assert HomologationRequestPolicy.new(@maria, @ana_request).show?
+  test "coordinator cannot see requests" do
+    refute HomologationRequestPolicy.new(@maria, @ana_request).show?
+  end
+
+  test "super_admin can see any request" do
+    assert HomologationRequestPolicy.new(@boss, @ana_request).show?
   end
 
   test "teacher cannot see requests" do
@@ -62,23 +66,32 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
 
   # === update? ===
 
-  test "coordinator can update request" do
-    assert HomologationRequestPolicy.new(@maria, @ana_request).update?
+  test "super_admin can update request" do
+    assert HomologationRequestPolicy.new(@boss, @ana_request).update?
   end
 
-  test "student cannot update request (only coordinators manage status)" do
+  test "coordinator cannot update request" do
+    refute HomologationRequestPolicy.new(@maria, @ana_request).update?
+  end
+
+  test "student cannot update request (only super_admin manages status)" do
     refute HomologationRequestPolicy.new(@ana, @ana_request).update?
   end
 
   # === confirm_payment? ===
 
-  test "coordinator can confirm payment when status is awaiting_payment" do
+  test "super_admin can confirm payment when status is awaiting_payment" do
     @ana_request.status = "awaiting_payment"
-    assert HomologationRequestPolicy.new(@maria, @ana_request).confirm_payment?
+    assert HomologationRequestPolicy.new(@boss, @ana_request).confirm_payment?
   end
 
-  test "coordinator cannot confirm payment when status is not awaiting_payment" do
+  test "super_admin cannot confirm payment when status is not awaiting_payment" do
     @ana_request.status = "in_review"
+    refute HomologationRequestPolicy.new(@boss, @ana_request).confirm_payment?
+  end
+
+  test "coordinator cannot confirm payment" do
+    @ana_request.status = "awaiting_payment"
     refute HomologationRequestPolicy.new(@maria, @ana_request).confirm_payment?
   end
 
@@ -97,8 +110,12 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
     refute HomologationRequestPolicy.new(@pedro, @ana_request).download_document?
   end
 
-  test "coordinator can download any document" do
-    assert HomologationRequestPolicy.new(@maria, @ana_request).download_document?
+  test "coordinator cannot download documents" do
+    refute HomologationRequestPolicy.new(@maria, @ana_request).download_document?
+  end
+
+  test "super_admin can download any document" do
+    assert HomologationRequestPolicy.new(@boss, @ana_request).download_document?
   end
 
   # === Scope ===
@@ -109,8 +126,13 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
     assert scope.all? { |r| r.discarded_at.nil? }
   end
 
-  test "coordinator scope returns all kept requests" do
+  test "coordinator scope returns nothing" do
     scope = HomologationRequestPolicy::Scope.new(@maria, HomologationRequest).resolve
+    assert_empty scope
+  end
+
+  test "super_admin scope returns all kept requests" do
+    scope = HomologationRequestPolicy::Scope.new(@boss, HomologationRequest).resolve
     assert_includes scope, @ana_request
   end
 
@@ -121,7 +143,7 @@ class HomologationRequestPolicyTest < ActiveSupport::TestCase
 
   test "scope excludes soft-deleted requests" do
     @ana_request.discard
-    scope = HomologationRequestPolicy::Scope.new(@maria, HomologationRequest).resolve
+    scope = HomologationRequestPolicy::Scope.new(@boss, HomologationRequest).resolve
     refute_includes scope, @ana_request
   end
 end

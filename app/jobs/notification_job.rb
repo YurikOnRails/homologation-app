@@ -28,8 +28,8 @@ class NotificationJob < ApplicationJob
       end
     end
 
-    # 4. Telegram (if user connected and enabled)
-    if user.notification_telegram? && user.telegram_chat_id.present?
+    # 4. Telegram (if user connected and enabled) — skip for chat messages (covered by digest)
+    if user.notification_telegram? && user.telegram_chat_id.present? && !notifiable.is_a?(Message)
       TelegramClient.new.send_message(
         user.telegram_chat_id,
         "<b>#{title}</b>\n#{body}"

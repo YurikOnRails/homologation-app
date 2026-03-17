@@ -162,7 +162,7 @@ end
 |---|---|
 | Adding/changing a DB table or field | `docs/02_DATABASE_SCHEMA.md` + `.dbml` |
 | Adding a user story or feature | `docs/03_FEATURES.md` |
-| Roles, permissions, or what each role can do | `docs/04_ROLES_AND_AUTHORIZATION.md` |
+| Roles, permissions, workflows, scenarios | `docs/04_ROLES_AND_AUTHORIZATION.md` |
 | Setting up or debugging OAuth | `docs/05_AUTH_OAUTH.md` |
 | Touching AmoCRM sync or field mapping | `docs/06_AMOCRM_INTEGRATION.md` |
 | What step to build next | `docs/07_IMPLEMENTATION_PLAN.md` |

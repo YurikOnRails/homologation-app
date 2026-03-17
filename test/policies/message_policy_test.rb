@@ -5,6 +5,7 @@ class MessagePolicyTest < ActiveSupport::TestCase
     @ana = users(:student_ana)
     @pedro = users(:student_pedro)
     @maria = users(:coordinator_maria)
+    @boss = users(:super_admin_boss)
     @ivan = users(:teacher_ivan)
     @request_conversation = conversations(:ana_equivalencia_conversation)
     @teacher_conversation = conversations(:ivan_ana_conversation)
@@ -22,9 +23,14 @@ class MessagePolicyTest < ActiveSupport::TestCase
     refute MessagePolicy.new(@pedro, msg).create?
   end
 
-  test "coordinator can send message in any request conversation" do
+  test "coordinator cannot send message in request conversation" do
     msg = @request_conversation.messages.build(user: @maria, body: "test")
-    assert MessagePolicy.new(@maria, msg).create?
+    refute MessagePolicy.new(@maria, msg).create?
+  end
+
+  test "super_admin can send message in any request conversation" do
+    msg = @request_conversation.messages.build(user: @boss, body: "test")
+    assert MessagePolicy.new(@boss, msg).create?
   end
 
   # === Teacher-student conversations ===

@@ -49,17 +49,17 @@ class ApplicationController < ActionController::Base
   def build_features(user)
     {
       # Action permissions
-      canConfirmPayment: user.coordinator? || user.super_admin?,
+      canConfirmPayment: user.super_admin?,
       canManageUsers: user.super_admin?,
       canManageTeachers: user.coordinator? || user.super_admin?,
-      canAccessChats: user.coordinator? || user.super_admin?,
+      canAccessChats: user.super_admin?,
       canAccessAdmin: user.super_admin?,
       canCreateRequest: user.student?,
       canCreateLesson: user.teacher? || user.coordinator? || user.super_admin?,
       # Navigation visibility — intentionally separate from action permissions,
       # logic may overlap today but can diverge as roles evolve
       canSeeDashboard: user.super_admin? || user.coordinator? || user.student?,
-      canSeeAllRequests: user.coordinator? || user.super_admin?,
+      canSeeAllRequests: user.super_admin?,
       canSeeMyRequests: user.student?,
       canSeeAllLessons: user.coordinator? || user.super_admin?,
       canSeeCalendar: user.teacher?,

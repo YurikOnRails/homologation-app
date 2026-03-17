@@ -5,14 +5,20 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:student_ana)
     get homologation_requests_path
     assert_response :ok
-    assert_equal "Requests/Index", inertia.component
+    assert_equal "requests/Index", inertia.component
   end
 
-  test "coordinator sees all requests" do
+  test "coordinator cannot see requests" do
     sign_in users(:coordinator_maria)
     get homologation_requests_path
+    assert_response :forbidden
+  end
+
+  test "super_admin sees all requests" do
+    sign_in users(:super_admin_boss)
+    get homologation_requests_path
     assert_response :ok
-    assert_equal "Requests/Index", inertia.component
+    assert_equal "requests/Index", inertia.component
   end
 
   test "teacher cannot access requests" do
@@ -25,7 +31,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:student_ana)
     get homologation_request_path(homologation_requests(:ana_equivalencia))
     assert_response :ok
-    assert_equal "Requests/Show", inertia.component
+    assert_equal "requests/Show", inertia.component
   end
 
   test "student cannot see other student request" do
@@ -34,8 +40,14 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "coordinator can view any request" do
+  test "coordinator cannot view requests" do
     sign_in users(:coordinator_maria)
+    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    assert_response :forbidden
+  end
+
+  test "super_admin can view any request" do
+    sign_in users(:super_admin_boss)
     get homologation_request_path(homologation_requests(:ana_equivalencia))
     assert_response :ok
   end
@@ -60,21 +72,37 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "draft", HomologationRequest.last.status
   end
 
-  test "coordinator can change status" do
-    sign_in users(:coordinator_maria)
+  test "super_admin can change status" do
+    sign_in users(:super_admin_boss)
     request = homologation_requests(:ana_equivalencia)
     patch homologation_request_path(request), params: { status: "in_review" }
     assert_equal "in_review", request.reload.status
   end
 
-  test "coordinator can confirm payment" do
+  test "coordinator cannot change status" do
     sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    patch homologation_request_path(request), params: { status: "in_review" }
+    assert_response :forbidden
+    assert_equal "submitted", request.reload.status
+  end
+
+  test "super_admin can confirm payment" do
+    sign_in users(:super_admin_boss)
     request = homologation_requests(:ana_equivalencia)
     request.update!(status: "awaiting_payment")
     post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
     assert_redirected_to homologation_request_path(request)
     assert_equal "payment_confirmed", request.reload.status
     assert_equal 60.0, request.reload.payment_amount.to_f
+  end
+
+  test "coordinator cannot confirm payment" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "awaiting_payment")
+    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
+    assert_response :forbidden
   end
 
   test "student cannot confirm payment" do
@@ -96,7 +124,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:student_ana)
     get new_homologation_request_path
     assert_response :ok
-    assert_equal "Requests/New", inertia.component
+    assert_equal "requests/New", inertia.component
   end
 
   test "coordinator cannot create request (only students can)" do
@@ -142,7 +170,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "payment confirmation triggers AmoCRM sync job" do
-    sign_in users(:coordinator_maria)
+    sign_in users(:super_admin_boss)
     request = homologation_requests(:ana_equivalencia)
     request.update!(status: "awaiting_payment")
 
@@ -151,14 +179,23 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "coordinator can retry AmoCRM sync" do
-    sign_in users(:coordinator_maria)
+  test "super_admin can retry AmoCRM sync" do
+    sign_in users(:super_admin_boss)
     request = homologation_requests(:ana_equivalencia)
     request.update!(status: "payment_confirmed", amo_crm_sync_error: "API timeout")
 
     post retry_sync_homologation_request_path(request)
     assert_redirected_to homologation_request_path(request)
     assert_nil request.reload.amo_crm_sync_error
+  end
+
+  test "coordinator cannot retry AmoCRM sync" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "payment_confirmed", amo_crm_sync_error: "API timeout")
+
+    post retry_sync_homologation_request_path(request)
+    assert_response :forbidden
   end
 
   test "student cannot retry AmoCRM sync" do
@@ -170,12 +207,12 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "coordinator is added as conversation participant on show" do
-    sign_in users(:coordinator_maria)
+  test "super_admin is added as conversation participant on show" do
+    sign_in users(:super_admin_boss)
     request = homologation_requests(:ana_equivalencia)
     conv = request.conversation
 
     get homologation_request_path(request)
-    assert_includes conv.participants, users(:coordinator_maria)
+    assert_includes conv.participants, users(:super_admin_boss)
   end
 end

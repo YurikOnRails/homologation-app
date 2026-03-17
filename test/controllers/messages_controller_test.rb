@@ -9,8 +9,17 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "coordinator can send message in any request conversation" do
+  test "coordinator cannot send message in request conversation" do
     sign_in users(:coordinator_maria)
+    assert_no_difference "Message.count" do
+      post homologation_request_messages_path(homologation_requests(:ana_equivalencia)),
+           params: { body: "I'll review your documents" }
+    end
+    assert_response :forbidden
+  end
+
+  test "super_admin can send message in any request conversation" do
+    sign_in users(:super_admin_boss)
     assert_difference "Message.count", 1 do
       post homologation_request_messages_path(homologation_requests(:ana_equivalencia)),
            params: { body: "I'll review your documents" }

@@ -1,16 +1,17 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { formatDistanceToNow, format } from "date-fns"
+import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns"
 import { es, enUS, ru } from "date-fns/locale"
 
-const DATE_LOCALES: Record<string, typeof es> = { es, en: enUS, ru }
+export const DATE_LOCALES: Record<string, typeof es> = { es, en: enUS, ru }
 
-export type DateMode = "relative" | "date" | "time" | "datetime"
+export type DateMode = "relative" | "date" | "time" | "datetime" | "short"
 
 export function formatDate(
   date: string | Date,
   mode: DateMode = "relative",
-  locale = "es"
+  locale = "es",
+  yesterdayLabel = "Yesterday"
 ): string {
   const d = typeof date === "string" ? new Date(date) : date
   const loc = DATE_LOCALES[locale] ?? es
@@ -24,6 +25,10 @@ export function formatDate(
       return format(d, "HH:mm", { locale: loc })
     case "datetime":
       return format(d, "PP HH:mm", { locale: loc })
+    case "short":
+      if (isToday(d)) return format(d, "HH:mm", { locale: loc })
+      if (isYesterday(d)) return yesterdayLabel
+      return format(d, "d MMM", { locale: loc })
   }
 }
 
