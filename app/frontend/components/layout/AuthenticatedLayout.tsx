@@ -5,14 +5,16 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { AppSidebar } from "@/components/layout/AppSidebar"
 import { Header, type BreadcrumbItem } from "@/components/layout/Header"
+import { cn } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode
   breadcrumbs?: BreadcrumbItem[]
+  fixedHeight?: boolean
 }
 
-export function AuthenticatedLayout({ children, breadcrumbs }: AuthenticatedLayoutProps) {
+export function AuthenticatedLayout({ children, breadcrumbs, fixedHeight }: AuthenticatedLayoutProps) {
   const { auth } = usePage<SharedProps>().props
   const { i18n } = useTranslation()
 
@@ -29,7 +31,7 @@ export function AuthenticatedLayout({ children, breadcrumbs }: AuthenticatedLayo
         <AppSidebar />
         <SidebarInset>
           <Header breadcrumbs={breadcrumbs} />
-          <div className="flex flex-1 flex-col p-4 md:p-6 overflow-y-auto">
+          <div className={cn("flex flex-1 flex-col p-4 md:p-6", fixedHeight ? "overflow-hidden min-h-0" : "overflow-y-auto")}>
             {children}
           </div>
         </SidebarInset>

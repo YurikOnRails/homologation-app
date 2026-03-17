@@ -166,15 +166,15 @@ export default function ChatsIndex() {
     : null
 
   return (
-    <AuthenticatedLayout breadcrumbs={[{ label: t("nav.chats") }]}>
+    <AuthenticatedLayout breadcrumbs={[{ label: t("nav.chats") }]} fixedHeight>
       <Main fixed>
-        <section className="flex h-full gap-6">
+        <section className="flex flex-1 min-h-0 gap-6">
           {/* Left Side */}
           <div className={cn(
-            "flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80",
+            "flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80 min-h-0",
             mobileSelected && "hidden sm:flex"
           )}>
-            <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none">
+            <div className="shrink-0">
               <div className="flex items-center justify-between py-2">
                 <div className="flex gap-2">
                   <h1 className="text-2xl font-bold tracking-tight">{t("chats.title")}</h1>
@@ -215,7 +215,7 @@ export default function ChatsIndex() {
               ))}
             </div>
 
-            <ScrollArea className="-mx-3 h-full overflow-scroll p-3">
+            <ScrollArea className="-mx-3 flex-1 min-h-0 p-3">
               {filtered.length === 0 ? (
                 <p className="py-8 text-center text-sm text-muted-foreground">{t("chats.no_conversations")}</p>
               ) : (
@@ -316,30 +316,28 @@ export default function ChatsIndex() {
               )}
 
               {/* Conversation */}
-              <div className="flex flex-1 flex-col gap-2 rounded-md px-4 pt-0 pb-4 min-h-0">
-                <div className="flex size-full flex-1 min-h-0">
-                  <div className="chat-text-container relative -me-4 flex flex-1 flex-col overflow-y-hidden">
-                    <div className="chat-flex flex h-40 w-full grow flex-col justify-end gap-4 overflow-y-auto py-2 pe-4 pb-4">
-                      {messages.length === 0 ? (
-                        <p className="self-center text-center text-sm text-muted-foreground py-8">
-                          {t("chat.no_messages")}
-                        </p>
-                      ) : (
-                        Object.keys(groupedMessages).map((key) => (
-                          <Fragment key={key}>
-                            <div className="text-center text-xs text-muted-foreground">{key}</div>
-                            {groupedMessages[key].map((msg) => (
-                              <MessageBubble
-                                key={msg.id}
-                                message={msg}
-                                isOwn={msg.user.id === auth.user?.id}
-                              />
-                            ))}
-                          </Fragment>
-                        ))
-                      )}
-                      <div ref={messagesEndRef} />
-                    </div>
+              <div className="flex flex-1 flex-col gap-2 px-4 pb-4 min-h-0">
+                <div className="flex-1 min-h-0 overflow-y-auto py-2">
+                  <div className="flex flex-col justify-end gap-4 min-h-full">
+                    {messages.length === 0 ? (
+                      <p className="self-center text-center text-sm text-muted-foreground py-8">
+                        {t("chat.no_messages")}
+                      </p>
+                    ) : (
+                      Object.keys(groupedMessages).map((key) => (
+                        <Fragment key={key}>
+                          <div className="text-center text-xs text-muted-foreground">{key}</div>
+                          {groupedMessages[key].map((msg) => (
+                            <MessageBubble
+                              key={msg.id}
+                              message={msg}
+                              isOwn={msg.user.id === auth.user?.id}
+                            />
+                          ))}
+                        </Fragment>
+                      ))
+                    )}
+                    <div ref={messagesEndRef} />
                   </div>
                 </div>
                 <form

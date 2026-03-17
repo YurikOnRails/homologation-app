@@ -8,7 +8,7 @@ export function Main({ fixed, className, ...props }: MainProps) {
   return (
     <div
       className={cn(
-        fixed && "flex grow flex-col overflow-hidden",
+        fixed && "flex flex-1 flex-col overflow-hidden min-h-0",
         className
       )}
       {...props}
