@@ -274,7 +274,7 @@ export default function Edit() {
               {/* Privacy policy */}
               <p className="text-center text-sm text-muted-foreground">
                 <Link href={routes.privacyPolicy} className="underline hover:text-foreground">
-                  {t("auth.accept_privacy")}
+                  {t("auth.accept_privacy_link")}
                 </Link>
               </p>
 

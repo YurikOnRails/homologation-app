@@ -1,8 +1,8 @@
 import { useForm, Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { OAuthButtons } from "@/components/auth/OAuthButtons"
+import { FormField } from "@/components/auth/FormField"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { routes } from "@/lib/routes"
@@ -21,7 +21,6 @@ export default function Login() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">{t("auth.sign_in")}</h1>
         <p className="text-sm text-muted-foreground">
@@ -32,10 +31,8 @@ export default function Login() {
         </p>
       </div>
 
-      {/* OAuth buttons — above the form, Google first */}
       <OAuthButtons />
 
-      {/* Divider */}
       <div className="relative">
         <Separator />
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-muted-foreground">
@@ -43,26 +40,21 @@ export default function Login() {
         </span>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email_address">{t("auth.email")}</Label>
-          <Input
-            id="email_address"
-            type="email"
-            autoComplete="email"
-            placeholder="nombre@ejemplo.com"
-            value={data.email_address}
-            onChange={(e) => setData("email_address", e.target.value)}
-            required
-          />
-          {errors.email_address && (
-            <p className="text-xs text-destructive">{errors.email_address}</p>
-          )}
-        </div>
+        <FormField
+          id="email_address"
+          label={t("auth.email")}
+          type="email"
+          autoComplete="email"
+          placeholder="nombre@ejemplo.com"
+          value={data.email_address}
+          onChange={(v) => setData("email_address", v)}
+          error={errors.email_address}
+          required
+        />
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center justify-between mb-2">
             <Label htmlFor="password">{t("auth.password")}</Label>
             <Link
               href={routes.forgotPassword}
@@ -71,17 +63,15 @@ export default function Login() {
               {t("auth.forgot_password")}
             </Link>
           </div>
-          <Input
+          <FormField
             id="password"
             type="password"
             autoComplete="current-password"
             value={data.password}
-            onChange={(e) => setData("password", e.target.value)}
+            onChange={(v) => setData("password", v)}
+            error={errors.password}
             required
           />
-          {errors.password && (
-            <p className="text-xs text-destructive">{errors.password}</p>
-          )}
         </div>
 
         <Button type="submit" className="w-full" size="lg" disabled={processing}>

@@ -1,10 +1,7 @@
 import { useForm, Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { AuthLayout } from "@/components/layout/AuthLayout"
+import { FormField } from "@/components/auth/FormField"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { routes } from "@/lib/routes"
 
 export default function ForgotPassword() {
@@ -19,40 +16,36 @@ export default function ForgotPassword() {
   }
 
   return (
-    <AuthLayout>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">{t("auth.forgot_password")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email_address">{t("auth.email")}</Label>
-              <Input
-                id="email_address"
-                type="email"
-                autoComplete="email"
-                value={data.email_address}
-                onChange={(e) => setData("email_address", e.target.value)}
-                required
-              />
-              {errors.email_address && (
-                <p className="text-sm text-destructive">{errors.email_address}</p>
-              )}
-            </div>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">{t("auth.forgot_password")}</h1>
+        <p className="text-sm text-muted-foreground">
+          {t("auth.forgot_password_hint")}
+        </p>
+      </div>
 
-            <Button type="submit" className="w-full min-h-[44px]" disabled={processing}>
-              {t("auth.reset_password")}
-            </Button>
-          </form>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField
+          id="email_address"
+          label={t("auth.email")}
+          type="email"
+          autoComplete="email"
+          value={data.email_address}
+          onChange={(v) => setData("email_address", v)}
+          error={errors.email_address}
+          required
+        />
 
-          <p className="text-center text-sm text-muted-foreground">
-            <Link href={routes.login} className="underline">
-              {t("auth.sign_in")}
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+        <Button type="submit" className="w-full" size="lg" disabled={processing}>
+          {processing ? t("common.loading") : t("auth.reset_password")}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-muted-foreground">
+        <Link href={routes.login} className="text-foreground underline underline-offset-4 hover:text-primary">
+          {t("auth.sign_in")}
+        </Link>
+      </p>
+    </div>
   )
 }

@@ -1,10 +1,7 @@
 import { useForm, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { AuthLayout } from "@/components/layout/AuthLayout"
+import { FormField } from "@/components/auth/FormField"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { SharedProps } from "@/types"
 import type { ResetPasswordProps } from "@/types/pages"
 import { routes } from "@/lib/routes"
@@ -23,49 +20,38 @@ export default function ResetPassword() {
   }
 
   return (
-    <AuthLayout>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">{t("auth.reset_password")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")}</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                value={data.password}
-                onChange={(e) => setData("password", e.target.value)}
-                required
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
-              )}
-            </div>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">{t("auth.reset_password")}</h1>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password_confirmation">{t("auth.confirm_password")}</Label>
-              <Input
-                id="password_confirmation"
-                type="password"
-                autoComplete="new-password"
-                value={data.password_confirmation}
-                onChange={(e) => setData("password_confirmation", e.target.value)}
-                required
-              />
-              {errors.password_confirmation && (
-                <p className="text-sm text-destructive">{errors.password_confirmation}</p>
-              )}
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField
+          id="password"
+          label={t("auth.password")}
+          type="password"
+          autoComplete="new-password"
+          value={data.password}
+          onChange={(v) => setData("password", v)}
+          error={errors.password}
+          required
+        />
 
-            <Button type="submit" className="w-full min-h-[44px]" disabled={processing}>
-              {t("auth.reset_password")}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+        <FormField
+          id="password_confirmation"
+          label={t("auth.confirm_password")}
+          type="password"
+          autoComplete="new-password"
+          value={data.password_confirmation}
+          onChange={(v) => setData("password_confirmation", v)}
+          error={errors.password_confirmation}
+          required
+        />
+
+        <Button type="submit" className="w-full" size="lg" disabled={processing}>
+          {processing ? t("common.loading") : t("auth.reset_password")}
+        </Button>
+      </form>
+    </div>
   )
 }
