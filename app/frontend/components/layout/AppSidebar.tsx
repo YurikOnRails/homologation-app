@@ -1,3 +1,4 @@
+import { useMemo, memo } from "react"
 import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
@@ -15,6 +16,7 @@ import {
   LogOut,
   ChevronsUpDown,
   GraduationCap,
+  Globe,
 } from "lucide-react"
 import {
   Sidebar,
@@ -62,7 +64,7 @@ function isActive(href: string, currentPath: string, exact?: boolean): boolean {
   return currentPath === href || currentPath.startsWith(href + "/")
 }
 
-function UserCard({ user, initials }: { user: User; initials: string }) {
+const UserCard = memo(function UserCard({ user, initials }: { user: User; initials: string }) {
   return (
     <div className="flex items-center gap-2 text-left text-sm">
       <Avatar className="size-8 rounded-lg">
@@ -75,7 +77,7 @@ function UserCard({ user, initials }: { user: User; initials: string }) {
       </div>
     </div>
   )
-}
+})
 
 export function AppSidebar() {
   const { t } = useTranslation()
@@ -86,7 +88,7 @@ export function AppSidebar() {
   // Super admin gets 4 domain-oriented groups; other roles get the flat layout
   const isSuperAdmin = features.canAccessAdmin
 
-  const navGroups: NavGroup[] = isSuperAdmin
+  const navGroups = useMemo<NavGroup[]>(() => isSuperAdmin
     ? [
         {
           label: t("nav.homologation"),
@@ -250,16 +252,21 @@ export function AppSidebar() {
             },
           ],
         },
-      ]
+      ],
+  [isSuperAdmin, features, unreadNotificationsCount, t])
 
-  const visibleGroups = navGroups
-    .map((group) => ({
-      ...group,
-      items: group.items.filter((item) => item.show),
-    }))
-    .filter((group) => group.items.length > 0)
+  const visibleGroups = useMemo(() =>
+    navGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => item.show),
+      }))
+      .filter((group) => group.items.length > 0),
+    [navGroups, url])
 
-  const initials = user?.name ? getInitials(user.name) : "?"
+  const initials = useMemo(() =>
+    user?.name ? getInitials(user.name) : "?",
+    [user?.name])
 
   return (
     <Sidebar collapsible="icon">
@@ -268,8 +275,8 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href={routes.root}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GraduationCap className="size-4" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-600 to-blue-700">
+                  <Globe className="size-4 text-white" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">SpaceForEdu</span>
