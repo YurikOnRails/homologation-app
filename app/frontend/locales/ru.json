@@ -232,7 +232,8 @@
     "no_conversations": "Нет разговоров",
     "select_chat": "Выберите чат, чтобы начать",
     "your_messages": "Ваши сообщения",
-    "info": "Инфо"
+    "info": "Инфо",
+    "yesterday": "Вчера"
   },
   "teachers": {
     "title": "Учителя",

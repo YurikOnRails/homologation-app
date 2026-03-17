@@ -57,6 +57,15 @@ ru:
         subject: "Оплата подтверждена: %{request_subject}"
       status_changed:
         subject: "Статус обновлён: %{request_subject}"
+    chat_digest:
+      subject:
+        one: "У вас 1 новое сообщение в %{title}"
+        other: "У вас %{count} новых сообщений в %{title}"
+      greeting: "Здравствуйте, %{name}!"
+      body:
+        one: "У вас 1 непрочитанное сообщение в переписке «%{title}»."
+        other: "У вас %{count} непрочитанных сообщений в переписке «%{title}»."
+      cta: "Откройте приложение, чтобы ответить."
   notifications:
     new_request: "Новая заявка от %{name}"
     new_message: "Новое сообщение от %{name}"

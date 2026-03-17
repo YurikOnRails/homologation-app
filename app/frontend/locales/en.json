@@ -232,7 +232,8 @@
     "no_conversations": "No conversations",
     "select_chat": "Select a chat to get started",
     "your_messages": "Your messages",
-    "info": "Info"
+    "info": "Info",
+    "yesterday": "Yesterday"
   },
   "teachers": {
     "title": "Teachers",

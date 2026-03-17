@@ -57,6 +57,15 @@ es:
         subject: "Pago confirmado para: %{request_subject}"
       status_changed:
         subject: "Estado actualizado: %{request_subject}"
+    chat_digest:
+      subject:
+        one: "Tienes 1 mensaje nuevo en %{title}"
+        other: "Tienes %{count} mensajes nuevos en %{title}"
+      greeting: "Hola %{name},"
+      body:
+        one: "Tienes 1 mensaje sin leer en la conversación «%{title}»."
+        other: "Tienes %{count} mensajes sin leer en la conversación «%{title}»."
+      cta: "Abre la aplicación para responder."
   notifications:
     new_request: "Nueva solicitud de %{name}"
     new_message: "Nuevo mensaje de %{name}"

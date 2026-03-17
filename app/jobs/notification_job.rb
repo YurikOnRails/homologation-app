@@ -1,6 +1,8 @@
 class NotificationJob < ApplicationJob
   queue_as :default
 
+  CHAT_DIGEST_DELAY = 10.minutes
+
   def perform(user_id:, title:, body: nil, notifiable:)
     user = User.find(user_id)
 
@@ -16,9 +18,14 @@ class NotificationJob < ApplicationJob
       unreadCount: user.notifications.unread.count
     })
 
-    # 3. Email (if user has it enabled — default: true)
+    # 3. Email — chat messages get a delayed digest, everything else is immediate
     if user.notification_email?
-      NotificationMailer.notify(notification).deliver_later
+      if notifiable.is_a?(Message)
+        ChatEmailDigestJob.set(wait: CHAT_DIGEST_DELAY)
+          .perform_later(user.id, notifiable.conversation_id)
+      else
+        NotificationMailer.notify(notification).deliver_later
+      end
     end
 
     # 4. Telegram (if user connected and enabled)

@@ -57,6 +57,15 @@ en:
         subject: "Payment confirmed for: %{request_subject}"
       status_changed:
         subject: "Status updated: %{request_subject}"
+    chat_digest:
+      subject:
+        one: "You have 1 new message in %{title}"
+        other: "You have %{count} new messages in %{title}"
+      greeting: "Hi %{name},"
+      body:
+        one: "You have 1 unread message in the conversation \"%{title}\"."
+        other: "You have %{count} unread messages in the conversation \"%{title}\"."
+      cta: "Open the app to reply."
   notifications:
     new_request: "New request from %{name}"
     new_message: "New message from %{name}"

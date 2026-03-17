@@ -51,7 +51,7 @@ class NotificationJobTest < ActiveJob::TestCase
     assert_not_requested :post, /api\.telegram\.org/
   end
 
-  test "sends email when user has it enabled" do
+  test "sends immediate email for non-message notifiable" do
     user = users(:student_ana)
     user.update!(notification_email: true)
 
@@ -60,6 +60,19 @@ class NotificationJobTest < ActiveJob::TestCase
         user_id: user.id,
         title: "Test",
         notifiable: homologation_requests(:ana_equivalencia)
+      )
+    end
+  end
+
+  test "enqueues digest job instead of immediate email for message notifiable" do
+    user = users(:student_ana)
+    user.update!(notification_email: true)
+
+    assert_enqueued_with(job: ChatEmailDigestJob) do
+      NotificationJob.perform_now(
+        user_id: user.id,
+        title: "Test",
+        notifiable: messages(:ana_message_1)
       )
     end
   end
