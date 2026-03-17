@@ -1,9 +1,8 @@
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { router } from "@inertiajs/react"
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react"
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isToday as checkIsToday } from "date-fns"
-
-const MAX_DOTS = 5
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -17,6 +16,8 @@ import { getTeacherColor, LESSON_STATUS_COLORS } from "@/lib/colors"
 import { TeacherLegend } from "./TeacherLegend"
 import type { MonthDayLesson } from "@/types/pages"
 
+const MAX_DOTS = 5
+
 interface AdminMonthViewProps {
   monthStart: string
   monthSummary: Record<string, MonthDayLesson[]>
@@ -27,11 +28,11 @@ export function AdminMonthView({ monthStart, monthSummary, teachers }: AdminMont
   const { t, i18n } = useTranslation()
   const monthDate = new Date(monthStart)
   const loc = DATE_LOCALES[i18n.language]
-  const teacherIds = teachers.map((t) => t.id)
+  const teacherIds = useMemo(() => teachers.map((t) => t.id), [teachers])
 
   const monthLabel = format(monthDate, "LLLL yyyy", { locale: loc })
 
-  // Build calendar grid: 6 rows of 7 days
+  // Build calendar grid
   const calStart = startOfWeek(startOfMonth(monthDate), { weekStartsOn: 1 })
   const calEnd = endOfWeek(endOfMonth(monthDate), { weekStartsOn: 1 })
 
@@ -46,51 +47,39 @@ export function AdminMonthView({ monthStart, monthSummary, teachers }: AdminMont
     weeks.push(week)
   }
 
-  // Day name headers
-  const dayHeaders = Array.from({ length: 7 }, (_, i) => {
-    const d = addDays(calStart, i)
-    return format(d, "EEE", { locale: loc })
-  })
+  const dayHeaders = Array.from({ length: 7 }, (_, i) =>
+    format(addDays(calStart, i), "EEE", { locale: loc })
+  )
+
+  // Sorted list of days with lessons (for mobile view)
+  const daysWithLessons = useMemo(() =>
+    Object.entries(monthSummary)
+      .map(([dateKey, lessons]) => ({ date: new Date(dateKey), lessons }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime()),
+    [monthSummary]
+  )
 
   function navigateMonth(delta: number) {
     const d = new Date(monthDate)
     d.setMonth(d.getMonth() + delta)
-    router.get(
-      routes.admin.lessons,
-      { view: "month", month: format(d, "yyyy-MM") },
-      { preserveState: true }
-    )
+    router.get(routes.admin.lessons, { view: "month", month: format(d, "yyyy-MM") }, { preserveState: true })
   }
 
   function goToWeek(date: Date) {
     const monday = startOfWeek(date, { weekStartsOn: 1 })
-    router.get(
-      routes.admin.lessons,
-      { view: "week", week_start: format(monday, "yyyy-MM-dd") },
-      { preserveState: true }
-    )
+    router.get(routes.admin.lessons, { view: "week", week_start: format(monday, "yyyy-MM-dd") }, { preserveState: true })
   }
 
-  const hasLessons = Object.keys(monthSummary).length > 0
+  const hasLessons = daysWithLessons.length > 0
 
   return (
     <div className="space-y-4">
       {/* Navigation */}
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-9"
-          onClick={() => navigateMonth(-1)}
-        >
+        <Button variant="outline" size="icon" className="size-9" onClick={() => navigateMonth(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-9"
-          onClick={() => navigateMonth(1)}
-        >
+        <Button variant="outline" size="icon" className="size-9" onClick={() => navigateMonth(1)}>
           <ChevronRight className="h-4 w-4" />
         </Button>
         <span className="text-sm font-semibold capitalize">{monthLabel}</span>
@@ -104,44 +93,100 @@ export function AdminMonthView({ monthStart, monthSummary, teachers }: AdminMont
           <p className="text-sm text-muted-foreground">{t("calendar.no_lessons_month")}</p>
         </div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          {/* Day headers */}
-          <div className="grid grid-cols-7 bg-muted/50">
-            {dayHeaders.map((dh, i) => (
-              <div
-                key={i}
-                className="text-center text-xs font-medium text-muted-foreground py-2 border-b"
-              >
-                {dh}
+        <>
+          {/* Desktop: month grid */}
+          <div className="hidden sm:block border rounded-lg overflow-hidden">
+            <div className="grid grid-cols-7 bg-muted/50">
+              {dayHeaders.map((dh, i) => (
+                <div key={i} className="text-center text-xs font-medium text-muted-foreground py-2 border-b">
+                  {dh}
+                </div>
+              ))}
+            </div>
+
+            {weeks.map((week, weekIdx) => (
+              <div key={weekIdx} className="grid grid-cols-7">
+                {week.map((day, dayIdx) => {
+                  const dateKey = format(day, "yyyy-MM-dd")
+                  const dayLessons = monthSummary[dateKey] ?? []
+                  const inMonth = isSameMonth(day, monthDate)
+                  const isToday = checkIsToday(day)
+
+                  return (
+                    <DayCell
+                      key={dayIdx}
+                      day={day}
+                      dayLessons={dayLessons}
+                      inMonth={inMonth}
+                      isToday={isToday}
+                      teacherIds={teacherIds}
+                      onGoToWeek={() => goToWeek(day)}
+                      locale={loc}
+                    />
+                  )
+                })}
               </div>
             ))}
           </div>
 
-          {/* Weeks */}
-          {weeks.map((week, weekIdx) => (
-            <div key={weekIdx} className="grid grid-cols-7">
-              {week.map((day, dayIdx) => {
-                const dateKey = format(day, "yyyy-MM-dd")
-                const dayLessons = monthSummary[dateKey] ?? []
-                const inMonth = isSameMonth(day, monthDate)
-                const isToday = checkIsToday(day)
+          {/* Mobile: day-by-day list */}
+          <div className="sm:hidden space-y-3">
+            {daysWithLessons.map(({ date, lessons }) => {
+              const isToday = checkIsToday(date)
+              const sortedLessons = [...lessons].sort(
+                (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+              )
 
-                return (
-                  <DayCell
-                    key={dayIdx}
-                    day={day}
-                    dayLessons={dayLessons}
-                    inMonth={inMonth}
-                    isToday={isToday}
-                    teacherIds={teacherIds}
-                    onGoToWeek={() => goToWeek(day)}
-                    locale={loc}
-                  />
-                )
-              })}
-            </div>
-          ))}
-        </div>
+              return (
+                <div key={date.toISOString()} className="border rounded-lg overflow-hidden">
+                  <button
+                    type="button"
+                    className={cn(
+                      "w-full flex items-center justify-between px-4 py-2.5 bg-muted/50 text-left min-h-[44px]",
+                      isToday && "bg-primary/10"
+                    )}
+                    onClick={() => goToWeek(date)}
+                  >
+                    <span className={cn("text-sm font-medium", isToday && "text-primary font-semibold")}>
+                      {format(date, "EEEE, d MMMM", { locale: loc })}
+                      {isToday && (
+                        <span className="ml-1.5 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                          {t("calendar.today")}
+                        </span>
+                      )}
+                    </span>
+                    <Badge variant="secondary" className="text-[10px]">
+                      {lessons.length}
+                    </Badge>
+                  </button>
+                  <div className="p-2 space-y-1.5">
+                    {sortedLessons.map((lesson) => {
+                      const color = getTeacherColor(lesson.teacherId, teacherIds)
+                      const time = format(new Date(lesson.scheduledAt), "HH:mm")
+                      return (
+                        <div
+                          key={lesson.id}
+                          className={cn(
+                            "flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm border min-h-[44px]",
+                            color.bg, color.border, color.text
+                          )}
+                        >
+                          <span className={cn("h-2.5 w-2.5 rounded-full shrink-0", color.dot)} />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium">{time} · {lesson.studentName}</div>
+                            <div className="text-xs opacity-70">
+                              {lesson.teacherName} · {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
       )}
 
       <TeacherLegend teachers={teachers} teacherIds={teacherIds} />
@@ -215,7 +260,7 @@ function DayCell({ day, dayLessons, inMonth, isToday, teacherIds, onGoToWeek, lo
   return (
     <Popover>
       <PopoverTrigger asChild>{content}</PopoverTrigger>
-      <PopoverContent className="w-72 p-0" align="start">
+      <PopoverContent className="w-72 max-w-[calc(100vw-2rem)] p-0" align="start">
         <div className="px-4 py-2.5 border-b bg-muted/50 flex items-center justify-between">
           <span className="text-sm font-semibold">
             {format(day, "EEEE, d MMMM", { locale })}
@@ -235,16 +280,12 @@ function DayCell({ day, dayLessons, inMonth, isToday, teacherIds, onGoToWeek, lo
                   key={lesson.id}
                   className={cn(
                     "flex items-center gap-2 rounded-md px-2.5 py-2 text-xs border",
-                    color.bg,
-                    color.border,
-                    color.text
+                    color.bg, color.border, color.text
                   )}
                 >
                   <span className={cn("h-2 w-2 rounded-full shrink-0", color.dot)} />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium truncate">
-                      {time} · {lesson.studentName}
-                    </div>
+                    <div className="font-medium truncate">{time} · {lesson.studentName}</div>
                     <div className="opacity-70 truncate">
                       {lesson.teacherName} · {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })}
                     </div>
@@ -260,12 +301,7 @@ function DayCell({ day, dayLessons, inMonth, isToday, teacherIds, onGoToWeek, lo
             })}
         </div>
         <div className="px-4 py-2 border-t">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full min-h-[44px] text-xs"
-            onClick={onGoToWeek}
-          >
+          <Button variant="ghost" size="sm" className="w-full min-h-[44px] text-xs" onClick={onGoToWeek}>
             {t("calendar.go_to_week")}
           </Button>
         </div>

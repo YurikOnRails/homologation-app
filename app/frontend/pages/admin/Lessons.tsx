@@ -33,7 +33,11 @@ export default function AdminLessons() {
   const [teacherFilter, setTeacherFilter] = useState("")
   const [studentFilter, setStudentFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  const [weekTeacherFilter, setWeekTeacherFilter] = useState("")
+  // Sync teacher filter from URL params on initial load
+  const [weekTeacherFilter, setWeekTeacherFilter] = useState(() => {
+    const url = new URL(window.location.href)
+    return url.searchParams.get("teacher_id") ?? ""
+  })
 
   function switchView(newView: string) {
     const params: Record<string, string> = { view: newView }
@@ -56,10 +60,11 @@ export default function AdminLessons() {
   }
 
   function handleWeekTeacherChange(id: string) {
-    setWeekTeacherFilter(id)
+    const effectiveId = id === "all" ? "" : id
+    setWeekTeacherFilter(effectiveId)
     const params: Record<string, string> = { view: "week" }
     if (weekStart) params.week_start = weekStart
-    if (id) params.teacher_id = id
+    if (effectiveId) params.teacher_id = effectiveId
     router.get(routes.admin.lessons, params, { preserveState: true })
   }
 
@@ -160,9 +165,9 @@ export default function AdminLessons() {
               data={lessons}
               renderMobileCard={(lesson) => <LessonCard lesson={lesson} />}
               toolbarContent={
-                <div className="flex flex-wrap gap-2 items-end">
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-end">
                   <Select value={teacherFilter} onValueChange={setTeacherFilter}>
-                    <SelectTrigger className="w-40 min-h-[44px]">
+                    <SelectTrigger className="min-h-[44px]">
                       <SelectValue placeholder={t("lessons.teacher")} />
                     </SelectTrigger>
                     <SelectContent>
@@ -175,7 +180,7 @@ export default function AdminLessons() {
                   </Select>
 
                   <Select value={studentFilter} onValueChange={setStudentFilter}>
-                    <SelectTrigger className="w-40 min-h-[44px]">
+                    <SelectTrigger className="min-h-[44px]">
                       <SelectValue placeholder={t("lessons.student")} />
                     </SelectTrigger>
                     <SelectContent>
@@ -188,7 +193,7 @@ export default function AdminLessons() {
                   </Select>
 
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-36 min-h-[44px]">
+                    <SelectTrigger className="min-h-[44px]">
                       <SelectValue placeholder={t("lessons.status_label")} />
                     </SelectTrigger>
                     <SelectContent>
@@ -204,12 +209,14 @@ export default function AdminLessons() {
                     </SelectContent>
                   </Select>
 
-                  <Button onClick={applyListFilters} size="sm" className="min-h-[44px]">
-                    {t("common.filter")}
-                  </Button>
-                  <Button onClick={clearListFilters} variant="ghost" size="sm" className="min-h-[44px]">
-                    {t("common.clear")}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={applyListFilters} size="sm" className="flex-1 min-h-[44px]">
+                      {t("common.filter")}
+                    </Button>
+                    <Button onClick={clearListFilters} variant="ghost" size="sm" className="flex-1 min-h-[44px]">
+                      {t("common.clear")}
+                    </Button>
+                  </div>
                 </div>
               }
             />

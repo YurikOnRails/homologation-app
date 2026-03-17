@@ -25,7 +25,7 @@ export function LessonPopover({ lesson, teacherIds, children }: LessonPopoverPro
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start">
+      <PopoverContent className="w-80 max-w-[calc(100vw-2rem)] p-0" align="start">
         <div className={cn("px-4 py-3 rounded-t-lg border-b", color.bg, color.border)}>
           <div className={cn("font-semibold", color.text)}>{lesson.studentName}</div>
           <div className={cn("text-xs opacity-75", color.text)}>

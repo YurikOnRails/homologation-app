@@ -20,7 +20,7 @@ import { TeacherLegend } from "./TeacherLegend"
 import type { LessonItem } from "@/types/pages"
 
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8) // 8:00–20:00
-const WEEKDAYS = 5 // Mon–Fri
+const WEEKDAYS = 7 // Mon–Sun
 
 interface AdminWeekGridProps {
   lessons: LessonItem[]
@@ -81,7 +81,7 @@ export function AdminWeekGrid({
     router.get(routes.admin.lessons, params, { preserveState: true })
   }
 
-  const weekLabel = `${format(days[0], "d MMM", { locale: loc })} – ${format(days[4], "d MMM yyyy", { locale: loc })}`
+  const weekLabel = `${format(days[0], "d MMM", { locale: loc })} – ${format(days[6], "d MMM yyyy", { locale: loc })}`
   const isCurrentWeek = days.some((d) => d.toDateString() === todayStr)
 
   return (
@@ -99,17 +99,18 @@ export function AdminWeekGrid({
           </div>
           <span className="text-sm font-semibold">{weekLabel}</span>
           {!isCurrentWeek && (
-            <Button variant="ghost" size="sm" onClick={goToToday}>
+            <Button variant="ghost" size="sm" className="min-h-[44px]" onClick={goToToday}>
               {t("calendar.today")}
             </Button>
           )}
         </div>
 
         <Select value={selectedTeacherId} onValueChange={onTeacherChange}>
-          <SelectTrigger className="w-48 min-h-[44px]">
+          <SelectTrigger className="w-full sm:w-48 min-h-[44px]">
             <SelectValue placeholder={t("calendar.all_teachers")} />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">{t("calendar.all_teachers")}</SelectItem>
             {teachers.map((teacher) => (
               <SelectItem key={teacher.id} value={String(teacher.id)}>
                 <span className="flex items-center gap-2">
@@ -129,6 +130,11 @@ export function AdminWeekGrid({
             <CalendarDays className="h-8 w-8 text-muted-foreground" />
           </div>
           <p className="text-sm text-muted-foreground">{t("calendar.no_lessons_week")}</p>
+          {selectedTeacherId && lessons.length > 0 && (
+            <Button variant="link" size="sm" className="mt-2" onClick={() => onTeacherChange("all")}>
+              {t("calendar.all_teachers")}
+            </Button>
+          )}
         </div>
       ) : (
         <>
@@ -137,18 +143,23 @@ export function AdminWeekGrid({
             <ScrollArea className="w-full">
               <div
                 className="grid border rounded-lg overflow-hidden"
-                style={{ gridTemplateColumns: "4rem repeat(5, 1fr)", minWidth: 700 }}
+                style={{ gridTemplateColumns: "4rem repeat(7, 1fr)", minWidth: 800 }}
               >
                 {/* Header */}
                 <div className="bg-muted/50 border-b p-2" />
                 {days.map((d, i) => {
                   const isToday = d.toDateString() === todayStr
+                  const isWeekend = d.getDay() === 0 || d.getDay() === 6
                   return (
                     <div
                       key={i}
                       className={cn(
                         "text-center text-xs font-medium py-2.5 border-b border-l",
-                        isToday ? "bg-primary/5 text-primary font-semibold" : "bg-muted/50 text-muted-foreground"
+                        isToday
+                          ? "bg-primary/5 text-primary font-semibold"
+                          : isWeekend
+                            ? "bg-muted/80 text-muted-foreground"
+                            : "bg-muted/50 text-muted-foreground"
                       )}
                     >
                       <div>{format(d, "EEE", { locale: loc })}</div>
@@ -170,10 +181,15 @@ export function AdminWeekGrid({
                         return d.toDateString() === dayDate.toDateString() && d.getHours() === hour
                       })
                       const isToday = dayDate.toDateString() === todayStr
+                      const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6
                       return (
                         <div
                           key={`cell-${hour}-${dayIdx}`}
-                          className={cn("border-b border-l min-h-[3.5rem] p-1 space-y-1", isToday && "bg-primary/[0.02]")}
+                          className={cn(
+                            "border-b border-l min-h-[3.5rem] p-1 space-y-1",
+                            isToday && "bg-primary/[0.02]",
+                            isWeekend && !isToday && "bg-muted/20"
+                          )}
                         >
                           {dayLessons.map((lesson) => (
                             <LessonBlock key={lesson.id} lesson={lesson} teacherIds={teacherIds} />
