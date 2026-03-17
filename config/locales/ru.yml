@@ -11,12 +11,40 @@ ru:
       user:
         name: "Имя"
         email_address: "Электронная почта"
+        phone: "Телефон"
+        whatsapp: "WhatsApp"
+        birthday: "Дата рождения"
+        country: "Страна"
+        locale: "Язык"
+        guardian_name: "Имя опекуна"
+        guardian_email: "Email опекуна"
+        guardian_phone: "Телефон опекуна"
+        guardian_whatsapp: "WhatsApp опекуна"
     errors:
       models:
         homologation_request:
           attributes:
             privacy_accepted:
               accepted: "необходимо принять политику конфиденциальности"
+        user:
+          attributes:
+            phone:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            whatsapp:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_phone:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_whatsapp:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_email:
+              invalid: "неверный формат email"
+            birthday:
+              less_than: "должна быть прошедшей датой"
+              greater_than_or_equal_to: "должна быть позже 1900 года"
+            locale:
+              inclusion: "недопустимый язык"
+            country:
+              inclusion: "недопустимая страна"
   flash:
     signed_in: "Вход выполнен"
     signed_out: "Выход выполнен"

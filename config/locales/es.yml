@@ -11,12 +11,40 @@ es:
       user:
         name: "Nombre"
         email_address: "Correo electrónico"
+        phone: "Teléfono"
+        whatsapp: "WhatsApp"
+        birthday: "Fecha de nacimiento"
+        country: "País"
+        locale: "Idioma"
+        guardian_name: "Nombre del tutor"
+        guardian_email: "Email del tutor"
+        guardian_phone: "Teléfono del tutor"
+        guardian_whatsapp: "WhatsApp del tutor"
     errors:
       models:
         homologation_request:
           attributes:
             privacy_accepted:
               accepted: "debe aceptar la política de privacidad"
+        user:
+          attributes:
+            phone:
+              invalid: "formato incorrecto (ej: +34 612 345 678)"
+            whatsapp:
+              invalid: "formato incorrecto (ej: +34 612 345 678)"
+            guardian_phone:
+              invalid: "formato incorrecto (ej: +34 612 345 678)"
+            guardian_whatsapp:
+              invalid: "formato incorrecto (ej: +34 612 345 678)"
+            guardian_email:
+              invalid: "formato de email incorrecto"
+            birthday:
+              less_than: "debe ser una fecha pasada"
+              greater_than_or_equal_to: "debe ser posterior al año 1900"
+            locale:
+              inclusion: "idioma no válido"
+            country:
+              inclusion: "país no válido"
   flash:
     signed_in: "Sesión iniciada"
     signed_out: "Sesión cerrada"

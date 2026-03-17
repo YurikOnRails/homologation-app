@@ -11,12 +11,40 @@ en:
       user:
         name: "Name"
         email_address: "Email"
+        phone: "Phone"
+        whatsapp: "WhatsApp"
+        birthday: "Date of birth"
+        country: "Country"
+        locale: "Language"
+        guardian_name: "Guardian name"
+        guardian_email: "Guardian email"
+        guardian_phone: "Guardian phone"
+        guardian_whatsapp: "Guardian WhatsApp"
     errors:
       models:
         homologation_request:
           attributes:
             privacy_accepted:
               accepted: "you must accept the privacy policy"
+        user:
+          attributes:
+            phone:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            whatsapp:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_phone:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_whatsapp:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_email:
+              invalid: "invalid email format"
+            birthday:
+              less_than: "must be a past date"
+              greater_than_or_equal_to: "must be after year 1900"
+            locale:
+              inclusion: "is not a valid language"
+            country:
+              inclusion: "is not a valid country"
   flash:
     signed_in: "Signed in successfully"
     signed_out: "Signed out"

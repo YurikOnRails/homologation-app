@@ -1,6 +1,11 @@
 class User < ApplicationRecord
   include Discardable
 
+  ALLOWED_LOCALES   = %w[es en ru].freeze
+  ALLOWED_COUNTRIES = %w[AR CO MX PE VE RU UA US ES DE FR IT other].freeze
+  PHONE_REGEX       = /\A\+?[\d\s\-(). ]{6,30}\z/
+  EMAIL_REGEX       = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+
   has_secure_password validations: false
 
   validates :password, length: { minimum: 8 }, if: -> { password_digest_changed? || (new_record? && provider.blank?) }
@@ -22,8 +27,30 @@ class User < ApplicationRecord
 
   encrypts :phone, :whatsapp, :guardian_phone, :guardian_whatsapp
 
+  # Identity
   validates :email_address, presence: true, uniqueness: true
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 100 }
+
+  # Profile fields
+  validates :locale,  inclusion: { in: ALLOWED_LOCALES },   allow_blank: true
+  validates :country, inclusion: { in: ALLOWED_COUNTRIES }, allow_blank: true
+
+  # Phone numbers — permissive format, allow blank (filled during profile completion)
+  validates :phone,             format: { with: PHONE_REGEX }, allow_blank: true
+  validates :whatsapp,          format: { with: PHONE_REGEX }, allow_blank: true
+  validates :guardian_phone,    format: { with: PHONE_REGEX }, allow_blank: true
+  validates :guardian_whatsapp, format: { with: PHONE_REGEX }, allow_blank: true
+
+  validates :guardian_email, format: { with: EMAIL_REGEX }, allow_blank: true
+
+  validates :birthday,
+    comparison: {
+      less_than:                Date.current,
+      greater_than_or_equal_to: Date.new(1900, 1, 1)
+    },
+    allow_blank: true
+
+  validate :guardian_fields_required_if_minor
 
   def self.find_or_create_from_oauth(auth)
     user = find_by(provider: auth.provider, uid: auth.uid)
@@ -66,6 +93,12 @@ class User < ApplicationRecord
   def student?     = has_role?("student")
 
   private
+
+  def guardian_fields_required_if_minor
+    return unless is_minor?
+    errors.add(:guardian_name,  :blank) if guardian_name.blank?
+    errors.add(:guardian_phone, :blank) if guardian_phone.blank?
+  end
 
   def has_role?(name)
     if roles.loaded?
