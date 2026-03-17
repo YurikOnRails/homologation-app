@@ -49,6 +49,10 @@ ru:
     user_deactivated: "Пользователь деактивирован успешно"
     role_assigned: "Роль назначена успешно"
     role_removed: "Роль удалена успешно"
+    password_updated: "Пароль успешно обновлён"
+    settings_saved: "Настройки сохранены"
+    deletion_requested: "Запрос на удаление аккаунта отправлен. Мы свяжемся с вами в течение 30 дней."
+    user_gdpr_deleted: "Аккаунт удалён по запросу GDPR"
   mailers:
     request_mailer:
       new_request:
@@ -75,3 +79,4 @@ ru:
     lesson_reminder: "Напоминание об уроке"
     lesson_starts_soon: "Ваш урок начнётся через 1 час (%{time})"
     lesson_cancelled: "Урок отменён: %{date}"
+    deletion_requested: "Запрос на удаление аккаунта от %{name}"

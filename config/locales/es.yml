@@ -49,6 +49,10 @@ es:
     user_deactivated: "Usuario desactivado correctamente"
     role_assigned: "Rol asignado correctamente"
     role_removed: "Rol eliminado correctamente"
+    password_updated: "Contraseña actualizada correctamente"
+    settings_saved: "Configuración guardada"
+    deletion_requested: "Solicitud de eliminación de cuenta enviada. Te contactaremos en un plazo de 30 días."
+    user_gdpr_deleted: "Cuenta eliminada según solicitud GDPR"
   mailers:
     request_mailer:
       new_request:
@@ -75,3 +79,4 @@ es:
     lesson_reminder: "Recordatorio de clase"
     lesson_starts_soon: "Tu clase empieza en 1 hora (%{time})"
     lesson_cancelled: "Clase cancelada: %{date}"
+    deletion_requested: "Solicitud de eliminación de cuenta de %{name}"

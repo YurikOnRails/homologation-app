@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_151347) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_170038) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -202,6 +202,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_151347) do
     t.date "birthday"
     t.string "country"
     t.datetime "created_at", null: false
+    t.datetime "deletion_requested_at"
     t.datetime "discarded_at"
     t.string "email_address", null: false
     t.string "guardian_email"
@@ -223,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_151347) do
     t.string "uid"
     t.datetime "updated_at", null: false
     t.string "whatsapp"
+    t.index ["deletion_requested_at"], name: "index_users_on_deletion_requested_at"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["guardian_user_id"], name: "index_users_on_guardian_user_id"

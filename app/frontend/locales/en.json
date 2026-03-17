@@ -204,7 +204,20 @@
       "remove_role": "Remove Role",
       "deactivate": "Deactivate",
       "deactivate_confirm": "Are you sure you want to deactivate {{name}}? You can reactivate them later.",
-      "deactivated": "Deactivated"
+      "deactivated": "Deactivated",
+      "gdpr_delete": "Delete (GDPR)",
+      "gdpr_delete_confirm": "Are you sure you want to permanently delete {{name}}'s account per GDPR? This action cannot be undone.",
+      "manage_user": "Manage",
+      "user_status": "Status",
+      "status_active": "Active",
+      "status_gdpr": "GDPR Pending",
+      "filter_active": "Active",
+      "filter_archived": "Archived",
+      "search_placeholder": "Search by name or email...",
+      "no_roles": "No roles",
+      "remove_role_confirm": "Remove the {{role}} role from {{name}}?",
+      "danger_zone": "Danger zone",
+      "deletion_requested_on": "Request received on {{date}}"
     },
     "charts": {
       "requests_over_time": "Requests Over Time",
@@ -309,6 +322,48 @@
     "management": "Management",
     "other": "Other",
     "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings.",
+    "nav": {
+      "profile": "Profile",
+      "account": "Account",
+      "notifications": "Notifications"
+    },
+    "profile": {
+      "description": "Update your personal information and language preferences."
+    },
+    "account": {
+      "description": "Manage your email, password, and connected accounts.",
+      "email_readonly": "Your email address cannot be changed.",
+      "connected_accounts": "Connected Accounts",
+      "oauth_connected": "Connected via OAuth",
+      "connected": "Connected",
+      "change_password": "Change Password",
+      "change_password_hint": "Use a long, secure password.",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "update_password": "Update Password",
+      "danger_zone": "Danger Zone",
+      "danger_description": "These actions are irreversible.",
+      "delete_account": "Delete Account",
+      "delete_description": "Request deletion of your account and all your data in accordance with GDPR.",
+      "request_deletion": "Request Account Deletion",
+      "deletion_pending": "Deletion Requested",
+      "deletion_pending_hint": "Your request is being processed. We will contact you within 30 days.",
+      "delete_confirm_title": "Request account deletion?",
+      "delete_confirm_description": "An administrator will be notified. Your account will be deleted within 30 days in accordance with GDPR. This action cannot be undone."
+    },
+    "invalid_current_password": "Current password is incorrect",
+    "notifications": {
+      "description": "Choose how and when you receive notifications.",
+      "email_title": "Email Notifications",
+      "email_hint": "Receive updates about your requests and messages.",
+      "telegram_title": "Telegram",
+      "telegram_hint": "Receive instant notifications via Telegram.",
+      "save": "Save Preferences"
+    }
   },
   "privacy": {
     "title": "Privacy Policy",

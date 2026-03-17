@@ -11,6 +11,15 @@ export const routes = {
   editProfile: "/profile/edit",
   connectTelegram: "/profile/connect_telegram",
   disconnectTelegram: "/profile/disconnect_telegram",
+  settings: {
+    root: "/settings",
+    profile: "/settings/profile",
+    account: "/settings/account",
+    notifications: "/settings/notifications",
+    requestDeletion: "/settings/request_deletion",
+    connectTelegram: "/settings/connect_telegram",
+    disconnectTelegram: "/settings/disconnect_telegram",
+  },
   requests: "/requests",
   newRequest: "/requests/new",
   request: (id: number) => `/requests/${id}`,
@@ -42,6 +51,7 @@ export const routes = {
     editUser: (id: number) => `/admin/users/${id}/edit`,
     assignRole: (id: number) => `/admin/users/${id}/assign_role`,
     removeRole: (id: number) => `/admin/users/${id}/remove_role`,
+    gdprDelete: (id: number) => `/admin/users/${id}/gdpr_delete`,
     lessons: "/admin/lessons",
   },
 }

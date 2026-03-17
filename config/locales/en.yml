@@ -49,6 +49,10 @@ en:
     user_deactivated: "User deactivated successfully"
     role_assigned: "Role assigned successfully"
     role_removed: "Role removed successfully"
+    password_updated: "Password updated successfully"
+    settings_saved: "Settings saved"
+    deletion_requested: "Account deletion request submitted. We will contact you within 30 days."
+    user_gdpr_deleted: "Account deleted per GDPR request"
   mailers:
     request_mailer:
       new_request:
@@ -75,3 +79,4 @@ en:
     lesson_reminder: "Lesson reminder"
     lesson_starts_soon: "Your lesson starts in 1 hour (%{time})"
     lesson_cancelled: "Lesson cancelled: %{date}"
+    deletion_requested: "Account deletion request from %{name}"

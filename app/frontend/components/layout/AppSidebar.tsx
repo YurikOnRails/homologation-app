@@ -181,7 +181,7 @@ export function AppSidebar() {
         },
         {
           show: true,
-          href: routes.profile,
+          href: routes.settings.root,
           icon: Settings,
           label: t("nav.settings"),
         },
@@ -209,7 +209,7 @@ export function AppSidebar() {
                   <GraduationCap className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">HomologApp</span>
+                  <span className="truncate font-semibold">SpaceForEdu</span>
                   <span className="truncate text-xs text-muted-foreground">
                     Homologación España
                   </span>
@@ -274,19 +274,6 @@ export function AppSidebar() {
                       <UserCard user={user} initials={initials} />
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={routes.profile}>
-                      <Settings className="mr-2 size-4" />
-                      {t("nav.profile")}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={routes.notifications}>
-                      <Bell className="mr-2 size-4" />
-                      {t("nav.notifications")}
-                    </Link>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href={routes.session} method="delete" as="button" className="w-full text-destructive">

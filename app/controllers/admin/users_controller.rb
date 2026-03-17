@@ -1,6 +1,6 @@
 module Admin
   class UsersController < InertiaController
-    before_action :set_user, only: [ :edit, :update, :destroy, :assign_role, :remove_role ]
+    before_action :set_user, only: [ :edit, :update, :destroy, :assign_role, :remove_role, :gdpr_delete ]
 
     def index
       authorize User
@@ -50,6 +50,12 @@ module Admin
       redirect_to admin_users_path, notice: t("flash.user_deactivated")
     end
 
+    def gdpr_delete
+      authorize @user, :destroy?
+      @user.discard
+      redirect_to admin_users_path, notice: t("flash.user_gdpr_deleted")
+    end
+
     def assign_role
       authorize @user, :update?
       role = Role.find_by!(name: params[:role_name])
@@ -71,7 +77,7 @@ module Admin
     end
 
     def users_list
-      policy_scope(User).kept.includes(:roles).order(created_at: :desc).map { |u| admin_user_json(u) }
+      policy_scope(User).includes(:roles).order(created_at: :desc).map { |u| admin_user_json(u) }
     end
 
     def user_params
@@ -82,7 +88,8 @@ module Admin
       { id: u.id, name: u.name, email: u.email_address,
         roles: u.roles.map(&:name), locale: u.locale,
         avatarUrl: u.avatar_url, createdAt: u.created_at.iso8601,
-        discarded: u.discarded? }
+        discarded: u.discarded?,
+        deletionRequestedAt: u.deletion_requested_at&.iso8601 }
     end
   end
 end

@@ -22,21 +22,47 @@ export interface ResetPasswordProps {
 
 // profile/Edit
 export interface ProfileEditProps {
-  profile: {
+  profile: SettingsProfileData
+}
+
+// settings/*
+export interface SettingsProfileData {
+  id: number
+  name: string
+  email: string
+  phone: string | null
+  whatsapp: string | null
+  birthday: string | null
+  country: string | null
+  locale: string
+  isMinor: boolean
+  guardianName: string | null
+  guardianEmail: string | null
+  guardianPhone: string | null
+  guardianWhatsapp: string | null
+  profileComplete: boolean
+  notificationEmail: boolean
+  notificationTelegram: boolean
+  telegramConnected: boolean
+}
+
+export interface SettingsProfileProps {
+  profile: SettingsProfileData
+}
+
+export interface SettingsAccountProps {
+  account: {
     id: number
     name: string
     email: string
-    phone: string | null
-    whatsapp: string | null
-    birthday: string | null
-    country: string | null
-    locale: string
-    isMinor: boolean
-    guardianName: string | null
-    guardianEmail: string | null
-    guardianPhone: string | null
-    guardianWhatsapp: string | null
-    profileComplete: boolean
+    provider: string | null
+    hasPassword: boolean
+    deletionRequestedAt: string | null
+  }
+}
+
+export interface SettingsNotificationsProps {
+  notifications: {
     notificationEmail: boolean
     notificationTelegram: boolean
     telegramConnected: boolean
@@ -240,6 +266,7 @@ export interface AdminUser {
   avatarUrl: string | null
   createdAt: string
   discarded: boolean
+  deletionRequestedAt: string | null
 }
 
 export interface AdminDashboardProps {

@@ -7,6 +7,18 @@ Rails.application.routes.draw do
     delete :disconnect_telegram
   end
 
+  # Settings (replaces profile/edit)
+  get  "settings",                    to: redirect("/settings/profile")
+  get  "settings/profile",            to: "settings#profile",        as: :settings_profile
+  patch "settings/profile",           to: "settings#update_profile"
+  get "settings/account",            to: "settings#account",        as: :settings_account
+  patch "settings/account",           to: "settings#update_account"
+  get "settings/notifications",      to: "settings#notifications",  as: :settings_notifications
+  patch "settings/notifications",     to: "settings#update_notifications"
+  post "settings/request_deletion",   to: "settings#request_deletion",   as: :settings_request_deletion
+  post "settings/connect_telegram",   to: "settings#connect_telegram",   as: :settings_connect_telegram
+  delete "settings/disconnect_telegram", to: "settings#disconnect_telegram", as: :settings_disconnect_telegram
+
   # OAuth
   post "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
   get  "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
@@ -39,6 +51,7 @@ Rails.application.routes.draw do
       member do
         post :assign_role
         delete :remove_role
+        delete :gdpr_delete
       end
     end
     resources :lessons, only: [ :index ]

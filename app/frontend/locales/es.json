@@ -204,7 +204,20 @@
       "remove_role": "Quitar rol",
       "deactivate": "Desactivar",
       "deactivate_confirm": "¿Estás seguro de que quieres desactivar a {{name}}? Podrás reactivarlo más tarde.",
-      "deactivated": "Desactivado"
+      "deactivated": "Desactivado",
+      "gdpr_delete": "Eliminar (GDPR)",
+      "gdpr_delete_confirm": "¿Estás seguro de que quieres eliminar la cuenta de {{name}} de forma permanente según el RGPD? Esta acción no se puede deshacer.",
+      "manage_user": "Gestionar",
+      "user_status": "Estado",
+      "status_active": "Activo",
+      "status_gdpr": "GDPR Pendiente",
+      "filter_active": "Activos",
+      "filter_archived": "Archivados",
+      "search_placeholder": "Buscar por nombre o email...",
+      "no_roles": "Sin roles",
+      "remove_role_confirm": "¿Quitar el rol {{role}} a {{name}}?",
+      "danger_zone": "Zona de peligro",
+      "deletion_requested_on": "Solicitud recibida el {{date}}"
     },
     "charts": {
       "requests_over_time": "Solicitudes a lo largo del tiempo",
@@ -309,6 +322,48 @@
     "management": "Gestión",
     "other": "Otro",
     "settings": "Configuración"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Gestiona la configuración de tu cuenta.",
+    "nav": {
+      "profile": "Perfil",
+      "account": "Cuenta",
+      "notifications": "Notificaciones"
+    },
+    "profile": {
+      "description": "Actualiza tu información personal y preferencias de idioma."
+    },
+    "account": {
+      "description": "Gestiona tu email, contraseña y cuentas conectadas.",
+      "email_readonly": "El email no se puede cambiar.",
+      "connected_accounts": "Cuentas conectadas",
+      "oauth_connected": "Conectado mediante OAuth",
+      "connected": "Conectado",
+      "change_password": "Cambiar contraseña",
+      "change_password_hint": "Usa una contraseña larga y segura.",
+      "current_password": "Contraseña actual",
+      "new_password": "Nueva contraseña",
+      "update_password": "Actualizar contraseña",
+      "danger_zone": "Zona de peligro",
+      "danger_description": "Estas acciones son irreversibles.",
+      "delete_account": "Eliminar cuenta",
+      "delete_description": "Solicitar la eliminación de tu cuenta y todos tus datos conforme al RGPD.",
+      "request_deletion": "Solicitar eliminación de cuenta",
+      "deletion_pending": "Eliminación solicitada",
+      "deletion_pending_hint": "Tu solicitud está siendo procesada. Nos pondremos en contacto contigo en un plazo de 30 días.",
+      "delete_confirm_title": "¿Solicitar eliminación de cuenta?",
+      "delete_confirm_description": "Se notificará a un administrador. Tu cuenta será eliminada en un plazo de 30 días conforme al RGPD. Esta acción no se puede deshacer."
+    },
+    "invalid_current_password": "La contraseña actual es incorrecta",
+    "notifications": {
+      "description": "Elige cómo y cuándo recibes notificaciones.",
+      "email_title": "Notificaciones por email",
+      "email_hint": "Recibirás actualizaciones de tus solicitudes y mensajes.",
+      "telegram_title": "Telegram",
+      "telegram_hint": "Recibe notificaciones instantáneas en Telegram.",
+      "save": "Guardar preferencias"
+    }
   },
   "privacy": {
     "title": "Política de privacidad",

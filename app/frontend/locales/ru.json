@@ -204,7 +204,20 @@
       "remove_role": "Убрать роль",
       "deactivate": "Деактивировать",
       "deactivate_confirm": "Вы уверены, что хотите деактивировать {{name}}? Вы сможете реактивировать его позже.",
-      "deactivated": "Деактивирован"
+      "deactivated": "Деактивирован",
+      "gdpr_delete": "Удалить (GDPR)",
+      "gdpr_delete_confirm": "Вы уверены, что хотите безвозвратно удалить аккаунт {{name}} согласно GDPR? Это действие нельзя отменить.",
+      "manage_user": "Управление",
+      "user_status": "Статус",
+      "status_active": "Активен",
+      "status_gdpr": "GDPR ожидает",
+      "filter_active": "Активные",
+      "filter_archived": "Архив",
+      "search_placeholder": "Поиск по имени или email...",
+      "no_roles": "Нет ролей",
+      "remove_role_confirm": "Убрать роль {{role}} у {{name}}?",
+      "danger_zone": "Опасная зона",
+      "deletion_requested_on": "Запрос получен {{date}}"
     },
     "charts": {
       "requests_over_time": "Заявки за период",
@@ -309,6 +322,48 @@
     "management": "Управление",
     "other": "Прочее",
     "settings": "Настройки"
+  },
+  "settings": {
+    "title": "Настройки",
+    "description": "Управляйте настройками вашего аккаунта.",
+    "nav": {
+      "profile": "Профиль",
+      "account": "Аккаунт",
+      "notifications": "Уведомления"
+    },
+    "profile": {
+      "description": "Обновите личную информацию и языковые предпочтения."
+    },
+    "account": {
+      "description": "Управляйте email, паролем и подключёнными аккаунтами.",
+      "email_readonly": "Адрес электронной почты не может быть изменён.",
+      "connected_accounts": "Подключённые аккаунты",
+      "oauth_connected": "Подключён через OAuth",
+      "connected": "Подключён",
+      "change_password": "Изменить пароль",
+      "change_password_hint": "Используйте длинный и надёжный пароль.",
+      "current_password": "Текущий пароль",
+      "new_password": "Новый пароль",
+      "update_password": "Обновить пароль",
+      "danger_zone": "Опасная зона",
+      "danger_description": "Эти действия необратимы.",
+      "delete_account": "Удалить аккаунт",
+      "delete_description": "Запросить удаление вашего аккаунта и всех данных в соответствии с GDPR.",
+      "request_deletion": "Запросить удаление аккаунта",
+      "deletion_pending": "Удаление запрошено",
+      "deletion_pending_hint": "Ваш запрос обрабатывается. Мы свяжемся с вами в течение 30 дней.",
+      "delete_confirm_title": "Запросить удаление аккаунта?",
+      "delete_confirm_description": "Администратор будет уведомлён. Ваш аккаунт будет удалён в течение 30 дней в соответствии с GDPR. Это действие нельзя отменить."
+    },
+    "invalid_current_password": "Текущий пароль неверный",
+    "notifications": {
+      "description": "Выберите как и когда получать уведомления.",
+      "email_title": "Уведомления на email",
+      "email_hint": "Получайте обновления по вашим заявкам и сообщениям.",
+      "telegram_title": "Telegram",
+      "telegram_hint": "Получайте мгновенные уведомления в Telegram.",
+      "save": "Сохранить настройки"
+    }
   },
   "privacy": {
     "title": "Политика конфиденциальности",

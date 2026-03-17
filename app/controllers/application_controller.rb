@@ -71,7 +71,7 @@ class ApplicationController < ActionController::Base
   def require_complete_profile
     return unless Current.user
     return if Current.user.profile_complete?
-    return if request.path.start_with?("/profile", "/session", "/registration", "/auth", "/passwords")
+    return if request.path.start_with?("/profile", "/settings", "/session", "/registration", "/auth", "/passwords")
     redirect_to edit_profile_path, notice: t("flash.complete_profile")
   end
 
