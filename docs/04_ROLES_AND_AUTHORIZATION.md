@@ -23,7 +23,6 @@
 | Admin dashboard | ✅ | — | — | — |
 | Manage users (CRUD) | ✅ | — | — | — |
 | Stripe billing | ✅ | — | — | — |
-| Set teacher level / rate | ✅ | — | — | — |
 | **Homologation & Documents** | | | | |
 | View all requests | ✅ | — | — | — |
 | View own requests | ✅ | — | — | ✅ |
@@ -35,6 +34,8 @@
 | Download own documents | ✅ | — | — | ✅ |
 | Retry AmoCRM sync | ✅ | — | — | — |
 | **Teachers & Lessons** | | | | |
+| Create teacher (assign role + profile) | ✅ | ✅ | — | — |
+| Edit teacher profile (grade, rate, link, bio) | ✅ | ✅ | — | — |
 | Assign teacher to student | ✅ | ✅ | — | — |
 | Remove student from teacher | ✅ | ✅ | — | — |
 | View teacher calendar | ✅ | ✅ | ✅ | — |
@@ -334,7 +335,7 @@ end
 {
   canConfirmPayment: user.super_admin?,
   canManageUsers: user.super_admin?,
-  canManageTeachers: user.coordinator? || user.super_admin?,
+  canManageTeachers: user.coordinator? || user.super_admin?,  # create + edit teacher profile (grade, rate, link, bio)
   canAccessChats: user.super_admin?,
   canAccessAdmin: user.super_admin?,
   canCreateRequest: user.student?,

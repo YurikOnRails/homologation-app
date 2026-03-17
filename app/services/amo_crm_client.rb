@@ -21,7 +21,7 @@ class AmoCrmClient
   end
 
   def create_contact(user)
-    result = post("/api/v4/contacts", [{ name: user.name, custom_fields_values: contact_fields(user) }])
+    result = post("/api/v4/contacts", [ { name: user.name, custom_fields_values: contact_fields(user) } ])
     result.dig("_embedded", "contacts", 0, "id")
   end
 
@@ -32,15 +32,15 @@ class AmoCrmClient
   # ── Lead ──
 
   def create_lead(request, contact_id)
-    result = post("/api/v4/leads", [{
+    result = post("/api/v4/leads", [ {
       name: "Homologation: #{request.subject}",
       pipeline_id: pipeline_id,
       status_id: new_status_id,
       price: (request.payment_amount.to_f * 100).to_i,
       responsible_user_id: responsible_user_id,
-      _embedded: { contacts: [{ id: contact_id }] },
+      _embedded: { contacts: [ { id: contact_id } ] },
       custom_fields_values: lead_fields(request)
-    }])
+    } ])
     result.dig("_embedded", "leads", 0, "id")
   end
 
@@ -52,11 +52,11 @@ class AmoCrmClient
 
   def contact_fields(user)
     fields = [
-      { field_code: "EMAIL", values: [{ value: user.email_address, enum_code: "WORK" }] },
-      { field_code: "PHONE", values: [{ value: user.phone, enum_code: "WORK" }] },
+      { field_code: "EMAIL", values: [ { value: user.email_address, enum_code: "WORK" } ] },
+      { field_code: "PHONE", values: [ { value: user.phone, enum_code: "WORK" } ] }
     ]
 
-    fields << { field_id: field_ids[:whatsapp], values: [{ value: user.whatsapp, enum_code: "WHATSAPP" }] } if user.whatsapp.present?
+    fields << { field_id: field_ids[:whatsapp], values: [ { value: user.whatsapp, enum_code: "WHATSAPP" } ] } if user.whatsapp.present?
     fields << custom_field(:country, user.country) if user.country.present?
     if user.birthday.present?
       fields << custom_field(:birthday, user.birthday.to_time.to_i)
@@ -78,7 +78,7 @@ class AmoCrmClient
       custom_field(:subject, request.study_type_spain),
       custom_field(:identity_card, request.identity_card || request.passport),
       custom_field(:language_knowledge, request.language_knowledge),
-      custom_field(:language_certificate, request.language_certificate),
+      custom_field(:language_certificate, request.language_certificate)
     ]
 
     fields << custom_field(:referral, request.referral_source) if request.referral_source.present?
@@ -91,7 +91,7 @@ class AmoCrmClient
     return nil if value.nil?
     fid = field_ids[key]
     return nil unless fid
-    { field_id: fid, values: [{ value: value }] }
+    { field_id: fid, values: [ { value: value } ] }
   end
 
   def field_ids

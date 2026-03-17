@@ -62,7 +62,7 @@ SUBJECTS = [
   "Reconocimiento de Título de Biología",
   "Homologación de Título de Farmacia",
   "Equivalencia de Grado en Matemáticas",
-  "Reconocimiento de Licenciatura en Letras",
+  "Reconocimiento de Licenciatura en Letras"
 ].freeze
 
 COORDINATOR_MESSAGES = [
@@ -73,7 +73,7 @@ COORDINATOR_MESSAGES = [
   "El proceso de homologación puede tardar entre 3 y 6 meses.",
   "Hemos enviado su expediente al Ministerio de Educación.",
   "Por favor, adjunte también el certificado académico.",
-  "Todo está correcto. Procedemos con el pago.",
+  "Todo está correcto. Procedemos con el pago."
 ].freeze
 
 STUDENT_MESSAGES = [
@@ -84,7 +84,7 @@ STUDENT_MESSAGES = [
   "Perfecto, procedo con el pago ahora mismo.",
   "He enviado los documentos por correo también.",
   "¿Es posible acelerar el proceso?",
-  "Gracias, quedo a la espera de noticias.",
+  "Gracias, quedo a la espera de noticias."
 ].freeze
 
 # ─── Хелперы ──────────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ maria  = seed_user(email: "maria@example.com",  name: "Maria Garcia",  role_name
 carlos = seed_user(email: "carlos@example.com", name: "Carlos Ruiz",   role_name: "coordinator", locale: "es", country: "ES")
 sofia  = seed_user(email: "sofia@example.com",  name: "Sofía Méndez",  role_name: "coordinator", locale: "es", country: "ES")
 ivan   = seed_user(email: "ivan@example.com",   name: "Ivan Petrov",   role_name: "teacher",     locale: "ru", country: "RU")
-elena  = seed_user(email: "elena@example.com",  name: "Elena Sokolova",role_name: "teacher",     locale: "ru", country: "RU")
+elena  = seed_user(email: "elena@example.com",  name: "Elena Sokolova", role_name: "teacher",     locale: "ru", country: "RU")
 omar   = seed_user(email: "omar@example.com",   name: "Omar Hassan",   role_name: "teacher",     locale: "es", country: "ES")
 ana    = seed_user(email: "ana@example.com",    name: "Ana Kowalski",  role_name: "student",     locale: "es", country: "RU")
 pedro  = seed_user(email: "pedro@example.com",  name: "Pedro Lopez",   role_name: "student",     locale: "es", country: "CO")
@@ -283,14 +283,14 @@ students.each do |student|
     conv.add_participant!(coordinator)
 
     msg_count = case status
-                when "submitted"                       then rand(0..2)
-                when "in_review"                       then rand(1..3)
-                when "awaiting_reply"                  then rand(2..5)
-                when "awaiting_payment"                then rand(3..6)
-                when "payment_confirmed", "in_progress" then rand(4..8)
-                when "resolved", "closed"              then rand(5..10)
-                else 0
-                end
+    when "submitted"                       then rand(0..2)
+    when "in_review"                       then rand(1..3)
+    when "awaiting_reply"                  then rand(2..5)
+    when "awaiting_payment"                then rand(3..6)
+    when "payment_confirmed", "in_progress" then rand(4..8)
+    when "resolved", "closed"              then rand(5..10)
+    else 0
+    end
 
     msg_time = created + 1.hour
     msg_count.times do |i|

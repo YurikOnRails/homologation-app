@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   # ─── Coordinator Workspace ───
   resources :inbox, only: [:index, :show]  # Unified chat inbox for coordinators
 
-  resources :teachers, only: [:index, :update] do
+  resources :teachers, only: [:index, :create, :update] do
     member do
       post   :assign_student               # POST /teachers/:id/assign_student
       delete :remove_student               # DELETE /teachers/:id/remove_student
@@ -144,7 +144,8 @@ end
 | Method | Path                            | Action         | Description                 |
 |--------|---------------------------------|----------------|-----------------------------|
 | GET    | /teachers                       | index          | Teacher cards + workload    |
-| PATCH  | /teachers/:id                   | update         | Edit teacher profile (level, rate, link) |
+| POST   | /teachers                       | create         | Create teacher: assign teacher role + create teacher_profile (grade, rate, link, bio) |
+| PATCH  | /teachers/:id                   | update         | Edit teacher profile (grade, rate, link, bio) |
 | POST   | /teachers/:id/assign_student    | assign_student | Assign student to teacher   |
 | DELETE | /teachers/:id/remove_student    | remove_student | Remove student from teacher |
 

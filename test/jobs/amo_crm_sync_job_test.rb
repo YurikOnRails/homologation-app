@@ -18,13 +18,13 @@ class AmoCrmSyncJobTest < ActiveJob::TestCase
 
     stub_request(:post, /api\/v4\/contacts/)
       .to_return(status: 200,
-                 body: { _embedded: { contacts: [{ id: 999 }] } }.to_json,
+                 body: { _embedded: { contacts: [ { id: 999 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
 
     # Stub lead create
     stub_request(:post, /api\/v4\/leads/)
       .to_return(status: 200,
-                 body: { _embedded: { leads: [{ id: 888 }] } }.to_json,
+                 body: { _embedded: { leads: [ { id: 888 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
   end
 

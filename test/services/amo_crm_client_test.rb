@@ -25,7 +25,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
 
     stub_request(:post, /api\/v4\/contacts/)
       .to_return(status: 200,
-                 body: { _embedded: { contacts: [{ id: 999 }] } }.to_json,
+                 body: { _embedded: { contacts: [ { id: 999 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
@@ -36,7 +36,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
   test "find_or_create_contact updates existing contact" do
     stub_request(:get, /api\/v4\/contacts/)
       .to_return(status: 200,
-                 body: { _embedded: { contacts: [{ id: 777 }] } }.to_json,
+                 body: { _embedded: { contacts: [ { id: 777 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
 
     stub_request(:patch, /api\/v4\/contacts\/777/)
@@ -51,7 +51,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
   test "create_lead sends correct payload and returns lead id" do
     stub_request(:post, /api\/v4\/leads/)
       .to_return(status: 200,
-                 body: { _embedded: { leads: [{ id: 888 }] } }.to_json,
+                 body: { _embedded: { leads: [ { id: 888 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
@@ -94,7 +94,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
 
     stub_request(:post, /api\/v4\/contacts/)
       .to_return(status: 200,
-                 body: { _embedded: { contacts: [{ id: 111 }] } }.to_json,
+                 body: { _embedded: { contacts: [ { id: 111 } ] } }.to_json,
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
