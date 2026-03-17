@@ -1,9 +1,9 @@
 class User < ApplicationRecord
   include Discardable
 
-  ALLOWED_LOCALES   = %w[es en ru].freeze
-  ALLOWED_COUNTRIES = %w[AR CO MX PE VE RU UA US ES DE FR IT other].freeze
-  PHONE_REGEX       = /\A\+?[\d\s\-(). ]{6,30}\z/
+  ALLOWED_LOCALES   = I18n.available_locales.map(&:to_s).freeze
+  ALLOWED_COUNTRIES = Rails.application.config.select_options["countries"].map { |c| c["key"] }.freeze
+  PHONE_REGEX       = /\A\+?[\d\s\-().]{6,30}\z/
   EMAIL_REGEX       = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
 
   has_secure_password validations: false
@@ -45,7 +45,7 @@ class User < ApplicationRecord
 
   validates :birthday,
     comparison: {
-      less_than:                Date.current,
+      less_than:                -> { Date.current },
       greater_than_or_equal_to: Date.new(1900, 1, 1)
     },
     allow_blank: true

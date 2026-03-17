@@ -27,7 +27,7 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
       name: "Ana Updated",
       whatsapp: "+34600000001",
       birthday: "2000-01-01",
-      country: "spain",
+      country: "ES",
       locale: "es"
     }
     assert_redirected_to settings_profile_path

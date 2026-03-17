@@ -27,7 +27,7 @@ class EncryptionTest < ActiveSupport::TestCase
 
   test "guardian phone and whatsapp are encrypted" do
     user = users(:student_ana)
-    user.update!(is_minor: true, guardian_phone: "+34699000111", guardian_whatsapp: "+34699000222")
+    user.update!(is_minor: true, guardian_name: "Test Guardian", guardian_phone: "+34699000111", guardian_whatsapp: "+34699000222")
 
     raw_phone = ActiveRecord::Base.connection.select_value(
       "SELECT guardian_phone FROM users WHERE id = #{user.id}"

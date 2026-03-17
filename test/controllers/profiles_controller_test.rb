@@ -31,7 +31,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
 
   test "minor fields are saved" do
     sign_in users(:student_ana)
-    patch profile_path, params: { is_minor: true, guardian_name: "Mama", guardian_email: "mama@test.com" }
+    patch profile_path, params: { is_minor: true, guardian_name: "Mama", guardian_email: "mama@test.com", guardian_phone: "+34600111222" }
     reloaded = users(:student_ana).reload
     assert reloaded.is_minor?
     assert_equal "Mama", reloaded.guardian_name
