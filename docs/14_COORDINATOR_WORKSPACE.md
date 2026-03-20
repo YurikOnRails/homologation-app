@@ -74,8 +74,8 @@ class InboxController < InertiaController
     authorize :inbox
 
     conversations = Conversation
-      .includes(:messages, :homologation_request, :teacher_student)
-      .order("messages.created_at DESC")
+      .includes(:homologation_request, :teacher_student, :conversation_participants)
+      .order(last_message_at: :desc)
 
     render inertia: "inbox/Index", props: {
       conversations: conversations.map { |c| serialize_conversation(c) }
@@ -182,8 +182,8 @@ Cards view of all teachers with workload and assigned students.
 |---|---|
 | **+ Assign** | Dialog: search students, select, assign to this teacher |
 | **View Calendar** | Opens teacher's calendar (same page as teacher sees) |
-| **Edit** | Dialog: edit level, rate, bio, permanent link |
-| **+ Add Teacher** | Dialog: select existing user → assign teacher role + create teacher_profile (level, rate, link) in one step |
+| **Edit** | Dialog: edit grade, rate, bio, permanent link |
+| **+ Add Teacher** | Dialog: select existing user → assign teacher role + create teacher_profile (grade, rate, link, bio) in one step |
 
 ### Assign Student Dialog
 
@@ -267,7 +267,7 @@ All built with shadcn/ui: `Card`, `Dialog`, `ScrollArea`, `Badge`, `Avatar`, `In
 
 # Coordinator workspace
 resources :inbox, only: [:index, :show]     # GET /inbox, GET /inbox/:conversation_id
-resources :teachers, only: [:index, :update] do
+resources :teachers, only: [:index, :create, :update] do
   member do
     post :assign_student       # POST /teachers/:id/assign_student
     delete :remove_student     # DELETE /teachers/:id/remove_student

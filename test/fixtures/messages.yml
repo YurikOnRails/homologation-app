@@ -1,0 +1,13 @@
+ana_message_1:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ana_equivalencia_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
+  body: Hello, I need help with my equivalencia request
+  created_at: 2026-01-10 11:00:00
+  updated_at: 2026-01-10 11:00:00
+
+maria_message_1:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ana_equivalencia_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:coordinator_maria) %>
+  body: Hello Ana, I will review your documents
+  created_at: 2026-01-10 12:00:00
+  updated_at: 2026-01-10 12:00:00

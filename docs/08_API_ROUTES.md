@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   # ─── Coordinator Workspace ───
   resources :inbox, only: [:index, :show]  # Unified chat inbox for coordinators
 
-  resources :teachers, only: [:index, :update] do
+  resources :teachers, only: [:index, :create, :update] do
     member do
       post   :assign_student               # POST /teachers/:id/assign_student
       delete :remove_student               # DELETE /teachers/:id/remove_student
@@ -144,7 +144,8 @@ end
 | Method | Path                            | Action         | Description                 |
 |--------|---------------------------------|----------------|-----------------------------|
 | GET    | /teachers                       | index          | Teacher cards + workload    |
-| PATCH  | /teachers/:id                   | update         | Edit teacher profile (level, rate, link) |
+| POST   | /teachers                       | create         | Create teacher: assign teacher role + create teacher_profile (grade, rate, link, bio) |
+| PATCH  | /teachers/:id                   | update         | Edit teacher profile (grade, rate, link, bio) |
 | POST   | /teachers/:id/assign_student    | assign_student | Assign student to teacher   |
 | DELETE | /teachers/:id/remove_student    | remove_student | Remove student from teacher |
 
@@ -210,22 +211,31 @@ end
 
 ```json
 {
-  "current_user": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "roles": ["student"],
-    "avatar_url": "https://...",
-    "locale": "es",
-    "profile_complete": true
+  "auth": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "roles": ["student"],
+      "avatarUrl": "https://...",
+      "locale": "es",
+      "profileComplete": true
+    }
   },
   "flash": {
     "notice": "...",
     "alert": "..."
   },
-  "unread_notifications_count": 3,
-  "select_options": { "...loaded from config/select_options.yml..." }
+  "features": {
+    "canConfirmPayment": false,
+    "canManageUsers": false,
+    "canAccessInbox": false,
+    "canAccessAdmin": false,
+    "canCreateRequest": true
+  },
+  "unreadNotificationsCount": 3,
+  "selectOptions": { "...loaded from config/select_options.yml..." }
 }
 ```
 
-**Note:** If `profile_complete` is `false`, the app should redirect to `/profile/edit` to complete profile (WhatsApp, birthday, country).
+**Note:** If `auth.user.profileComplete` is `false`, the app should redirect to `/profile/edit` to complete profile (WhatsApp, birthday, country).

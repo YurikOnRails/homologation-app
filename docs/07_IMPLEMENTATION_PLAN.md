@@ -140,6 +140,8 @@ export const routes = {
   lesson: (id: number) => `/lessons/${id}`,
   notifications: "/notifications",
   markAllRead: "/notifications/mark_all_read",
+  connectTelegram: "/profile/connect_telegram",
+  disconnectTelegram: "/profile/disconnect_telegram",
   privacyPolicy: "/privacy-policy",
   admin: {
     root: "/admin",
@@ -167,7 +169,7 @@ Use shadcn-admin layout patterns. All visible text via `t()`.
 **Files to create:**
 - `app/frontend/components/layout/AuthLayout.tsx` — Centered card layout for login/register. Language switcher in corner.
 - `app/frontend/components/layout/AuthenticatedLayout.tsx` — Sidebar + Header + main content area. Wraps all authenticated pages.
-- `app/frontend/components/layout/AppSidebar.tsx` — Collapsible sidebar. Menu items filtered by role from `auth.user.roles` in shared props. See sidebar matrix in `docs/09_UI_COMPONENTS.md`.
+- `app/frontend/components/layout/AppSidebar.tsx` — Collapsible sidebar. Menu items filtered by `features.*` flags from shared props (never by `auth.user.roles` directly). See sidebar matrix below and `docs/09_UI_COMPONENTS.md`.
 - `app/frontend/components/layout/Header.tsx` — Top bar: breadcrumb area, LanguageSwitcher, NotificationBell, user dropdown menu (profile, logout).
 
 **Sidebar items by role** (source of truth — `docs/09_UI_COMPONENTS.md`):
@@ -191,7 +193,7 @@ Use shadcn-admin layout patterns. All visible text via `t()`.
 
 All text via `t()`. All dates via locale-aware `date-fns`.
 
-- `app/frontend/components/common/LanguageSwitcher.tsx` — 3-language dropdown (es/en/ru), persists via `router.patch("/profile", { locale })`.
+- `app/frontend/components/common/LanguageSwitcher.tsx` — 3-language dropdown (es/en/ru), persists via `router.patch(routes.profile, { locale })` **only when user is authenticated**. For unauthenticated pages (Login, Register), changes language locally only via `i18n.changeLanguage(code)` without server persist.
 - `app/frontend/components/common/StatusBadge.tsx` — Colored badge per status. Label: `t(\`requests.status.${status}\`)`. Colors: draft=gray, submitted=blue, in_review=yellow, awaiting_reply=orange, awaiting_payment=purple, payment_confirmed=green, in_progress=blue, resolved=green, closed=gray.
 - `app/frontend/components/common/FormattedDate.tsx` — Locale-aware `formatDistanceToNow` using `date-fns` + `date-fns/locale`. Import `{ es, enUS, ru }`.
 - `app/frontend/components/common/NotificationBell.tsx` — Bell icon (lucide-react) + unread count badge from `unreadNotificationsCount` shared prop. Placeholder click handler (wired up in Step 8).
@@ -214,14 +216,15 @@ All text via `t()`. All dates via locale-aware `date-fns`.
   - `auth: { user: current_user ? user_json(current_user) : nil }`
   - `flash: { notice: flash[:notice], alert: flash[:alert] }`
   - `features: current_user ? build_features(current_user) : {}`
-  - `unreadNotificationsCount: current_user ? current_user.notifications.unread.count : 0`
-  - `selectOptions: YAML.load_file(Rails.root.join("config/select_options.yml"))`
+  - `unreadNotificationsCount: 0` (hardcoded for Step 0 — Notification model not yet created; replace in Step 8)
+  - `selectOptions: Rails.application.config.select_options` (loaded once at boot in `config/application.rb`)
 
-**File:** `app/controllers/inertia_controller.rb` — Inherits `ApplicationController`. Base class for all Inertia-rendering controllers.
+**File:** `app/controllers/inertia_controller.rb` — Base class for all Inertia-rendering pages. Add `include Authentication` and `after_action :verify_authorized` here in Step 1 so every page controller inherits them automatically.
 
 **Helper method** `build_features(user)` returns hash:
 ```ruby
 {
+  # Action permissions
   canConfirmPayment: user.coordinator? || user.super_admin?,
   canManageUsers: user.super_admin?,
   canManageTeachers: user.coordinator? || user.super_admin?,
@@ -229,6 +232,14 @@ All text via `t()`. All dates via locale-aware `date-fns`.
   canAccessAdmin: user.super_admin?,
   canCreateRequest: user.student?,
   canCreateLesson: user.teacher? || user.coordinator? || user.super_admin?,
+  # Navigation visibility — intentionally separate from action permissions
+  canSeeDashboard: user.super_admin? || user.coordinator? || user.student?,
+  canSeeAllRequests: user.coordinator? || user.super_admin?,
+  canSeeMyRequests: user.student?,
+  canSeeAllLessons: user.coordinator? || user.super_admin?,
+  canSeeCalendar: user.teacher?,
+  canSeeMyLessons: user.student?,
+  canSeeChat: user.teacher? || user.student?,
 }
 ```
 
@@ -239,6 +250,8 @@ All text via `t()`. All dates via locale-aware `date-fns`.
 ### 0.12 — Create Rails I18n files
 
 **Files:** `config/locales/es.yml`, `en.yml`, `ru.yml` — ActiveRecord model names/attributes, mailer subjects, notification messages, flash messages, validation errors. Full content from `docs/11_I18N_MULTILANGUAGE.md`.
+
+**Note:** Rails locale files must include a `flash:` section with at minimum these keys: `signed_in`, `signed_out`, `auth_failed`, `profile_updated`, `complete_profile`, `teacher_updated`, `student_assigned`, `student_removed`, `telegram_disconnected`, `payment_confirmed`. All controllers reference these keys via `t("flash.*")`.
 
 ### 0.13 — Configure security basics
 
@@ -272,7 +285,7 @@ Rails.application.config.filter_parameters += [
 
 ## Step 1: Database Schema & Models
 
-**Goal:** Create all 12 tables, models with validations/associations/encrypted fields, and seeds. No controllers or pages — just the data layer with full test coverage.
+**Goal:** Create all 13 tables, models with validations/associations/encrypted fields, and seeds. No controllers or pages — just the data layer with full test coverage.
 
 ### 1.1 — Run Rails authentication generator
 
@@ -312,9 +325,11 @@ class AddFieldsToUsers < ActiveRecord::Migration[8.0]
     add_column :users, :notification_email, :boolean, null: false, default: true
     add_column :users, :amo_crm_contact_id, :string
     add_column :users, :privacy_accepted_at, :datetime
+    add_column :users, :discarded_at, :datetime
 
     add_index :users, [:provider, :uid], unique: true
     add_index :users, :guardian_user_id
+    add_index :users, :discarded_at
   end
 end
 ```
@@ -396,10 +411,14 @@ create_table :homologation_requests do |t|
   t.string :amo_crm_lead_id
   t.datetime :amo_crm_synced_at
   t.text :amo_crm_sync_error
+  t.datetime :discarded_at
   t.timestamps
 end
 add_index :homologation_requests, :coordinator_id
 add_index :homologation_requests, :status
+add_index :homologation_requests, [:user_id, :status]
+add_index :homologation_requests, :updated_at
+add_index :homologation_requests, :discarded_at
 add_foreign_key :homologation_requests, :users, column: :coordinator_id
 add_foreign_key :homologation_requests, :users, column: :status_changed_by
 add_foreign_key :homologation_requests, :users, column: :payment_confirmed_by
@@ -410,10 +429,24 @@ add_foreign_key :homologation_requests, :users, column: :payment_confirmed_by
 create_table :conversations do |t|
   t.references :homologation_request, foreign_key: true, index: { unique: true }
   t.integer :teacher_student_id
+  t.datetime :last_message_at
   t.timestamps
 end
 add_index :conversations, :teacher_student_id
+add_index :conversations, :last_message_at
 add_foreign_key :conversations, :teacher_students
+```
+
+**Migration 6b: conversation_participants**
+```ruby
+create_table :conversation_participants do |t|
+  t.references :conversation, null: false, foreign_key: true
+  t.references :user, null: false, foreign_key: true
+  t.datetime :last_read_at
+  t.timestamps
+end
+add_index :conversation_participants, [:conversation_id, :user_id], unique: true
+add_index :conversation_participants, [:user_id, :last_read_at]
 ```
 
 **Migration 7: messages**
@@ -425,6 +458,7 @@ create_table :messages do |t|
   t.timestamps
 end
 add_index :messages, [:conversation_id, :created_at]
+add_index :messages, :user_id
 ```
 
 **Migration 8: lessons**
@@ -458,6 +492,7 @@ create_table :notifications do |t|
   t.timestamps
 end
 add_index :notifications, [:user_id, :read_at]
+add_index :notifications, [:user_id, :created_at]
 add_index :notifications, [:notifiable_type, :notifiable_id]
 ```
 
@@ -484,12 +519,14 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 ### 1.5 — Create models with validations & associations
 
 **`app/models/user.rb`:**
-- `has_secure_password validations: false` (allows OAuth-only users without password)
+- `has_secure_password` with conditional validation: `validates :password, length: { minimum: 8 }, if: -> { password_digest_changed? || (new_record? && provider.blank?) }` — allows OAuth-only users (no password) while still validating for email+password users
 - Associations: `has_many :user_roles`, `has_many :roles, through: :user_roles`, `has_one :teacher_profile`, `has_many :homologation_requests`, teacher-student links (see `docs/04_ROLES_AND_AUTHORIZATION.md`), lesson links (taught_lessons, booked_lessons), `has_many :notifications`
 - `encrypts :phone, :whatsapp, :guardian_phone, :guardian_whatsapp`
 - Role helpers: `super_admin?`, `coordinator?`, `teacher?`, `student?` — each calls `has_role?(name)` which does `roles.exists?(name: name)`
 - `self.find_or_create_from_oauth(auth)` — finds by provider+uid, then by email, creates with student role if new
 - `profile_complete?` — `whatsapp.present? && birthday.present? && country.present?`
+- Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
+- **Important:** `.kept` is NOT a default scope — every Pundit scope and controller query on `User` and `HomologationRequest` MUST explicitly chain `.kept` to exclude soft-deleted records. Example: `policy_scope(HomologationRequest).kept.includes(:user)`.
 - Validations: `email_address` presence + uniqueness, `name` presence
 
 **`app/models/role.rb`:**
@@ -535,23 +572,54 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
   def transition_to!(new_status, changed_by:)
     allowed = VALID_TRANSITIONS[status] || []
     raise InvalidTransition, "Cannot transition from #{status} to #{new_status}" unless allowed.include?(new_status)
-    update!(status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id)
+    attrs = { status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id }
+    attrs[:payment_confirmed_at] = Time.current if new_status == "payment_confirmed"
+    update!(attrs)
   end
   ```
 - Custom exception: `class InvalidTransition < StandardError; end` (define in model or `app/models/concerns/`)
+- Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
+- Auto-create conversation with participants when request becomes "submitted":
+  ```ruby
+  after_save :create_request_conversation!, if: -> { saved_change_to_status? && status == "submitted" }
+
+  private
+
+  def create_request_conversation!
+    conv = Conversation.create!(homologation_request: self)
+    conv.conversation_participants.create!(user: user)  # student
+    # Coordinator is added as participant when they first open the request (see controller)
+  end
+  ```
+  **Important:** Uses `after_save` + `saved_change_to_status?`, NOT `after_create` — because requests are created as "draft" first, then transitioned to "submitted" via `transition_to!` (an update, not a create).
 - Validations: `subject` presence, `service_type` presence + inclusion, `privacy_accepted` acceptance (on create when status != draft)
 
 **`app/models/conversation.rb`:**
 - `belongs_to :homologation_request, optional: true`
 - `belongs_to :teacher_student_link, class_name: "TeacherStudent", foreign_key: :teacher_student_id, optional: true`
 - `has_many :messages, dependent: :destroy`
+- `has_many :conversation_participants, dependent: :destroy`
+- `has_many :participants, through: :conversation_participants, source: :user`
 - Custom validation: `validate :must_have_one_association` — either `homologation_request_id` or `teacher_student_id` must be present (but not both)
+- Helper to add participant:
+  ```ruby
+  def add_participant!(user)
+    conversation_participants.find_or_create_by!(user: user)
+  end
+  ```
+- Note: `last_message_at` is updated via a callback on `Message` after create (see Message model)
+
+**`app/models/conversation_participant.rb`:**
+- `belongs_to :conversation`, `belongs_to :user`
+- `validates :user_id, uniqueness: { scope: :conversation_id }`
+- `scope :unread, ->(user) { where(user: user).where("last_read_at < conversations.last_message_at OR last_read_at IS NULL") }`
 
 **`app/models/message.rb`:**
 - `belongs_to :conversation`, `belongs_to :user`
 - `has_many_attached :attachments`
 - `validates :body, presence: true`
 - `after_create_commit :broadcast_to_conversation` (broadcasts via `ConversationChannel.broadcast_to(conversation, ...)`)
+- `after_create_commit :touch_conversation_last_message_at` — updates `conversation.update_columns(last_message_at: created_at)` so inbox ordering stays accurate
 
 **`app/models/lesson.rb`:**
 - `belongs_to :teacher, class_name: "User"`, `belongs_to :student, class_name: "User"`
@@ -585,7 +653,7 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 - `update?` — coordinator OR super_admin
 - `confirm_payment?` — (coordinator OR super_admin) AND status == "awaiting_payment"
 - `download_document?` — same as `show?`
-- Scope: students → `scope.where(user: user)`, coordinators/admins → `scope.all`
+- Scope: students → `scope.kept.where(user: user)`, coordinators/admins → `scope.kept` (always chain `.kept` to exclude soft-deleted)
 
 **`app/policies/message_policy.rb`:**
 - `create?` — user must be participant in conversation (check via request owner, coordinator, or teacher-student link)
@@ -604,6 +672,7 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 - `index?` / `show?` — coordinator OR super_admin
 
 **`app/policies/teacher_policy.rb`:**
+- Headless policy — `authorize :teacher, :index?` (Struct-based, not tied to a specific record)
 - `index?` / `update?` / `assign_student?` / `remove_student?` — coordinator OR super_admin
 
 ### 1.7 — Create seeds
@@ -780,10 +849,11 @@ end
 
 - [ ] `bin/rails db:migrate` runs without errors
 - [ ] `bin/rails db:seed` creates 4 roles (verify: `Role.count == 4` in console)
-- [ ] `bin/rails test` — all model tests pass (minimum 12 tests)
+- [ ] `bin/rails test` — all model tests pass (minimum 14 tests)
 - [ ] Encrypted fields work: `User.create!(email_address: "test@test.com", name: "Test", phone: "+123")` → `phone` is encrypted in DB
 - [ ] `HomologationRequest.new.transition_to!("submitted", ...)` works from draft
 - [ ] `HomologationRequest.new.transition_to!("resolved", ...)` from draft raises `InvalidTransition`
+- [ ] Soft delete works: `user.discard` → `User.kept` excludes user, `User.discarded` includes user
 - [ ] Fixtures load without errors: `bin/rails test` doesn't fail on fixture loading
 
 ---
@@ -1041,6 +1111,7 @@ resource :profile, only: [:show, :edit, :update]
 - Privacy policy link
 - "Save" button
 - All text via `t("profile.*")`
+- Future TODO: add "Set Password" section for OAuth-only users who want to add email+password login.
 
 ### 3.6 — Write tests
 
@@ -1095,6 +1166,8 @@ end
 
 ## Step 4: Homologation Requests (CRUD + Status Machine + Files)
 
+> **Note:** This is the largest step (~15 files, ~12 tests). If it feels too big, split into **Step 4a** (controller + CRUD + status transitions + pages without file upload) and **Step 4b** (FileDropZone + FileList + download + Dashboard). Both halves are independently testable.
+
 **Goal:** Students create/view/submit requests with file uploads. Coordinators view all requests and change status. Status transitions enforced. File download works with authorization.
 
 ### 4.1 — Create HomologationRequestsController
@@ -1102,12 +1175,12 @@ end
 **File:** `app/controllers/homologation_requests_controller.rb`:
 
 Actions:
-- `index` — `policy_scope(HomologationRequest).includes(:user).order(updated_at: :desc)`. Props: `requests` array (list JSON).
+- `index` — `policy_scope(HomologationRequest).kept.includes(:user).order(updated_at: :desc)`. Props: `requests` array (list JSON). **Note:** Always chain `.kept` to exclude soft-deleted records.
 - `new` — `authorize HomologationRequest.new`. Props: none (form uses selectOptions from shared props).
-- `create` — build from `current_user.homologation_requests`, set status based on `params[:commit]` ("draft" or "submitted"). Create conversation on submit. Redirect to show.
-- `show` — `find` with includes (user, conversation.messages.user). Props: `request` detail JSON.
+- `create` — build from `current_user.homologation_requests`, set status based on `params[:commit]` ("draft" or "submitted"). Redirect to show. Note: Conversation is auto-created by model callback when status becomes "submitted" — no manual conversation creation needed in the controller.
+- `show` — `find` with includes (user, conversation.messages.user). Props: `request` detail JSON. **Important:** If coordinator/super_admin opens a request with a conversation, auto-add them as conversation participant (for unread tracking): `@request.conversation&.add_participant!(current_user) if current_user.coordinator? || current_user.super_admin?`
 - `update` — handle status changes via `transition_to!` and field updates.
-- `confirm_payment` — set payment_amount, payment_confirmed_at/by, transition to "payment_confirmed", enqueue `AmoCrmSyncJob`.
+- `confirm_payment` — within a transaction: set `payment_amount` and `payment_confirmed_by`, call `@request.transition_to!("payment_confirmed", changed_by: current_user)` (which sets `payment_confirmed_at` via `status_changed_at`), then enqueue `AmoCrmSyncJob`. Use `transition_to!` — never `update!(status: ...)` directly.
 - `download_document` — find blob by ID, authorize, redirect to proxy URL.
 
 Use private `_json` methods with camelCase keys. Dates as ISO 8601.
@@ -1574,7 +1647,7 @@ end
 ### 6.1 — Create InboxController
 
 **`app/controllers/inbox_controller.rb`:**
-- `index` — all conversations ordered by last message time. Include conversation type (request vs teacher-student), unread status, last message preview. Authorize: coordinator/super_admin only.
+- `index` — all conversations ordered by `order(last_message_at: :desc)`. Include conversation type (request vs teacher-student), unread status, last message preview. Authorize: coordinator/super_admin only.
 - `show` — selected conversation with full messages + context. For request chats: include request details, files, status, CRM sync info. For teacher-student chats: include teacher name, student name, next lesson.
 - Props: `conversations` list, `selectedConversation` (if show), `context` (request or teacher-student details)
 
@@ -1606,7 +1679,7 @@ Build per wireframes in `docs/14_COORDINATOR_WORKSPACE.md`:
 ```ruby
 class TeachersController < InertiaController
   def index
-    authorize :teacher
+    authorize :teacher, :index?
     teachers = User.joins(:roles).where(roles: { name: "teacher" })
       .includes(:teacher_profile, teacher_student_links: :student)
     render inertia: "teachers/Index", props: {
@@ -1624,11 +1697,12 @@ class TeachersController < InertiaController
   def assign_student
     teacher = User.find(params[:id])
     authorize teacher, :assign_student?
-    TeacherStudent.create!(teacher_id: teacher.id, student_id: params[:student_id],
-                           assigned_by: current_user.id)
-    # Auto-create teacher-student conversation
-    ts = TeacherStudent.find_by(teacher_id: teacher.id, student_id: params[:student_id])
-    Conversation.find_or_create_by!(teacher_student_id: ts.id)
+    ts = TeacherStudent.create!(teacher_id: teacher.id, student_id: params[:student_id],
+                                assigned_by: current_user.id)
+    # Auto-create teacher-student conversation with participants
+    conv = Conversation.create!(teacher_student_id: ts.id)
+    conv.conversation_participants.create!(user: teacher)
+    conv.conversation_participants.create!(user_id: params[:student_id])
     redirect_to teachers_path, notice: t("flash.student_assigned")
   end
 
@@ -1864,19 +1938,9 @@ end
 
 **Goal:** In-app bell with real-time count. Email notifications (default on). Telegram Bot notifications (opt-in via profile button). Notification preferences. All triggered by background jobs. **Telegram is free — no providers, no message templates, no cost.**
 
-### 8.1 — Add Telegram fields to users table
+### 8.1 — Telegram fields (already in Step 1.2)
 
-Create migration:
-```ruby
-class AddTelegramAndNotificationPrefsToUsers < ActiveRecord::Migration[8.0]
-  def change
-    add_column :users, :telegram_chat_id, :string
-    add_column :users, :telegram_link_token, :string
-    add_column :users, :notification_telegram, :boolean, null: false, default: false
-    add_column :users, :notification_email, :boolean, null: false, default: true
-  end
-end
-```
+> **Note:** `telegram_chat_id`, `telegram_link_token`, `notification_telegram`, and `notification_email` fields were already added to the `users` table in Step 1.2 (`AddFieldsToUsers` migration). No new migration needed here.
 
 ### 8.2 — Create TelegramClient service
 
@@ -2009,6 +2073,42 @@ Add `NotificationJob.perform_later(...)` calls to:
 - **`HomologationRequestsController#confirm_payment`** → notify student
 - **`LessonsController#create`** → notify student
 - **`LessonsController#update`** (cancelled) → notify student + teacher
+
+### 8.7b — Create LessonReminderJob (recurring)
+
+**`app/jobs/lesson_reminder_job.rb`:**
+```ruby
+class LessonReminderJob < ApplicationJob
+  queue_as :default
+
+  def perform
+    # Find lessons starting in ~1 hour (55–65 min window to avoid missed reminders)
+    upcoming = Lesson.where(status: "scheduled")
+                     .where(scheduled_at: 55.minutes.from_now..65.minutes.from_now)
+
+    upcoming.find_each do |lesson|
+      [lesson.teacher_id, lesson.student_id].each do |user_id|
+        NotificationJob.perform_later(
+          user_id: user_id,
+          title: I18n.t("notifications.lesson_reminder"),
+          body: I18n.t("notifications.lesson_starts_soon",
+                       time: I18n.l(lesson.scheduled_at, format: :short)),
+          notifiable: lesson
+        )
+      end
+    end
+  end
+end
+```
+
+**`config/recurring.yml`** (Solid Queue recurring tasks):
+```yaml
+lesson_reminders:
+  class: LessonReminderJob
+  schedule: every 5 minutes
+```
+
+This fulfills requirement F7.5: "Lesson reminder 1h before (→ student + teacher)".
 
 ### 8.8 — Add "Connect Telegram" to profile page
 
@@ -2175,6 +2275,27 @@ test "does not send telegram when user has it disabled" do
 end
 ```
 
+**`test/jobs/lesson_reminder_job_test.rb`:**
+```ruby
+test "sends reminder for lessons starting in ~1 hour" do
+  lesson = lessons(:ivan_ana_lesson)
+  lesson.update!(scheduled_at: 60.minutes.from_now, status: "scheduled")
+
+  assert_difference "Notification.count", 2 do  # teacher + student
+    LessonReminderJob.perform_now
+  end
+end
+
+test "does not send reminder for cancelled lessons" do
+  lesson = lessons(:ivan_ana_lesson)
+  lesson.update!(scheduled_at: 60.minutes.from_now, status: "cancelled")
+
+  assert_no_difference "Notification.count" do
+    LessonReminderJob.perform_now
+  end
+end
+```
+
 **`test/controllers/telegram_controller_test.rb`:**
 ```ruby
 test "webhook links telegram to user" do
@@ -2224,7 +2345,7 @@ end
 
 ### Done criteria for Step 8
 
-- [ ] `bin/rails test` — all notification tests pass (minimum 8 tests)
+- [ ] `bin/rails test` — all notification tests pass (minimum 9 tests)
 - [ ] `npm run check` — TypeScript compiles
 - [ ] Bell icon shows correct unread count
 - [ ] New notification appears in real-time (count updates without refresh)
@@ -2238,6 +2359,8 @@ end
 - [ ] Telegram notification NOT sent when disabled or no chat_id
 - [ ] "Disconnect Telegram" clears chat_id and disables toggle
 - [ ] Notification preferences (email/telegram toggles) save correctly
+- [ ] `LessonReminderJob` is configured in `config/recurring.yml` and runs every 5 minutes
+- [ ] Lesson reminder notifications sent ~1h before lesson to both student and teacher
 
 ---
 
@@ -2383,13 +2506,12 @@ end
       totalUsers: User.count,
       totalTeachers: User.joins(:roles).where(roles: { name: "teacher" }).count,
     },
-    requestsByMonth: HomologationRequest.group_by_month(:created_at, last: 12).count,
+    requestsByMonth: HomologationRequest.where(created_at: 12.months.ago..).group("strftime('%Y-%m', created_at)").count,
     requestsByStatus: HomologationRequest.group(:status).count,
     recentRequests: HomologationRequest.includes(:user).order(created_at: :desc).limit(10).map { |r| request_list_json(r) },
     failedSyncs: HomologationRequest.where.not(amo_crm_sync_error: nil).count,
   }
   ```
-  Note: `group_by_month` may need the `groupdate` gem, or use raw SQL grouping by month.
 
 ### 10.2 — Create Admin::UsersController
 
@@ -2524,6 +2646,10 @@ end
 - [ ] Only super_admin can access admin pages
 - [ ] Privacy policy page renders at `/privacy-policy`
 - [ ] Privacy policy accessible without authentication
+
+### Note: Stripe Billing (Phase 2)
+
+Stripe billing (invoicing by super_admin) is **deferred to Phase 2** and is not included in Steps 0–10. The database schema and UI for Stripe will be designed after the core MVP is complete.
 
 ---
 
@@ -2668,3 +2794,28 @@ npm install recharts lucide-react date-fns
 | AmoCRM API | CRM sync after payment | Included in AmoCRM plan | Integration in AmoCRM settings |
 | Telegram Bot API | Push notifications | **Free forever** | @BotFather → create bot → set webhook |
 | Stripe | Invoicing (future) | Per transaction | Stripe Dashboard |
+
+---
+
+## SQLite Production Considerations
+
+SQLite is used for 3 subsystems simultaneously: main DB, Solid Cable (WebSocket pub/sub), and Solid Queue (background jobs). This works well for MVP but has known limitations:
+
+**Potential issue:** SQLite allows only one writer at a time. Under heavy real-time chat usage + background AmoCRM sync + notifications, write contention may cause occasional `SQLITE_BUSY` errors.
+
+**Mitigations (built into Rails 8):**
+- WAL mode is enabled by default (`PRAGMA journal_mode=WAL`)
+- `busy_timeout` is set in `config/database.yml` (default 5000ms)
+
+**If contention becomes a problem (>10 concurrent chat users):**
+1. Use separate SQLite files for Solid Cable and Solid Queue (Rails 8 supports this via `connects_to`):
+   ```yaml
+   # config/database.yml
+   cable:
+     adapter: sqlite3
+     database: storage/cable.sqlite3
+   queue:
+     adapter: sqlite3
+     database: storage/queue.sqlite3
+   ```
+2. Or migrate to PostgreSQL for production (straightforward — no SQLite-specific code in the app)

@@ -1,31 +1,110 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      homologation_request: "Homologation Request"
+      user: "User"
+    attributes:
+      homologation_request:
+        subject: "Subject"
+        service_type: "Service Type"
+        status: "Status"
+      user:
+        name: "Name"
+        email_address: "Email"
+        phone: "Phone"
+        whatsapp: "WhatsApp"
+        birthday: "Date of birth"
+        country: "Country"
+        locale: "Language"
+        guardian_name: "Guardian name"
+        guardian_email: "Guardian email"
+        guardian_phone: "Guardian phone"
+        guardian_whatsapp: "Guardian WhatsApp"
+    errors:
+      models:
+        homologation_request:
+          attributes:
+            privacy_accepted:
+              accepted: "you must accept the privacy policy"
+        user:
+          attributes:
+            phone:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            whatsapp:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_phone:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_whatsapp:
+              invalid: "invalid format (e.g. +34 612 345 678)"
+            guardian_email:
+              invalid: "invalid email format"
+            birthday:
+              less_than: "must be a past date"
+              greater_than_or_equal_to: "must be after year 1900"
+            locale:
+              inclusion: "is not a valid language"
+            country:
+              inclusion: "is not a valid country"
+  flash:
+    signed_in: "Signed in successfully"
+    signed_out: "Signed out"
+    auth_failed: "Authentication failed"
+    profile_updated: "Profile updated"
+    complete_profile: "Please complete your profile"
+    teacher_updated: "Teacher updated"
+    student_assigned: "Student assigned"
+    student_removed: "Student removed"
+    telegram_disconnected: "Telegram disconnected"
+    payment_confirmed: "Payment confirmed. Syncing to AmoCRM..."
+    sync_retried: "AmoCRM sync retried"
+    request_created: "Request created"
+    request_submitted: "Request submitted"
+    request_updated: "Request updated successfully"
+    status_updated: "Status updated"
+    lesson_created: "Lesson created successfully"
+    lesson_updated: "Lesson updated successfully"
+    lesson_cancelled: "Lesson cancelled successfully"
+    notification_read: "Notification marked as read"
+    registered: "Account created successfully"
+    invalid_credentials: "Invalid email or password"
+    rate_limit_exceeded: "Too many attempts. Please try again later"
+    password_reset_sent: "Password reset instructions sent (if that email exists)"
+    password_reset: "Password has been reset"
+    password_mismatch: "Passwords did not match"
+    password_reset_invalid: "Password reset link is invalid or has expired"
+    user_created: "User created successfully"
+    user_updated: "User updated successfully"
+    user_deactivated: "User deactivated successfully"
+    role_assigned: "Role assigned successfully"
+    role_removed: "Role removed successfully"
+    password_updated: "Password updated successfully"
+    settings_saved: "Settings saved"
+    deletion_requested: "Account deletion request submitted. We will contact you within 30 days."
+    user_gdpr_deleted: "Account deleted per GDPR request"
+  mailers:
+    request_mailer:
+      new_request:
+        subject: "New request received: %{request_subject}"
+      payment_confirmed:
+        subject: "Payment confirmed for: %{request_subject}"
+      status_changed:
+        subject: "Status updated: %{request_subject}"
+    chat_digest:
+      subject:
+        one: "You have 1 new message in %{title}"
+        other: "You have %{count} new messages in %{title}"
+      greeting: "Hi %{name},"
+      body:
+        one: "You have 1 unread message in the conversation \"%{title}\"."
+        other: "You have %{count} unread messages in the conversation \"%{title}\"."
+      cta: "Open the app to reply."
+  notifications:
+    new_request: "New request from %{name}"
+    new_message: "New message from %{name}"
+    payment_confirmed: "Payment of €%{amount} confirmed for '%{subject}'"
+    status_changed: "Your request status updated to %{status}"
+    lesson_scheduled: "New lesson scheduled for %{date}"
+    lesson_reminder: "Lesson reminder"
+    lesson_starts_soon: "Your lesson starts in 1 hour (%{time})"
+    lesson_cancelled: "Lesson cancelled: %{date}"
+    deletion_requested: "Account deletion request from %{name}"

@@ -1,9 +1,17 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# =============================================================================
+# seeds.rb — обязательные данные для ВСЕХ окружений (roles)
+# =============================================================================
+# Запуск:  bin/rails db:seed
+# Сброс:   bin/rails db:reset   (удаляет БД, заново мигрирует + сидит)
+# =============================================================================
+
+# --- Роли (нужны везде: dev, test, production) --------------------------------
+%w[super_admin coordinator teacher student].each do |role_name|
+  Role.find_or_create_by!(name: role_name)
+end
+puts "✅ #{Role.count} roles"
+
+# --- Реалистичные тестовые данные (только development) -----------------------
+if Rails.env.development?
+  require_relative "seeds/development"
+end

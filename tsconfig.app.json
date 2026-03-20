@@ -26,8 +26,8 @@
     /* Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["app/frontend/*"],
-      "~/*": ["app/frontend/*"]
+      "@/*": ["./app/frontend/*"],
+      "~/*": ["./app/frontend/*"]
     }
   },
   "include": ["app/frontend"]

@@ -1,0 +1,8 @@
+ana_unread_notification:
+  user_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
+  notifiable_type: HomologationRequest
+  notifiable_id: <%= ActiveRecord::FixtureSet.identify(:ana_equivalencia) %>
+  title: Your request has been updated
+  body: Your equivalencia request status changed
+  created_at: 2026-01-10 12:00:00
+  updated_at: 2026-01-10 12:00:00

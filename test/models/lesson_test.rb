@@ -1,0 +1,40 @@
+require "test_helper"
+
+class LessonTest < ActiveSupport::TestCase
+  test "effective_meeting_link returns lesson link if present" do
+    lesson = lessons(:ivan_ana_lesson)
+    lesson.meeting_link = "https://custom.link/123"
+    assert_equal "https://custom.link/123", lesson.effective_meeting_link
+  end
+
+  test "effective_meeting_link falls back to teacher permanent link" do
+    lesson = lessons(:ivan_ana_lesson)
+    lesson.meeting_link = nil
+    assert_equal "https://zoom.us/j/123456", lesson.effective_meeting_link
+  end
+
+  test "meeting_link_ready? returns true when link available" do
+    assert lessons(:ivan_ana_lesson).meeting_link_ready?
+  end
+
+  test "meeting_link_ready? returns false when no link" do
+    lesson = lessons(:ivan_ana_lesson)
+    lesson.meeting_link = nil
+    lesson.teacher.teacher_profile.update!(permanent_meeting_link: nil)
+    refute lesson.meeting_link_ready?
+  end
+
+  test "validates status inclusion" do
+    lesson = lessons(:ivan_ana_lesson)
+    lesson.status = "invalid_status"
+    refute lesson.valid?
+    assert lesson.errors[:status].any?
+  end
+
+  test "validates scheduled_at presence" do
+    lesson = Lesson.new(teacher: users(:teacher_ivan), student: users(:student_ana),
+                        duration_minutes: 60)
+    refute lesson.valid?
+    assert lesson.errors[:scheduled_at].any?
+  end
+end

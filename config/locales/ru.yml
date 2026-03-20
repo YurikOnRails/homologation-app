@@ -1,0 +1,110 @@
+ru:
+  activerecord:
+    models:
+      homologation_request: "Заявка на гомологацию"
+      user: "Пользователь"
+    attributes:
+      homologation_request:
+        subject: "Тема"
+        service_type: "Тип услуги"
+        status: "Статус"
+      user:
+        name: "Имя"
+        email_address: "Электронная почта"
+        phone: "Телефон"
+        whatsapp: "WhatsApp"
+        birthday: "Дата рождения"
+        country: "Страна"
+        locale: "Язык"
+        guardian_name: "Имя опекуна"
+        guardian_email: "Email опекуна"
+        guardian_phone: "Телефон опекуна"
+        guardian_whatsapp: "WhatsApp опекуна"
+    errors:
+      models:
+        homologation_request:
+          attributes:
+            privacy_accepted:
+              accepted: "необходимо принять политику конфиденциальности"
+        user:
+          attributes:
+            phone:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            whatsapp:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_phone:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_whatsapp:
+              invalid: "неверный формат (например: +7 912 345-67-89)"
+            guardian_email:
+              invalid: "неверный формат email"
+            birthday:
+              less_than: "должна быть прошедшей датой"
+              greater_than_or_equal_to: "должна быть позже 1900 года"
+            locale:
+              inclusion: "недопустимый язык"
+            country:
+              inclusion: "недопустимая страна"
+  flash:
+    signed_in: "Вход выполнен"
+    signed_out: "Выход выполнен"
+    auth_failed: "Ошибка авторизации"
+    profile_updated: "Профиль обновлён"
+    complete_profile: "Пожалуйста, заполните профиль"
+    teacher_updated: "Учитель обновлён"
+    student_assigned: "Ученик назначен"
+    student_removed: "Ученик удалён"
+    telegram_disconnected: "Telegram отключён"
+    payment_confirmed: "Оплата подтверждена. Синхронизация с AmoCRM..."
+    sync_retried: "Синхронизация с AmoCRM перезапущена"
+    request_created: "Заявка создана"
+    request_submitted: "Заявка отправлена"
+    request_updated: "Заявка обновлена успешно"
+    status_updated: "Статус обновлён"
+    lesson_created: "Урок создан успешно"
+    lesson_updated: "Урок обновлён успешно"
+    lesson_cancelled: "Урок отменён успешно"
+    notification_read: "Уведомление отмечено как прочитанное"
+    registered: "Аккаунт успешно создан"
+    invalid_credentials: "Неверный email или пароль"
+    rate_limit_exceeded: "Слишком много попыток. Попробуйте позже"
+    password_reset_sent: "Инструкции по сбросу пароля отправлены (если email существует)"
+    password_reset: "Пароль сброшен"
+    password_mismatch: "Пароли не совпадают"
+    password_reset_invalid: "Ссылка для сброса пароля недействительна или истекла"
+    user_created: "Пользователь создан успешно"
+    user_updated: "Пользователь обновлён успешно"
+    user_deactivated: "Пользователь деактивирован успешно"
+    role_assigned: "Роль назначена успешно"
+    role_removed: "Роль удалена успешно"
+    password_updated: "Пароль успешно обновлён"
+    settings_saved: "Настройки сохранены"
+    deletion_requested: "Запрос на удаление аккаунта отправлен. Мы свяжемся с вами в течение 30 дней."
+    user_gdpr_deleted: "Аккаунт удалён по запросу GDPR"
+  mailers:
+    request_mailer:
+      new_request:
+        subject: "Получена новая заявка: %{request_subject}"
+      payment_confirmed:
+        subject: "Оплата подтверждена: %{request_subject}"
+      status_changed:
+        subject: "Статус обновлён: %{request_subject}"
+    chat_digest:
+      subject:
+        one: "У вас 1 новое сообщение в %{title}"
+        other: "У вас %{count} новых сообщений в %{title}"
+      greeting: "Здравствуйте, %{name}!"
+      body:
+        one: "У вас 1 непрочитанное сообщение в переписке «%{title}»."
+        other: "У вас %{count} непрочитанных сообщений в переписке «%{title}»."
+      cta: "Откройте приложение, чтобы ответить."
+  notifications:
+    new_request: "Новая заявка от %{name}"
+    new_message: "Новое сообщение от %{name}"
+    payment_confirmed: "Оплата €%{amount} подтверждена для '%{subject}'"
+    status_changed: "Статус заявки обновлён: %{status}"
+    lesson_scheduled: "Новый урок запланирован на %{date}"
+    lesson_reminder: "Напоминание об уроке"
+    lesson_starts_soon: "Ваш урок начнётся через 1 час (%{time})"
+    lesson_cancelled: "Урок отменён: %{date}"
+    deletion_requested: "Запрос на удаление аккаунта от %{name}"
