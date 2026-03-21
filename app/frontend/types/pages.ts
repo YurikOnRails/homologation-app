@@ -322,6 +322,48 @@ export interface AdminDashboardProps {
   failedSyncs: number
 }
 
+// admin/Pipeline
+export interface PipelineCard {
+  id: number
+  studentName: string
+  phone: string | null
+  country: string | null
+  year: number
+  serviceType: string
+  amount: number
+  pipelineStage: string
+  pipelineNotes: string | null
+  documentChecklist: Record<string, boolean>
+  documentsComplete: number
+  documentsTotal: number
+  cotejoRoute: "ministerio" | "delegacion" | "unknown"
+  updatedAt: string
+  countryMissing: boolean
+  canAdvance: boolean
+  canRetreat: boolean
+}
+
+export interface PipelineStats {
+  active: number
+  revenue: number
+  byYear: Record<string, number>
+  noPago: number
+  cotejo: number
+}
+
+export interface PipelineFilters {
+  q: string | null
+  year: string | null
+  cotejoRoute: string | null
+  serviceType: string | null
+}
+
+export interface PipelineIndexProps {
+  stages: Record<string, PipelineCard[]>
+  stats: PipelineStats
+  filters: PipelineFilters
+}
+
 // admin/Users
 export interface AdminUsersProps {
   users: AdminUser[]

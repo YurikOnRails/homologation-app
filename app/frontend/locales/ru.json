@@ -358,7 +358,8 @@
     "homologation": "Омологация",
     "teaching": "Обучение",
     "administration": "Администрирование",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "pipeline": "Pipeline"
   },
   "settings": {
     "title": "Настройки",
@@ -400,6 +401,61 @@
       "telegram_title": "Telegram",
       "telegram_hint": "Получайте мгновенные уведомления в Telegram.",
       "save": "Сохранить настройки"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "search_placeholder": "Поиск по имени, стране...",
+    "advance": "Далее",
+    "retreat": "Назад",
+    "no_cards": "Нет заявок на этом этапе",
+    "empty_title": "Pipeline пуст",
+    "empty_hint": "Заявки появятся здесь после подтверждения оплаты.",
+    "stages": {
+      "pago_recibido": "Оплата получена",
+      "documentos": "Документы",
+      "traduccion": "Присяжный перевод",
+      "tasas_volantes": "Пошлины и формы",
+      "redsara": "RedSARA",
+      "cotejo_ministerio": "Котехо – Министерство",
+      "cotejo_delegacion": "Котехо – Делегация",
+      "completado": "Завершено"
+    },
+    "stats": {
+      "active": "Активные",
+      "revenue": "Доход",
+      "no_payment": "Без оплаты",
+      "cotejo": "Котехо"
+    },
+    "documents": {
+      "sol": "SOL",
+      "vol": "VOL",
+      "tas": "TAS",
+      "aut": "AUT",
+      "pas": "PAS",
+      "ori": "ORI",
+      "tra": "TRA",
+      "reg": "REG",
+      "not": "NOT",
+      "ent": "ENT"
+    },
+    "filters": {
+      "all": "Все",
+      "year": "Год",
+      "cotejo_route": "Маршрут котехо",
+      "service_type": "Тип",
+      "ministerio": "Министерство",
+      "delegacion": "Делегация",
+      "no_country": "Без страны"
+    },
+    "edit_dialog": {
+      "title": "Редактировать заявку",
+      "notes": "Заметки",
+      "amount": "Сумма €",
+      "year": "Год",
+      "documents": "Документы",
+      "save": "Сохранить",
+      "cancel": "Отмена"
     }
   },
   "privacy": {

@@ -358,7 +358,8 @@
     "homologation": "Homologation",
     "teaching": "Teaching",
     "administration": "Administration",
-    "settings": "Settings"
+    "settings": "Settings",
+    "pipeline": "Pipeline"
   },
   "settings": {
     "title": "Settings",
@@ -400,6 +401,61 @@
       "telegram_title": "Telegram",
       "telegram_hint": "Receive instant notifications via Telegram.",
       "save": "Save Preferences"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "search_placeholder": "Search by name, country...",
+    "advance": "Advance",
+    "retreat": "Back",
+    "no_cards": "No requests in this stage",
+    "empty_title": "Pipeline empty",
+    "empty_hint": "Requests will appear here after payment confirmation.",
+    "stages": {
+      "pago_recibido": "Payment Received",
+      "documentos": "Documents",
+      "traduccion": "Sworn Translation",
+      "tasas_volantes": "Fees & Forms",
+      "redsara": "RedSARA",
+      "cotejo_ministerio": "Verification – Ministry",
+      "cotejo_delegacion": "Verification – Delegation",
+      "completado": "Completed"
+    },
+    "stats": {
+      "active": "Active",
+      "revenue": "Revenue",
+      "no_payment": "No payment",
+      "cotejo": "Verification"
+    },
+    "documents": {
+      "sol": "SOL",
+      "vol": "VOL",
+      "tas": "TAS",
+      "aut": "AUT",
+      "pas": "PAS",
+      "ori": "ORI",
+      "tra": "TRA",
+      "reg": "REG",
+      "not": "NOT",
+      "ent": "ENT"
+    },
+    "filters": {
+      "all": "All",
+      "year": "Year",
+      "cotejo_route": "Verification Route",
+      "service_type": "Type",
+      "ministerio": "Ministry",
+      "delegacion": "Delegation",
+      "no_country": "No country"
+    },
+    "edit_dialog": {
+      "title": "Edit request",
+      "notes": "Notes",
+      "amount": "Amount €",
+      "year": "Year",
+      "documents": "Documents",
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "privacy": {

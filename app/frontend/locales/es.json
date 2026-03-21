@@ -358,7 +358,8 @@
     "homologation": "Homologación",
     "teaching": "Docencia",
     "administration": "Administración",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "pipeline": "Pipeline"
   },
   "settings": {
     "title": "Configuración",
@@ -400,6 +401,61 @@
       "telegram_title": "Telegram",
       "telegram_hint": "Recibe notificaciones instantáneas en Telegram.",
       "save": "Guardar preferencias"
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "search_placeholder": "Buscar por nombre, país...",
+    "advance": "Avanzar",
+    "retreat": "Volver",
+    "no_cards": "Sin solicitudes en esta etapa",
+    "empty_title": "Pipeline vacío",
+    "empty_hint": "Las solicitudes aparecerán aquí después de confirmar el pago.",
+    "stages": {
+      "pago_recibido": "Pago Recibido",
+      "documentos": "Documentos",
+      "traduccion": "Trad. Jurada",
+      "tasas_volantes": "Tasas y Volantes",
+      "redsara": "RedSARA",
+      "cotejo_ministerio": "Cotejo – Ministerio",
+      "cotejo_delegacion": "Cotejo – Delegación",
+      "completado": "Completado"
+    },
+    "stats": {
+      "active": "Activos",
+      "revenue": "Ingresos",
+      "no_payment": "Sin pago",
+      "cotejo": "Cotejo"
+    },
+    "documents": {
+      "sol": "SOL",
+      "vol": "VOL",
+      "tas": "TAS",
+      "aut": "AUT",
+      "pas": "PAS",
+      "ori": "ORI",
+      "tra": "TRA",
+      "reg": "REG",
+      "not": "NOT",
+      "ent": "ENT"
+    },
+    "filters": {
+      "all": "Todo",
+      "year": "Año",
+      "cotejo_route": "Ruta Cotejo",
+      "service_type": "Tipo",
+      "ministerio": "Ministerio",
+      "delegacion": "Delegación",
+      "no_country": "Sin país"
+    },
+    "edit_dialog": {
+      "title": "Editar solicitud",
+      "notes": "Notas",
+      "amount": "Importe €",
+      "year": "Año",
+      "documents": "Documentos",
+      "save": "Guardar",
+      "cancel": "Cancelar"
     }
   },
   "privacy": {

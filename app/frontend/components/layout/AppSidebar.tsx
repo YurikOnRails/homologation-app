@@ -17,6 +17,7 @@ import {
   ChevronsUpDown,
   GraduationCap,
   Globe,
+  Kanban,
 } from "lucide-react"
 import {
   Sidebar,
@@ -112,6 +113,12 @@ export function AppSidebar() {
               icon: MessagesSquare,
               label: t("nav.chats"),
               badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
+            },
+            {
+              show: features.canAccessPipeline,
+              href: routes.admin.pipeline,
+              icon: Kanban,
+              label: t("nav.pipeline"),
             },
           ],
         },
