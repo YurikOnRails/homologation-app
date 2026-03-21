@@ -55,6 +55,10 @@ Rails.application.routes.draw do
       end
     end
     resources :lessons, only: [ :index ]
+    get "pipeline", to: "pipeline#index", as: :pipeline
+    patch "pipeline/:id", to: "pipeline#update", as: :pipeline_update
+    patch "pipeline/:id/advance", to: "pipeline#advance", as: :pipeline_advance
+    patch "pipeline/:id/retreat", to: "pipeline#retreat", as: :pipeline_retreat
   end
 
   get "privacy-policy", to: "pages#privacy_policy"

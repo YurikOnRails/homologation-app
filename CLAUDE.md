@@ -176,6 +176,7 @@ end
 | Building chats or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
 | Mobile/responsive patterns and examples | `docs/15_MOBILE_PATTERNS.md` |
 | Writing tests or test conventions | `docs/16_TESTING.md` |
+| Building the CRM pipeline board (kanban, stages, document checklist) | `docs/17_CRM_PIPELINE_BOARD.md` |
 | Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
 
 ## UI Standards

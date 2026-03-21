@@ -81,6 +81,9 @@ en:
     settings_saved: "Settings saved"
     deletion_requested: "Account deletion request submitted. We will contact you within 30 days."
     user_gdpr_deleted: "Account deleted per GDPR request"
+    pipeline_advanced: "Request advanced to next stage"
+    pipeline_retreated: "Request moved back to previous stage"
+    pipeline_updated: "Pipeline updated"
   mailers:
     request_mailer:
       new_request:

@@ -84,6 +84,9 @@ es:
     settings_saved: "Configuración guardada"
     deletion_requested: "Solicitud de eliminación de cuenta enviada. Te contactaremos en un plazo de 30 días."
     user_gdpr_deleted: "Cuenta eliminada según solicitud GDPR"
+    pipeline_advanced: "Solicitud avanzada a la siguiente etapa"
+    pipeline_retreated: "Solicitud devuelta a la etapa anterior"
+    pipeline_updated: "Datos del pipeline actualizados"
   mailers:
     request_mailer:
       new_request:

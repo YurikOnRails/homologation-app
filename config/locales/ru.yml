@@ -81,6 +81,9 @@ ru:
     settings_saved: "Настройки сохранены"
     deletion_requested: "Запрос на удаление аккаунта отправлен. Мы свяжемся с вами в течение 30 дней."
     user_gdpr_deleted: "Аккаунт удалён по запросу GDPR"
+    pipeline_advanced: "Заявка перемещена на следующий этап"
+    pipeline_retreated: "Заявка возвращена на предыдущий этап"
+    pipeline_updated: "Данные процесса обновлены"
   mailers:
     request_mailer:
       new_request:

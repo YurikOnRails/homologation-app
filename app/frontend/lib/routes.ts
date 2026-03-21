@@ -53,5 +53,9 @@ export const routes = {
     removeRole: (id: number) => `/admin/users/${id}/remove_role`,
     gdprDelete: (id: number) => `/admin/users/${id}/gdpr_delete`,
     lessons: "/admin/lessons",
+    pipeline: "/admin/pipeline",
+    pipelineUpdate: (id: number) => `/admin/pipeline/${id}`,
+    pipelineAdvance: (id: number) => `/admin/pipeline/${id}/advance`,
+    pipelineRetreat: (id: number) => `/admin/pipeline/${id}/retreat`,
   },
 }

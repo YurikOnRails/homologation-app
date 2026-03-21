@@ -55,6 +55,7 @@ class ApplicationController < ActionController::Base
       canManageTeachers: user.coordinator? || user.super_admin?,
       canAccessChats: user.super_admin?,
       canAccessAdmin: user.super_admin?,
+      canAccessPipeline: user.super_admin?,
       canCreateRequest: user.student?,
       canCreateLesson: user.teacher? || user.coordinator? || user.super_admin?,
       # Navigation visibility — intentionally separate from action permissions,
