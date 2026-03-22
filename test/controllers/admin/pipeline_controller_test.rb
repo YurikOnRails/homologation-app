@@ -199,9 +199,10 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
     cards = inertia.props[:stages]["pago_recibido"]
     assert cards.any?, "Expected at least one card in pago_recibido"
     card = cards.first
-    expected_keys = %i[id studentName country year serviceType amount pipelineStage
-                       pipelineNotes documentChecklist documentsComplete documentsTotal
-                       cotejoRoute countryMissing updatedAt canAdvance canRetreat]
+    expected_keys = %i[id studentName phone country identityCard year serviceType amount
+                       pipelineStage pipelineNotes documentChecklist documentsComplete
+                       documentsTotal cotejoRoute countryMissing updatedAt canAdvance
+                       canRetreat nextStageName requiresTranslation]
     expected_keys.each do |key|
       assert card.key?(key), "Card missing key: #{key}"
     end

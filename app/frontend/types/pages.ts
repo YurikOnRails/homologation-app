@@ -328,6 +328,7 @@ export interface PipelineCard {
   studentName: string
   phone: string | null
   country: string | null
+  identityCard: string | null
   year: number
   serviceType: string
   amount: number
@@ -341,6 +342,8 @@ export interface PipelineCard {
   countryMissing: boolean
   canAdvance: boolean
   canRetreat: boolean
+  nextStageName: string | null
+  requiresTranslation: boolean
 }
 
 export interface PipelineStats {

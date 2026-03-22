@@ -439,6 +439,10 @@
       "not": "NOT",
       "ent": "ENT"
     },
+    "subtitles": {
+      "cotejo_ministerio": "No-UE sin convenio",
+      "cotejo_delegacion": "LATAM · EAU · Convenio"
+    },
     "filters": {
       "all": "Todo",
       "year": "Año",
@@ -455,7 +459,8 @@
       "year": "Año",
       "documents": "Documentos",
       "save": "Guardar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "view_request": "Ver solicitud"
     }
   },
   "privacy": {

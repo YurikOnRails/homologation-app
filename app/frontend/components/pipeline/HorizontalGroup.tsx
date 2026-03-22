@@ -13,16 +13,22 @@ interface HorizontalGroupProps {
 export function HorizontalGroup({ stage, cards, icon, onEditCard }: HorizontalGroupProps) {
   const { t } = useTranslation()
   const color = STAGE_COLORS[stage]
+  const subtitle = t(`pipeline.subtitles.${stage}`, { defaultValue: "" })
 
   return (
     <div className="border-t pt-4">
-      {/* Header: icon + title + dot ... count right-aligned */}
+      {/* Header: icon + title + subtitle ... count right-aligned */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">{icon}</span>
         <div className={`w-2 h-2 rounded-full ${color?.dot ?? "bg-gray-400"}`} />
-        <h3 className="text-sm font-semibold flex-1">
-          {t(`pipeline.stages.${stage}`)}
-        </h3>
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold">
+            {t(`pipeline.stages.${stage}`)}
+          </h3>
+          {subtitle && (
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
         <span className="text-lg font-bold text-muted-foreground tabular-nums">
           {cards.length}
         </span>

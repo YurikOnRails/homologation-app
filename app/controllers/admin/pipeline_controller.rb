@@ -100,7 +100,7 @@ class Admin::PipelineController < InertiaController
       pipelineNotes: r.pipeline_notes,
       documentChecklist: r.document_checklist || {},
       documentsComplete: r.documents_complete_count,
-      documentsTotal: 10,
+      documentsTotal: HomologationRequest::CHECKLIST_KEYS.size,
       cotejoRoute: cotejo_route_for(r),
       updatedAt: r.updated_at.iso8601,
       countryMissing: r.country_missing_for_cotejo?,

@@ -1,6 +1,7 @@
 import { useEffect } from "react"
-import { useForm } from "@inertiajs/react"
+import { Link, useForm } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import { ExternalLink } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
-import { DOC_KEYS } from "@/components/pipeline/constants"
 import type { PipelineCard } from "@/types/pages"
 
 interface CardEditDialogProps {
@@ -39,7 +38,6 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
     pipeline_notes: "",
     payment_amount: 0,
     year: CURRENT_YEAR,
-    document_checklist: {} as Record<string, boolean>,
   })
 
   useEffect(() => {
@@ -49,7 +47,6 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
         pipeline_notes: card.pipelineNotes ?? "",
         payment_amount: card.amount,
         year: card.year,
-        document_checklist: { ...card.documentChecklist },
       })
     }
   }, [card]) // eslint-disable-line react-hooks/exhaustive-deps -- setData/clearErrors are stable from useForm
@@ -63,20 +60,23 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
     })
   }
 
-  function toggleDoc(key: string) {
-    setData("document_checklist", {
-      ...data.document_checklist,
-      [key]: !data.document_checklist[key],
-    })
-  }
-
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("pipeline.edit_dialog.title")}</DialogTitle>
           {card && (
-            <p className="text-sm text-muted-foreground">{card.studentName}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">{card.studentName}</p>
+              <Link
+                href={routes.request(card.id)}
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {t("pipeline.edit_dialog.view_request")}
+                <ExternalLink className="h-3 w-3" />
+              </Link>
+            </div>
           )}
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -118,25 +118,6 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
               onChange={(e) => setData("pipeline_notes", e.target.value)}
               rows={3}
             />
-          </div>
-
-          {/* Document checklist */}
-          <div className="space-y-1.5">
-            <Label>{t("pipeline.edit_dialog.documents")}</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {DOC_KEYS.map((key) => (
-                <label
-                  key={key}
-                  className="flex items-center gap-2 cursor-pointer min-h-[44px]"
-                >
-                  <Checkbox
-                    checked={!!data.document_checklist[key]}
-                    onCheckedChange={() => toggleDoc(key)}
-                  />
-                  <span className="text-sm font-medium uppercase">{key}</span>
-                </label>
-              ))}
-            </div>
           </div>
 
           <DialogFooter>

@@ -166,10 +166,10 @@ class HomologationRequest < ApplicationRecord
 
   def sync_status_from_pipeline!
     new_status = case pipeline_stage
-                 when "pago_recibido" then "payment_confirmed"
-                 when "completado" then "resolved"
-                 else "in_progress"
-                 end
+    when "pago_recibido" then "payment_confirmed"
+    when "completado" then "resolved"
+    else "in_progress"
+    end
     return if status == new_status
 
     update!(status: new_status, status_changed_at: Time.current)

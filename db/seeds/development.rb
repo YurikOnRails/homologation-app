@@ -393,7 +393,7 @@ PIPELINE_STUDENTS = [
   { name: "Veronika Kozlova",                 country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
   { name: "Andrei Popov",                     country: "RU", stage: "completado",         notes: "Entregado al estudiante en oficina",                                                  checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
   { name: "Kateryna Oliinyk",                 country: "UA", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
-  { name: "Sofia Nikolaeva",                  country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Sofia Nikolaeva",                  country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } }
 ].freeze
 
 PIPELINE_NOTES_FOR_SUBJECTS = {
@@ -404,7 +404,7 @@ PIPELINE_NOTES_FOR_SUBJECTS = {
   "redsara"           => SUBJECTS,
   "cotejo_ministerio" => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
   "cotejo_delegacion" => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
-  "completado"        => SUBJECTS,
+  "completado"        => SUBJECTS
 }.freeze
 
 pipeline_created = 0
@@ -432,10 +432,10 @@ PIPELINE_STUDENTS.each do |data|
 
   # Map pipeline_stage to the correct parent status
   status = case data[:stage]
-           when "pago_recibido"  then "payment_confirmed"
-           when "completado"     then "resolved"
-           else "in_progress"
-           end
+  when "pago_recibido"  then "payment_confirmed"
+  when "completado"     then "resolved"
+  else "in_progress"
+  end
 
   req = HomologationRequest.new(
     user:                  student,

@@ -439,6 +439,10 @@
       "not": "NOT",
       "ent": "ENT"
     },
+    "subtitles": {
+      "cotejo_ministerio": "Не-ЕС без договора",
+      "cotejo_delegacion": "LATAM · ОАЭ · Договор"
+    },
     "filters": {
       "all": "Все",
       "year": "Год",
@@ -455,7 +459,8 @@
       "year": "Год",
       "documents": "Документы",
       "save": "Сохранить",
-      "cancel": "Отмена"
+      "cancel": "Отмена",
+      "view_request": "Открыть заявку"
     }
   },
   "privacy": {

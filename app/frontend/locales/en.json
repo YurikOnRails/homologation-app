@@ -439,6 +439,10 @@
       "not": "NOT",
       "ent": "ENT"
     },
+    "subtitles": {
+      "cotejo_ministerio": "Non-EU without treaty",
+      "cotejo_delegacion": "LATAM · UAE · Treaty"
+    },
     "filters": {
       "all": "All",
       "year": "Year",
@@ -455,7 +459,8 @@
       "year": "Year",
       "documents": "Documents",
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "view_request": "View request"
     }
   },
   "privacy": {

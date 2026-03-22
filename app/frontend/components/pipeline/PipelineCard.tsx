@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DocumentTags } from "@/components/pipeline/DocumentTags"
-import { STAGE_COLORS } from "@/components/pipeline/constants"
+import { STAGE_COLORS, STAGE_SHORT_LABELS, YEAR_COLORS } from "@/components/pipeline/constants"
 import { routes } from "@/lib/routes"
 import { cn, getOptionLabel } from "@/lib/utils"
 import type { SharedProps } from "@/types"
@@ -30,6 +30,15 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
   const countryName = countryLabel
     ? getOptionLabel(countryLabel, i18n.language)
     : card.country
+
+  const yearColor = YEAR_COLORS[card.year] ?? { bg: "bg-blue-600", text: "text-white" }
+
+  // Smart advance label: show next stage short name
+  const advanceLabel = card.nextStageName
+    ? card.nextStageName === "completado"
+      ? "\u2713 Fin"
+      : `\u2192 ${STAGE_SHORT_LABELS[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
+    : `${t("pipeline.advance")} \u2192`
 
   function advance(e: React.MouseEvent) {
     e.stopPropagation()
@@ -66,18 +75,21 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-semibold text-sm truncate">{card.studentName}</p>
+            {card.identityCard && (
+              <p className="text-[11px] text-muted-foreground font-mono">{card.identityCard}</p>
+            )}
             {card.phone && (
               <p className="text-xs text-muted-foreground">{card.phone}</p>
             )}
           </div>
-          <span className="text-xs font-bold text-foreground whitespace-nowrap">
+          <span className="text-xs font-bold text-foreground whitespace-nowrap font-mono">
             {card.amount}&euro;
           </span>
         </div>
 
         {/* Row 2: Badges */}
         <div className="flex items-center gap-1 flex-wrap">
-          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">
+          <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded", yearColor.bg, yearColor.text)}>
             {card.year}
           </span>
           <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-pink-600 text-white">
@@ -96,6 +108,11 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
               </TooltipContent>
             </Tooltip>
           )}
+          {card.requiresTranslation && (
+            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white" title="Traducción jurada">
+              🌐
+            </span>
+          )}
           {card.countryMissing && (
             <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-white">?</span>
           )}
@@ -106,20 +123,21 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
           <p className="text-xs text-muted-foreground line-clamp-2">{card.pipelineNotes}</p>
         )}
 
-        {/* Row 4: Document tags */}
+        {/* Row 4: Document tags (clickable) */}
         <DocumentTags
           checklist={card.documentChecklist}
           complete={card.documentsComplete}
           total={card.documentsTotal}
+          cardId={card.id}
         />
 
-        {/* Row 5: Actions */}
+        {/* Row 5: Actions — retreat narrow, advance wide */}
         <div className="flex items-center gap-1.5 pt-0.5">
           {card.canRetreat && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 flex-1 text-xs"
+              className="h-8 w-10 text-xs"
               disabled={busy}
               onClick={retreat}
             >
@@ -133,7 +151,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
               disabled={busy}
               onClick={advance}
             >
-              {t("pipeline.advance")} &rarr;
+              {advanceLabel}
             </Button>
           )}
         </div>
