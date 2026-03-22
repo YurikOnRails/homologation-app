@@ -454,13 +454,20 @@
     },
     "edit_dialog": {
       "title": "Edit request",
+      "student_data": "Student data",
+      "admin_fields": "Management",
       "notes": "Notes",
       "amount": "Amount €",
       "year": "Year",
       "documents": "Documents",
       "save": "Save",
       "cancel": "Cancel",
-      "view_request": "View request"
+      "view_request": "View request",
+      "cotejo_ministerio": "Verification → Ministry",
+      "cotejo_delegacion": "Verification → Delegation",
+      "requires_translation": "Requires translation",
+      "docs_in_spanish": "Docs in Spanish",
+      "no_country_hint": "Country not specified — ask the student to complete it in their profile."
     }
   },
   "privacy": {

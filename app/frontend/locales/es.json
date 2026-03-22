@@ -454,13 +454,20 @@
     },
     "edit_dialog": {
       "title": "Editar solicitud",
+      "student_data": "Datos del estudiante",
+      "admin_fields": "Gestión",
       "notes": "Notas",
       "amount": "Importe €",
       "year": "Año",
       "documents": "Documentos",
       "save": "Guardar",
       "cancel": "Cancelar",
-      "view_request": "Ver solicitud"
+      "view_request": "Ver solicitud",
+      "cotejo_ministerio": "Cotejo → Ministerio",
+      "cotejo_delegacion": "Cotejo → Delegación",
+      "requires_translation": "Requiere traducción",
+      "docs_in_spanish": "Docs en español",
+      "no_country_hint": "País no indicado — solicite al estudiante que lo complete en su perfil."
     }
   },
   "privacy": {

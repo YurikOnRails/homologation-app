@@ -454,13 +454,20 @@
     },
     "edit_dialog": {
       "title": "Редактировать заявку",
+      "student_data": "Данные студента",
+      "admin_fields": "Управление",
       "notes": "Заметки",
       "amount": "Сумма €",
       "year": "Год",
       "documents": "Документы",
       "save": "Сохранить",
       "cancel": "Отмена",
-      "view_request": "Открыть заявку"
+      "view_request": "Открыть заявку",
+      "cotejo_ministerio": "Котехо → Министерство",
+      "cotejo_delegacion": "Котехо → Делегация",
+      "requires_translation": "Требуется перевод",
+      "docs_in_spanish": "Документы на испанском",
+      "no_country_hint": "Страна не указана — попросите студента заполнить её в профиле."
     }
   },
   "privacy": {
