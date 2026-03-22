@@ -92,6 +92,7 @@ class Admin::PipelineController < InertiaController
       studentName: r.user.name,
       phone: r.user.phone,
       country: r.user.country,
+      identityCard: r.identity_card.presence || r.passport.presence,
       year: r.year,
       serviceType: r.service_type,
       amount: r.payment_amount.to_f,
@@ -104,7 +105,9 @@ class Admin::PipelineController < InertiaController
       updatedAt: r.updated_at.iso8601,
       countryMissing: r.country_missing_for_cotejo?,
       canAdvance: r.can_advance?,
-      canRetreat: r.can_retreat?
+      canRetreat: r.can_retreat?,
+      nextStageName: r.send(:compute_next_stage),
+      requiresTranslation: !HomologationRequest::SPANISH_SPEAKING_COUNTRIES.include?(r.user.country&.upcase)
     }
   end
 

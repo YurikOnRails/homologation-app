@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import { formatCurrency } from "@/lib/utils"
 import type { PipelineStats } from "@/types/pages"
 
@@ -10,31 +10,34 @@ interface StatsBarProps {
 export function StatsBar({ stats }: StatsBarProps) {
   const { t } = useTranslation()
 
-  // Show at most 2 most recent years to keep the grid stable at 5 columns
   const yearEntries = Object.entries(stats.byYear)
     .sort(([a], [b]) => Number(b) - Number(a))
     .slice(0, 2)
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-      <StatCard label={t("pipeline.stats.active")} value={stats.active} />
-      <StatCard
+    <div className="flex items-center gap-0 overflow-x-auto rounded-lg border bg-card">
+      <StatCell label={t("pipeline.stats.active")} value={stats.active} />
+      <Separator orientation="vertical" className="h-10" />
+      <StatCell
         label={t("pipeline.stats.revenue")}
         value={formatCurrency(stats.revenue)}
         className="text-green-600"
       />
       {yearEntries.map(([year, count]) => (
-        <StatCard key={year} label={year} value={count} />
+        <span key={year}>
+          <Separator orientation="vertical" className="h-10" />
+          <StatCell label={year} value={count} />
+        </span>
       ))}
-      {yearEntries.length < 2 && (
-        <StatCard label={t("pipeline.stats.no_payment")} value={stats.noPago} />
-      )}
-      <StatCard label={t("pipeline.stats.cotejo")} value={stats.cotejo} />
+      <Separator orientation="vertical" className="h-10" />
+      <StatCell label={t("pipeline.stats.no_payment")} value={stats.noPago} />
+      <Separator orientation="vertical" className="h-10" />
+      <StatCell label={t("pipeline.stats.cotejo")} value={stats.cotejo} />
     </div>
   )
 }
 
-function StatCard({
+function StatCell({
   label,
   value,
   className,
@@ -44,11 +47,9 @@ function StatCard({
   className?: string
 }) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className={`text-2xl font-bold ${className ?? ""}`}>{value}</p>
-      </CardContent>
-    </Card>
+    <div className="flex-1 min-w-[100px] px-4 py-3 text-center">
+      <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{label}</p>
+      <p className={`text-xl font-bold tabular-nums ${className ?? ""}`}>{value}</p>
+    </div>
   )
 }

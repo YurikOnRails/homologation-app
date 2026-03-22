@@ -64,6 +64,7 @@ class HomologationRequestsController < InertiaController
     ActiveRecord::Base.transaction do
       @request.update!(payment_amount: params[:payment_amount], payment_confirmed_by: current_user.id)
       @request.transition_to!("payment_confirmed", changed_by: current_user)
+      @request.enter_pipeline!
     end
 
     AmoCrmSyncJob.perform_later(@request.id)

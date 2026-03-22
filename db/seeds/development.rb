@@ -45,7 +45,7 @@ UNIVERSITIES  = %w[ucm uam ceu ue other].freeze
 LANG_LEVELS   = %w[a1 a2 b1 b2 c1 c2 none].freeze
 LANG_CERTS    = %w[dele siele other none].freeze
 REFERRALS     = %w[google instagram facebook friend university other].freeze
-COUNTRIES     = %w[AR CO MX PE VE RU UA US ES DE FR IT].freeze
+COUNTRIES     = %w[AR CO MX PE VE RU UA US ES DE FR IT BR EC KZ].freeze
 
 SUBJECTS = [
   "Equivalencia de Grado en Informática",
@@ -327,9 +327,179 @@ HomologationRequest.last(15).each do |req|
 end
 puts "  ✅ #{notif_count} notifications"
 
+# ─── 7. Pipeline Board (заявки после оплаты, распределённые по этапам) ────────
+puts "\n🏗  Pipeline board data..."
+
+PIPELINE_STUDENTS = [
+  # Pago Recibido (6)
+  { name: "Maksym Bilous",                   country: "UA", stage: "pago_recibido",      notes: "Todavía a la espera de notificación para cotejo, falta la copia notarial",            checklist: { sol: true, vol: true, tas: true, pas: true, ori: true, reg: true } },
+  { name: "Anna Tsymbalenko",                country: "UA", stage: "pago_recibido",      notes: "Presentado a la espera de cotejo",                                                    checklist: { sol: true, ori: true, reg: true } },
+  { name: "Apollinaria Agromenko",            country: "UA", stage: "pago_recibido",      notes: nil,                                                                                   checklist: { reg: true } },
+  { name: "Yaroslav Kovalenko",               country: "UA", stage: "pago_recibido",      notes: nil,                                                                                   checklist: {} },
+  { name: "Diana Savchenko",                  country: "UA", stage: "pago_recibido",      notes: "Esperando documentos originales del consulado",                                       checklist: { sol: true, vol: true } },
+  { name: "Mariana Torres Gutierrez",         country: "CO", stage: "pago_recibido",      notes: nil,                                                                                   checklist: { sol: true } },
+
+  # Documentos (3)
+  { name: "Viktoriia Shevchenko",             country: "UA", stage: "documentos",         notes: "Faltan traducciones juradas",                                                         checklist: { sol: true, vol: true, pas: true } },
+  { name: "Sergii Bondarenko",                country: "UA", stage: "documentos",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true } },
+  { name: "Camila Rosas Mendoza",             country: "PE", stage: "documentos",         notes: "Documentos enviados por correo certificado",                                          checklist: { sol: true, vol: true, tas: true, pas: true, ori: true } },
+
+  # Traducción Jurada (3)
+  { name: "Olha Marchenko",                   country: "UA", stage: "traduccion",         notes: "Traducción jurada en proceso, plazo estimado 2 semanas",                              checklist: { sol: true, vol: true, tas: true, aut: true, pas: true } },
+  { name: "Dmytro Lysenko",                   country: "UA", stage: "traduccion",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true } },
+  { name: "Nataliia Kravchuk",                country: "UA", stage: "traduccion",         notes: "Esperando traducción del apostillado",                                                checklist: { sol: true, vol: true, tas: true, pas: true, ori: true, tra: true } },
+
+  # Tasas y Volantes (4)
+  { name: "Temirlan Aisazhan",                country: "KZ", stage: "tasas_volantes",     notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true }, year: 2026 },
+  { name: "Kateryna Korzinkina",              country: "UA", stage: "tasas_volantes",     notes: "Una solicitud y volante ya ha sido entregado, COMPROBAR",                              checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+  { name: "Irene Balvina Morejon Mendez",     country: "VE", stage: "tasas_volantes",     notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+  { name: "Aylin Suleyka Fernandez Naranjo",  country: "EC", stage: "tasas_volantes",     notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+
+  # RedSARA (7)
+  { name: "Chintemir Yerkinov",               country: "KZ", stage: "redsara",            notes: "Realizar autorización firmada escrita NL_2025_S40713 / 2026-003025 CHINTEMIR YERKINOV", checklist: { sol: true, vol: true, tas: true, pas: true, ori: true, tra: true } },
+  { name: "Ruslan Romanovskykh",              country: "UA", stage: "redsara",            notes: "Aportar TDD para autorización Cotejo NL_2025_S34260 / 2025-94038 RUSLAN ROMANOVSKYKH", checklist: { sol: true, vol: true, tas: true, pas: true, ori: true, tra: true } },
+  { name: "Oleksandr Yakovyna",               country: "UA", stage: "redsara",            notes: "Me pidieron el DNI Estampilla NL_2025_S30783 / 2026-000738 OLEKSANDR YAKOVYNA",       checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true } },
+  { name: "Alana Fernandez Veloso",           country: "BR", stage: "redsara",            notes: "Tasas y volantes sin entrega no hay faltan NL_2025_S51960 / ALANA FERNANDEZ VELOSO",  checklist: { sol: true, vol: true, aut: true, pas: true, ori: true } },
+  { name: "Anastasiia Erokhina",              country: "RU", stage: "redsara",            notes: "URDD pendiente por el hecho de que tengo 9 copias en ruso y el resto de cotejos",     checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true } },
+  { name: "Bohdan Melnyk",                    country: "UA", stage: "redsara",            notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, pas: true, ori: true } },
+  { name: "Svitlana Prokopenko",              country: "UA", stage: "redsara",            notes: "Presentado, esperando respuesta de RedSARA",                                          checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true } },
+
+  # Cotejo - Ministerio (11)
+  { name: "Elizaveta Ryzahal",                country: "RU", stage: "cotejo_ministerio",  notes: "Todo el cotejo falta foto del pasaporte notarial",                                    checklist: { sol: true, vol: true, tas: true, aut: true, pas: true } },
+  { name: "Luiza Osipova",                    country: "RU", stage: "cotejo_ministerio",  notes: "Cotejo NL_2025_S08635 / 2025-79608 LUIZA OSIPOVA",                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true } },
+  { name: "Valeriia Hryhorash",               country: "UA", stage: "cotejo_ministerio",  notes: "NL_2025_S05006 / 2025-76900 VALERIIA HRYHORASH",                                     checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true } },
+  { name: "Dariia Briukova",                  country: "RU", stage: "cotejo_ministerio",  notes: "NL_2025_S30065 / 2026-000700 DARIIA BRIUKOVA",                                       checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true } },
+  { name: "Ivan Mankovskii",                  country: "RU", stage: "cotejo_ministerio",  notes: "NL_2025_S47054 / 2025-53374 NAN MANKOVSKII",                                         checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true } },
+  { name: "Evelina Minko",                    country: "RU", stage: "cotejo_ministerio",  notes: "NL_2025_S50884 / 2025-84678 EVELINA MINKO",                                          checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true } },
+  { name: "Artem Lopatin",                    country: "RU", stage: "cotejo_ministerio",  notes: "NL_2025_S33722 / 2025-94579 ARTEM LOPATIN",                                          checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true } },
+  { name: "Vladislav Niesvietov",             country: "RU", stage: "cotejo_ministerio",  notes: "NECESITO EL PASAPORTE NOTARIAL COMPULSADO SEA 1/2026-000718 VLADISLAV NIESVIETOV",    checklist: { sol: true, vol: true, aut: true, pas: true, reg: true, not: true } },
+  { name: "Polina Fedorova",                  country: "RU", stage: "cotejo_ministerio",  notes: "NL_2025_S41223 / 2025-87431 POLINA FEDOROVA",                                        checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true } },
+  { name: "Aleksei Sorokin",                  country: "RU", stage: "cotejo_ministerio",  notes: "Cotejo completado, esperando resolución",                                             checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Mariia Kuznetsova",                country: "RU", stage: "cotejo_ministerio",  notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true } },
+
+  # Cotejo - Delegación (3)
+  { name: "Denisse Bertha Cordova Ortiz",     country: "MX", stage: "cotejo_delegacion",  notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+  { name: "Rainer Aaron Quispe Ramirez",      country: "PE", stage: "cotejo_delegacion",  notes: "CCJM URGENTE",                                                                       checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+  { name: "Manuel Antonio Adan Barea",        country: "VE", stage: "cotejo_delegacion",  notes: "NL_2025_S43604 / 2025-05043646 MANUEL ANTONIO ADAN BAREA",                            checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true } },
+
+  # Completado (11)
+  { name: "Elias Khreiche",                   country: "US", stage: "completado",         notes: "FINALIZADO",                                                                          checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Bohdan Kuzmin",                    country: "UA", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Volodymyr Kunovskyi",              country: "UA", stage: "completado",         notes: "Motivo adicional: Notas D y ID",                                                     checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Anastasiia Holovastiuk",           country: "UA", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Mykhailo Petrenko",               country: "UA", stage: "completado",         notes: "NE utilizado",                                                                        checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Nikita Yarovskyi",                 country: "UA", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Ahlala Kossovets",                 country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Veronika Kozlova",                 country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Andrei Popov",                     country: "RU", stage: "completado",         notes: "Entregado al estudiante en oficina",                                                  checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Kateryna Oliinyk",                 country: "UA", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+  { name: "Sofia Nikolaeva",                  country: "RU", stage: "completado",         notes: nil,                                                                                   checklist: { sol: true, vol: true, tas: true, aut: true, pas: true, ori: true, tra: true, reg: true, not: true, ent: true } },
+].freeze
+
+PIPELINE_NOTES_FOR_SUBJECTS = {
+  "pago_recibido"     => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
+  "documentos"        => SUBJECTS,
+  "traduccion"        => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
+  "tasas_volantes"    => SUBJECTS,
+  "redsara"           => SUBJECTS,
+  "cotejo_ministerio" => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
+  "cotejo_delegacion" => SUBJECTS.select { |s| s.include?("Homolog") || s.include?("Equivalencia") },
+  "completado"        => SUBJECTS,
+}.freeze
+
+pipeline_created = 0
+default_checklist = HomologationRequest::DEFAULT_DOCUMENT_CHECKLIST
+
+PIPELINE_STUDENTS.each do |data|
+  student = seed_user(
+    email:     "#{data[:name].parameterize(separator: '.')}@example.com",
+    name:      data[:name],
+    role_name: "student",
+    locale:    %w[RU UA BY KZ].include?(data[:country]) ? "ru" : "es",
+    country:   data[:country]
+  )
+
+  coordinator = coordinators.sample
+  year        = data[:year] || 2025
+  amount      = [ 350, 450, 500, 550, 650 ].sample
+  created     = Faker::Time.between(from: 8.months.ago, to: 2.months.ago)
+  subjects    = PIPELINE_NOTES_FOR_SUBJECTS[data[:stage]] || SUBJECTS
+
+  # Build checklist from provided data, filling missing keys with false
+  checklist = default_checklist.merge(
+    (data[:checklist] || {}).transform_keys(&:to_s).transform_values { |v| !!v }
+  )
+
+  # Map pipeline_stage to the correct parent status
+  status = case data[:stage]
+           when "pago_recibido"  then "payment_confirmed"
+           when "completado"     then "resolved"
+           else "in_progress"
+           end
+
+  req = HomologationRequest.new(
+    user:                  student,
+    coordinator:           coordinator,
+    subject:               subjects.sample,
+    service_type:          %w[equivalencia equivalencia equivalencia invoice].sample,
+    description:           Faker::Lorem.paragraph(sentence_count: 2),
+    education_system:      EDU_SYSTEMS.sample,
+    studies_finished:      "yes",
+    study_type_spain:      STUDY_TYPES.sample,
+    studies_spain:         "yes",
+    university:            UNIVERSITIES.sample,
+    referral_source:       REFERRALS.sample,
+    language_knowledge:    LANG_LEVELS.sample,
+    language_certificate:  LANG_CERTS.sample,
+    identity_card:         Faker::Number.number(digits: 8).to_s,
+    passport:              "#{("A".."Z").to_a.sample}#{Faker::Number.number(digits: 7)}",
+    privacy_accepted:      true,
+    status:                status,
+    status_changed_at:     created + rand(10..40).days,
+    status_changed_by:     coordinator.id,
+    payment_amount:        amount,
+    payment_confirmed_at:  created + rand(5..15).days,
+    payment_confirmed_by:  coordinator.id,
+    pipeline_stage:        data[:stage],
+    pipeline_notes:        data[:notes],
+    document_checklist:    checklist,
+    year:                  year,
+    created_at:            created,
+    updated_at:            created + rand(15..60).days
+  )
+
+  if %w[in_progress resolved].include?(status) && rand < 0.6
+    req.amo_crm_lead_id   = Faker::Number.number(digits: 8).to_s
+    req.amo_crm_synced_at = req.payment_confirmed_at + rand(1..3).hours
+  end
+
+  req.save(validate: false)
+  pipeline_created += 1
+
+  # Conversation + messages
+  conv = Conversation.create!(homologation_request: req)
+  conv.add_participant!(student)
+  conv.add_participant!(coordinator)
+
+  rand(3..7).times do |i|
+    sender   = i.even? ? coordinator : student
+    msg_time = created + rand(1..60).days
+    break if msg_time > Time.current
+    Message.create!(
+      conversation: conv,
+      user:         sender,
+      body:         sender == coordinator ? COORDINATOR_MESSAGES.sample : STUDENT_MESSAGES.sample,
+      created_at:   msg_time
+    )
+  end
+end
+puts "  ✅ #{pipeline_created} pipeline requests across #{HomologationRequest::PIPELINE_STAGES.size} stages"
+
 # ─── Итоговая сводка ──────────────────────────────────────────────────────────
 
-sync_errors = HomologationRequest.where.not(amo_crm_sync_error: nil).count
+sync_errors    = HomologationRequest.where.not(amo_crm_sync_error: nil).count
+pipeline_total = HomologationRequest.where.not(pipeline_stage: nil).count
+pipeline_by_stage = HomologationRequest.where.not(pipeline_stage: nil).group(:pipeline_stage).count
 
 puts <<~SUMMARY
 
@@ -354,6 +524,8 @@ puts <<~SUMMARY
     ──────────────────────────────────────────────
     Пользователи:   #{User.count}
     Заявки:         #{HomologationRequest.count} (#{sync_errors} с ошибкой CRM-синхронизации)
+    Pipeline:       #{pipeline_total} заявок в pipeline
+    #{pipeline_by_stage.sort_by { |k, _| HomologationRequest::PIPELINE_STAGES.index(k) || 99 }.map { |k, v| "                    #{k}: #{v}" }.join("\n")}
     Уроки:          #{Lesson.count}
     Сообщения:      #{Message.count}
     Уведомления:    #{Notification.count}

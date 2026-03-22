@@ -37,11 +37,11 @@ export default function Pipeline() {
       ]}
     >
       <Main>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Title */}
           <h1 className="text-2xl font-bold tracking-tight">{t("pipeline.title")}</h1>
 
-          {/* Stats */}
+          {/* Stats — compact inline strip */}
           <StatsBar stats={stats} />
 
           {/* Filters */}
@@ -76,11 +76,12 @@ export default function Pipeline() {
                     </Button>
                   ))}
                 </div>
-                <div className="space-y-3 mt-3">
+                <div className="space-y-2.5 mt-3">
                   {(stages[mobileStage] ?? []).map((card) => (
                     <PipelineCardComponent
                       key={card.id}
                       card={card}
+                      stage={mobileStage}
                       onEdit={setEditCard}
                     />
                   ))}
@@ -92,9 +93,11 @@ export default function Pipeline() {
                 </div>
               </div>
 
-              {/* Desktop: full kanban + horizontal groups */}
+              {/* Desktop: kanban board on subtle gray background */}
               <div className="hidden md:block space-y-6">
-                <KanbanBoard stages={stages} onEditCard={setEditCard} />
+                <div className="bg-slate-50 -mx-4 px-4 py-4 rounded-lg">
+                  <KanbanBoard stages={stages} onEditCard={setEditCard} />
+                </div>
                 {HORIZONTAL_STAGES.map(({ stage, icon }) => (
                   <HorizontalGroup
                     key={stage}

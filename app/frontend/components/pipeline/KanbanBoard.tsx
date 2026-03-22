@@ -9,7 +9,7 @@ interface KanbanBoardProps {
 
 export function KanbanBoard({ stages, onEditCard }: KanbanBoardProps) {
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
+    <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2">
       {KANBAN_STAGES.map((stage) => (
         <KanbanColumn
           key={stage}
