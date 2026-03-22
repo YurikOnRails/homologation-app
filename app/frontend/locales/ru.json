@@ -103,7 +103,11 @@
       "section_details": "Данные заявки",
       "section_education": "Образование",
       "section_additional": "Дополнительная информация",
-      "chat_not_available": "Чат станет доступен после отправки заявки"
+      "chat_not_available": "Чат станет доступен после отправки заявки",
+      "no_documents": "Документы ещё не прикреплены",
+      "file_category_application": "Заявление",
+      "file_category_originals": "Оригиналы",
+      "file_category_documents": "Переведённые документы"
     },
     "status": {
       "draft": "Черновик",

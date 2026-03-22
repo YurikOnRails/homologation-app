@@ -103,7 +103,11 @@
       "section_details": "Request Details",
       "section_education": "Education",
       "section_additional": "Additional Information",
-      "chat_not_available": "Chat will be available after submitting your request"
+      "chat_not_available": "Chat will be available after submitting your request",
+      "no_documents": "No documents attached yet",
+      "file_category_application": "Application",
+      "file_category_originals": "Originals",
+      "file_category_documents": "Translated documents"
     },
     "status": {
       "draft": "Draft",

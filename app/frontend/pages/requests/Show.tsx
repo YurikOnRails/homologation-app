@@ -1,12 +1,13 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { Paperclip, Download, MessageSquare } from "lucide-react"
+import { Paperclip, Download, MessageSquare, FileX } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { ChatWindow } from "@/components/chat/ChatWindow"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { FormattedDate } from "@/components/common/FormattedDate"
+import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,7 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatBytes, getOptionLabel } from "@/lib/utils"
+import { cn, formatBytes, getOptionLabel } from "@/lib/utils"
 import { routes } from "@/lib/routes"
 import type { SharedProps, SelectOption } from "@/types/index"
 import type { RequestsShowProps, FileInfo } from "@/types/pages"
@@ -42,6 +43,8 @@ const COORDINATOR_STATUS_OPTIONS: Record<string, string[]> = {
   in_progress: ["resolved", "closed"],
 }
 
+const FILE_CATEGORIES = ["application", "originals", "documents"] as const
+
 export default function RequestsShow() {
   const { t } = useTranslation()
   const { auth, request, features, selectOptions } =
@@ -49,11 +52,15 @@ export default function RequestsShow() {
   const locale = auth.user?.locale ?? "es"
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState("")
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null)
 
+  const isCoordinator = features.canConfirmPayment
   const availableStatuses = COORDINATOR_STATUS_OPTIONS[request.status] ?? []
 
-  const handleStatusChange = (status: string) => {
-    router.patch(routes.request(request.id), { status })
+  const handleStatusConfirm = () => {
+    if (!pendingStatus) return
+    router.patch(routes.request(request.id), { status: pendingStatus })
+    setPendingStatus(null)
   }
 
   const handleConfirmPayment = () => {
@@ -73,7 +80,6 @@ export default function RequestsShow() {
           ? "error"
           : "not_synced"
 
-  /** Resolve a raw key (e.g. "equivalencia") to its localized label via selectOptions. */
   const resolveOption = (
     key: string | null | undefined,
     optionsKey: string
@@ -96,6 +102,17 @@ export default function RequestsShow() {
     request.languageCertificate ||
     request.referralSource
 
+  const filesByCategory = useMemo(() => {
+    const grouped: Record<string, FileInfo[]> = {}
+    for (const cat of FILE_CATEGORIES) grouped[cat] = []
+    for (const file of request.files) {
+      const cat = file.category ?? "documents"
+      if (!grouped[cat]) grouped[cat] = []
+      grouped[cat].push(file)
+    }
+    return grouped
+  }, [request.files])
+
   return (
     <AuthenticatedLayout
       breadcrumbs={[
@@ -104,11 +121,12 @@ export default function RequestsShow() {
       ]}
     >
       <Main fixed>
-        <h1 className="text-xl font-bold mb-4 lg:hidden">{request.subject}</h1>
-
         <div className="flex flex-col lg:grid lg:grid-cols-[1fr_320px] gap-6 min-h-0 flex-1">
-          {/* Left: Chat thread */}
-          <Card className="flex flex-col min-h-[400px] lg:min-h-0 order-2 lg:order-1">
+          {/* Left: Chat thread — first on mobile for students, second for coordinators */}
+          <Card className={cn(
+            "flex flex-col min-h-[400px] lg:min-h-0",
+            isCoordinator ? "order-2 lg:order-1" : "order-1 lg:order-1"
+          )}>
             <CardHeader className="shrink-0 pb-3">
               <CardTitle className="text-base">{request.subject}</CardTitle>
             </CardHeader>
@@ -133,27 +151,36 @@ export default function RequestsShow() {
           </Card>
 
           {/* Right: Metadata sidebar */}
-          <div className="order-1 lg:order-2 space-y-4 overflow-y-auto">
-            {/* Status card — prominent at the top */}
+          <div className={cn(
+            "lg:order-2 space-y-4 overflow-y-auto",
+            isCoordinator ? "order-1" : "order-2"
+          )}>
+            {/* Status + key info card — combined */}
             <Card>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {t("requests.table.status")}
-                  </span>
                   <StatusBadge status={request.status} />
+                  {request.paymentAmount && (
+                    <span className="text-lg font-bold tabular-nums">
+                      &euro;{request.paymentAmount}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{request.user.name}</span>
+                  <FormattedDate date={request.updatedAt} mode="relative" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Coordinator actions */}
-            {features.canConfirmPayment && (
+            {isCoordinator && (
               <Card>
                 <CardContent className="pt-4 space-y-3">
                   {availableStatuses.length > 0 && (
                     <div className="space-y-2">
                       <Label>{t("coordinator.change_status")}</Label>
-                      <Select onValueChange={handleStatusChange}>
+                      <Select onValueChange={(s) => setPendingStatus(s)}>
                         <SelectTrigger>
                           <SelectValue
                             placeholder={t("coordinator.change_status")}
@@ -224,6 +251,7 @@ export default function RequestsShow() {
                   <DetailRow
                     label={t("requests.detail.requester")}
                     value={request.user.name}
+                    bold
                   />
                   <DetailRow
                     label={t("requests.form.service_type")}
@@ -231,6 +259,7 @@ export default function RequestsShow() {
                       request.serviceType,
                       "service_types"
                     )}
+                    bold
                   />
                   {request.description && (
                     <DetailRow
@@ -242,6 +271,7 @@ export default function RequestsShow() {
                     <DetailRow
                       label={t("requests.form.identity_card")}
                       value={request.identityCard}
+                      mono
                     />
                   )}
                   <DetailRow
@@ -253,21 +283,6 @@ export default function RequestsShow() {
                       />
                     }
                   />
-                  <DetailRow
-                    label={t("requests.table.last_activity")}
-                    value={
-                      <FormattedDate
-                        date={request.updatedAt}
-                        mode="datetime"
-                      />
-                    }
-                  />
-                  {request.paymentAmount && (
-                    <DetailRow
-                      label={t("coordinator.payment_amount")}
-                      value={`\u20AC${request.paymentAmount}`}
-                    />
-                  )}
                 </div>
 
                 {/* Education section */}
@@ -361,28 +376,59 @@ export default function RequestsShow() {
               </CardContent>
             </Card>
 
-            {/* Attachments card */}
-            {request.files.length > 0 && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {t("requests.form.section_documents")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1.5">
-                  {request.files.map((file) => (
-                    <FileRow
-                      key={file.id}
-                      file={file}
-                      requestId={request.id}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+            {/* Attachments card — always visible, grouped by category */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {t("requests.form.section_documents")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {request.files.length === 0 ? (
+                  <div className="flex flex-col items-center py-6 text-center">
+                    <FileX className="h-6 w-6 text-muted-foreground mb-2" />
+                    <p className="text-xs text-muted-foreground">
+                      {t("requests.detail.no_documents")}
+                    </p>
+                  </div>
+                ) : (
+                  FILE_CATEGORIES.map((cat) => {
+                    const files = filesByCategory[cat]
+                    if (!files || files.length === 0) return null
+                    return (
+                      <div key={cat}>
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1.5">
+                          {t(`requests.detail.file_category_${cat}`)}
+                        </p>
+                        <div className="space-y-0.5">
+                          {files.map((file) => (
+                            <FileRow
+                              key={file.id}
+                              file={file}
+                              requestId={request.id}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </Main>
+
+      {/* Status change confirmation */}
+      <ConfirmDialog
+        open={pendingStatus !== null}
+        onOpenChange={(open) => { if (!open) setPendingStatus(null) }}
+        title={t("coordinator.confirm_status_title")}
+        description={t("coordinator.confirm_status_description", {
+          status: pendingStatus ? t(`requests.status.${pendingStatus}`) : "",
+        })}
+        onConfirm={handleStatusConfirm}
+      />
 
       {/* Confirm payment dialog */}
       <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
@@ -441,15 +487,25 @@ function DetailRow({
   label,
   value,
   children,
+  bold,
+  mono,
 }: {
   label: string
   value?: React.ReactNode
   children?: React.ReactNode
+  bold?: boolean
+  mono?: boolean
 }) {
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-sm">{children ?? value}</span>
+      <span className={cn(
+        "text-sm",
+        bold && "font-semibold",
+        mono && "font-mono",
+      )}>
+        {children ?? value}
+      </span>
     </div>
   )
 }
@@ -459,7 +515,7 @@ function FileRow({ file, requestId }: { file: FileInfo; requestId: number }) {
     <a
       href={routes.downloadDocument(requestId, file.id)}
       download
-      className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted transition-colors group"
+      className="flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors group min-h-[44px]"
     >
       <Paperclip className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
       <span className="truncate flex-1 text-primary group-hover:underline">

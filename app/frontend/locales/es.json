@@ -103,7 +103,11 @@
       "section_details": "Datos de la solicitud",
       "section_education": "Educación",
       "section_additional": "Información adicional",
-      "chat_not_available": "El chat estará disponible después de enviar la solicitud"
+      "chat_not_available": "El chat estará disponible después de enviar la solicitud",
+      "no_documents": "Documentos aún no adjuntados",
+      "file_category_application": "Solicitud",
+      "file_category_originals": "Originales",
+      "file_category_documents": "Documentos traducidos"
     },
     "status": {
       "draft": "Borrador",
