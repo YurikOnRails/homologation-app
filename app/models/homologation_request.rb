@@ -102,8 +102,12 @@ class HomologationRequest < ApplicationRecord
     sync_status_from_pipeline!
   end
 
+  def next_pipeline_stage
+    compute_next_stage
+  end
+
   def can_advance?
-    compute_next_stage.present?
+    next_pipeline_stage.present?
   end
 
   def can_retreat?

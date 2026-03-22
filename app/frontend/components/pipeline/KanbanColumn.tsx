@@ -18,7 +18,7 @@ export function KanbanColumn({ stage, cards, onEditCard }: KanbanColumnProps) {
   return (
     <div className="w-72 flex-shrink-0">
       {/* Column header with icon and color accent */}
-      <div className="flex items-center gap-2 mb-3 pb-2 border-b-2" style={{ borderBottomColor: "transparent" }}>
+      <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-transparent">
         <span className="text-base">{color?.icon}</span>
         <div className={`w-2 h-2 rounded-full ${color?.dot ?? "bg-gray-400"}`} />
         <h3 className="text-sm font-semibold flex-1">

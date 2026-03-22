@@ -40,22 +40,11 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
       : `\u2192 ${STAGE_SHORT_LABELS[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
     : `${t("pipeline.advance")} \u2192`
 
-  function advance(e: React.MouseEvent) {
+  function moveStage(e: React.MouseEvent, url: string) {
     e.stopPropagation()
     if (busy) return
     setBusy(true)
-    router.patch(routes.admin.pipelineAdvance(card.id), {}, {
-      preserveScroll: true,
-      preserveState: true,
-      onFinish: () => setBusy(false),
-    })
-  }
-
-  function retreat(e: React.MouseEvent) {
-    e.stopPropagation()
-    if (busy) return
-    setBusy(true)
-    router.patch(routes.admin.pipelineRetreat(card.id), {}, {
+    router.patch(url, {}, {
       preserveScroll: true,
       preserveState: true,
       onFinish: () => setBusy(false),
@@ -121,7 +110,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
 
         {/* Row 3: Notes — always reserve 2-line height for layout consistency */}
         <p className={cn(
-          "text-xs line-clamp-2 min-h-[2lh]",
+          "text-xs line-clamp-2 min-h-[2rem]",
           card.pipelineNotes ? "text-muted-foreground" : "invisible"
         )}>
           {card.pipelineNotes || "\u00A0"}
@@ -130,7 +119,6 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
         {/* Row 4: Document tags (clickable) */}
         <DocumentTags
           checklist={card.documentChecklist}
-          complete={card.documentsComplete}
           total={card.documentsTotal}
           cardId={card.id}
         />
@@ -142,7 +130,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
             size="sm"
             className="min-h-[44px] md:min-h-0 md:h-8 flex-1 text-xs"
             disabled={busy || !card.canRetreat}
-            onClick={retreat}
+            onClick={(e) => moveStage(e, routes.admin.pipelineRetreat(card.id))}
           >
             &larr;
           </Button>
@@ -154,7 +142,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
               `hover:opacity-90`,
             )}
             disabled={busy || !card.canAdvance}
-            onClick={advance}
+            onClick={(e) => moveStage(e, routes.admin.pipelineAdvance(card.id))}
           >
             {advanceLabel}
           </Button>

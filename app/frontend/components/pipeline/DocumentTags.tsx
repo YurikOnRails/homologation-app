@@ -6,7 +6,6 @@ import { DOC_KEYS } from "@/components/pipeline/constants"
 
 interface DocumentTagsProps {
   checklist: Record<string, boolean>
-  complete: number
   total: number
   cardId?: number
 }

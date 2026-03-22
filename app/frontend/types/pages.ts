@@ -326,7 +326,6 @@ export interface AdminDashboardProps {
 export interface PipelineCard {
   id: number
   studentName: string
-  phone: string | null
   country: string | null
   identityCard: string | null
   year: number

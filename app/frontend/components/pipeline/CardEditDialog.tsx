@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
+import { CURRENT_YEAR } from "@/components/pipeline/constants"
 import type { PipelineCard } from "@/types/pages"
 
 interface CardEditDialogProps {
@@ -29,7 +30,6 @@ interface CardEditDialogProps {
   onClose: () => void
 }
 
-const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1]
 
 export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {

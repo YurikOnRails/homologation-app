@@ -35,10 +35,14 @@ export const STAGE_COLORS: Record<string, { border: string; bg: string; text: st
   completado:        { border: "border-l-green-400",   bg: "bg-green-500",   text: "text-green-700",   dot: "bg-green-400",   icon: "✅" },
 }
 
-/** Year badge colors — current year = amber, previous = indigo */
+/** Current year — shared across pipeline components */
+export const CURRENT_YEAR = new Date().getFullYear()
+
+/** Year badge colors — current year = amber, others = indigo */
 export const YEAR_COLORS: Record<number, { bg: string; text: string }> = {
-  2025: { bg: "bg-indigo-500", text: "text-white" },
-  2026: { bg: "bg-amber-500", text: "text-white" },
+  [CURRENT_YEAR - 1]: { bg: "bg-indigo-500", text: "text-white" },
+  [CURRENT_YEAR]:     { bg: "bg-amber-500", text: "text-white" },
+  [CURRENT_YEAR + 1]: { bg: "bg-emerald-500", text: "text-white" },
 }
 
 /** Service type badge colors (reference: TC map) */

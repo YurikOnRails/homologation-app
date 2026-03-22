@@ -22,14 +22,16 @@ class Admin::PipelineController < InertiaController
     end
 
     not_completed = all_requests.reject { |r| r.pipeline_stage == "completado" }
+    cotejo_min = all_requests.count { |r| r.pipeline_stage == "cotejo_ministerio" }
+    cotejo_del = all_requests.count { |r| r.pipeline_stage == "cotejo_delegacion" }
     stats = {
       active: not_completed.size,
       revenue: all_requests.sum { |r| r.payment_amount.to_f },
       byYear: all_requests.group_by(&:year).transform_values(&:size),
       noPago: all_requests.count { |r| r.payment_amount.nil? || r.payment_amount.zero? },
-      cotejo: all_requests.count { |r| r.pipeline_stage.start_with?("cotejo_") },
-      cotejoMinisterio: all_requests.count { |r| r.pipeline_stage == "cotejo_ministerio" },
-      cotejoDelegacion: all_requests.count { |r| r.pipeline_stage == "cotejo_delegacion" }
+      cotejo: cotejo_min + cotejo_del,
+      cotejoMinisterio: cotejo_min,
+      cotejoDelegacion: cotejo_del
     }
 
     render inertia: "admin/Pipeline", props: {
@@ -45,23 +47,11 @@ class Admin::PipelineController < InertiaController
   end
 
   def advance
-    @request = HomologationRequest.find(params[:id])
-    authorize @request, :manage_pipeline?
-
-    @request.advance_pipeline!
-    redirect_to admin_pipeline_path, notice: t("flash.pipeline_advanced")
-  rescue HomologationRequest::InvalidTransition => e
-    redirect_to admin_pipeline_path, alert: e.message
+    transition_stage(:advance_pipeline!, "flash.pipeline_advanced")
   end
 
   def retreat
-    @request = HomologationRequest.find(params[:id])
-    authorize @request, :manage_pipeline?
-
-    @request.retreat_pipeline!
-    redirect_to admin_pipeline_path, notice: t("flash.pipeline_retreated")
-  rescue HomologationRequest::InvalidTransition => e
-    redirect_to admin_pipeline_path, alert: e.message
+    transition_stage(:retreat_pipeline!, "flash.pipeline_retreated")
   end
 
   def update
@@ -81,6 +71,15 @@ class Admin::PipelineController < InertiaController
 
   private
 
+  def transition_stage(method, flash_key)
+    @request = HomologationRequest.find(params[:id])
+    authorize @request, :manage_pipeline?
+    @request.public_send(method)
+    redirect_to admin_pipeline_path, notice: t(flash_key)
+  rescue HomologationRequest::InvalidTransition => e
+    redirect_to admin_pipeline_path, alert: e.message
+  end
+
   def pipeline_params
     params.require(:homologation_request).permit(
       :pipeline_notes, :payment_amount, :year,
@@ -92,7 +91,6 @@ class Admin::PipelineController < InertiaController
     {
       id: r.id,
       studentName: r.user.name,
-      phone: r.user.phone,
       country: r.user.country,
       identityCard: r.identity_card.presence || r.passport.presence,
       year: r.year,
@@ -108,7 +106,7 @@ class Admin::PipelineController < InertiaController
       countryMissing: r.country_missing_for_cotejo?,
       canAdvance: r.can_advance?,
       canRetreat: r.can_retreat?,
-      nextStageName: r.send(:compute_next_stage),
+      nextStageName: r.next_pipeline_stage,
       requiresTranslation: !HomologationRequest::SPANISH_SPEAKING_COUNTRIES.include?(r.user.country&.upcase)
     }
   end
@@ -125,11 +123,16 @@ class Admin::PipelineController < InertiaController
   end
 
   def filter_by_cotejo_route(requests)
+    all_known = HomologationRequest::COTEJO_MINISTERIO_COUNTRIES + HomologationRequest::COTEJO_DELEGACION_COUNTRIES
     case params[:cotejo_route]
     when "ministerio"
       requests.joins(:user).where(users: { country: HomologationRequest::COTEJO_MINISTERIO_COUNTRIES })
     when "delegacion"
       requests.joins(:user).where(users: { country: HomologationRequest::COTEJO_DELEGACION_COUNTRIES })
+    when "unknown"
+      requests.joins(:user).where.not(users: { country: all_known }).or(
+        requests.joins(:user).where(users: { country: nil })
+      )
     else
       requests
     end

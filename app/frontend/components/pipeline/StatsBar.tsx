@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next"
 import { cn, formatCurrency } from "@/lib/utils"
+import { CURRENT_YEAR } from "@/components/pipeline/constants"
 import type { PipelineStats } from "@/types/pages"
 
 interface StatsBarProps {
   stats: PipelineStats
 }
-
-const CURRENT_YEAR = new Date().getFullYear()
 
 export function StatsBar({ stats }: StatsBarProps) {
   const { t } = useTranslation()
