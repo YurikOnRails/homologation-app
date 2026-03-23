@@ -12,7 +12,7 @@ class RegistrationsController < ApplicationController
     if user.save
       user.assign_student_role!
       start_new_session_for(user)
-      redirect_to root_path, notice: t("flash.registered")
+      redirect_to dashboard_path, notice: t("flash.registered")
     else
       redirect_to new_registration_path, inertia: { errors: user.errors.to_hash(true) }
     end

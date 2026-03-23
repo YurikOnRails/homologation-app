@@ -1,5 +1,14 @@
 // Page-specific props interfaces — one per page, added per step
 
+import type { PageProps } from "@inertiajs/core"
+import type { SeoProps } from "@/components/public/SeoHead"
+
+// All public marketing pages share this shape
+export interface PublicPageProps extends PageProps {
+  seo: SeoProps
+  [key: string]: unknown
+}
+
 // notifications/Index
 export interface NotificationItem {
   id: number
@@ -320,6 +329,52 @@ export interface AdminDashboardProps {
   requestsByStatus: Record<string, number>
   recentRequests: RequestListItem[]
   failedSyncs: number
+}
+
+// admin/Pipeline
+export interface PipelineCard {
+  id: number
+  studentName: string
+  country: string | null
+  identityCard: string | null
+  year: number
+  serviceType: string
+  amount: number
+  pipelineStage: string
+  pipelineNotes: string | null
+  documentChecklist: Record<string, boolean>
+  documentsComplete: number
+  documentsTotal: number
+  cotejoRoute: "ministerio" | "delegacion" | "unknown"
+  updatedAt: string
+  countryMissing: boolean
+  canAdvance: boolean
+  canRetreat: boolean
+  nextStageName: string | null
+  requiresTranslation: boolean
+}
+
+export interface PipelineStats {
+  active: number
+  revenue: number
+  byYear: Record<string, number>
+  noPago: number
+  cotejo: number
+  cotejoMinisterio: number
+  cotejoDelegacion: number
+}
+
+export interface PipelineFilters {
+  q: string | null
+  year: string | null
+  cotejoRoute: string | null
+  serviceType: string | null
+}
+
+export interface PipelineIndexProps {
+  stages: Record<string, PipelineCard[]>
+  stats: PipelineStats
+  filters: PipelineFilters
 }
 
 // admin/Users

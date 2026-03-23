@@ -16,7 +16,8 @@ import {
   LogOut,
   ChevronsUpDown,
   GraduationCap,
-  Globe,
+  Rocket,
+  Kanban,
 } from "lucide-react"
 import {
   Sidebar,
@@ -95,7 +96,7 @@ export function AppSidebar() {
           items: [
             {
               show: true,
-              href: routes.root,
+              href: routes.dashboard,
               icon: LayoutDashboard,
               label: t("nav.dashboard"),
             },
@@ -112,6 +113,12 @@ export function AppSidebar() {
               icon: MessagesSquare,
               label: t("nav.chats"),
               badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
+            },
+            {
+              show: features.canAccessPipeline,
+              href: routes.admin.pipeline,
+              icon: Kanban,
+              label: t("nav.pipeline"),
             },
           ],
         },
@@ -181,7 +188,7 @@ export function AppSidebar() {
           items: [
             {
               show: features.canSeeDashboard,
-              href: routes.root,
+              href: routes.dashboard,
               icon: LayoutDashboard,
               label: t("nav.dashboard"),
             },
@@ -269,17 +276,12 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href={routes.root}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-600 to-blue-700">
-                  <Globe className="size-4 text-white" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">SpaceForEdu</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    Homologación España
-                  </span>
-                </div>
+            <SidebarMenuButton size="lg" asChild className="group-data-[collapsible=icon]:justify-center">
+              <Link href={routes.dashboard}>
+                <Rocket className="!size-5 text-[#E8453C]" />
+                <span className="text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">
+                  Space for <span className="text-[#2D7FF9]">Edu</span>
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

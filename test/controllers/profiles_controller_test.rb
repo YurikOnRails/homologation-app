@@ -11,7 +11,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
   test "student can update profile" do
     sign_in users(:student_ana)
     patch profile_path, params: { whatsapp: "+34999999999", country: "ES" }
-    assert_redirected_to root_path
+    assert_redirected_to dashboard_path
     assert_equal "+34999999999", users(:student_ana).reload.whatsapp
   end
 
@@ -19,7 +19,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     user = users(:student_ana)
     user.update_columns(whatsapp: nil)
     sign_in user
-    get root_path
+    get dashboard_path
     assert_redirected_to edit_profile_path
   end
 

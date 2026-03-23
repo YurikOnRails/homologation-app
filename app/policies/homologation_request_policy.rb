@@ -5,6 +5,7 @@ class HomologationRequestPolicy < ApplicationPolicy
   def update?  = user.super_admin?
   def confirm_payment? = user.super_admin? && record.status == "awaiting_payment"
   def retry_sync? = user.super_admin?
+  def manage_pipeline? = user.super_admin?
   def download_document? = show?
 
   class Scope < ApplicationPolicy::Scope

@@ -28,7 +28,23 @@ Rails.application.routes.draw do
   constraints(host: "127.0.0.1") do
     get "(*path)", to: redirect { |params, req| "#{req.protocol}localhost:#{req.port}/#{params[:path]}" }
   end
-  root "dashboard#index"
+
+  # Root: detect browser language → redirect to /:locale/
+  root "pages#redirect_to_locale"
+
+  # Public marketing pages — all languages with prefix, English slugs
+  scope "/:locale", locale: /es|en|ru/ do
+    get "/",             to: "pages#home",          as: :localized_home
+    get "homologation",  to: "pages#homologation",  as: :localized_homologation
+    get "university",    to: "pages#university",    as: :localized_university
+    get "spanish",       to: "pages#spanish",       as: :localized_spanish
+    get  "consultation",  to: "pages#consultation",  as: :localized_consultation
+    post "consultation",  to: "pages#create_consultation"
+    get "pricing",       to: "pages#pricing",       as: :localized_pricing
+  end
+
+  # Authenticated app — logged-in users
+  get "dashboard", to: "dashboard#index"
 
   resources :homologation_requests, path: "requests" do
     resources :messages, only: [ :create ]
@@ -55,6 +71,10 @@ Rails.application.routes.draw do
       end
     end
     resources :lessons, only: [ :index ]
+    get "pipeline", to: "pipeline#index", as: :pipeline
+    patch "pipeline/:id", to: "pipeline#update", as: :pipeline_update
+    patch "pipeline/:id/advance", to: "pipeline#advance", as: :pipeline_advance
+    patch "pipeline/:id/retreat", to: "pipeline#retreat", as: :pipeline_retreat
   end
 
   get "privacy-policy", to: "pages#privacy_policy"

@@ -26,6 +26,7 @@ export interface AppFeatures {
   canSeeAllLessons: boolean
   canSeeCalendar: boolean
   canSeeChat: boolean
+  canAccessPipeline: boolean
 }
 
 export interface SharedProps extends PageProps {

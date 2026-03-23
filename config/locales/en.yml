@@ -81,6 +81,10 @@ en:
     settings_saved: "Settings saved"
     deletion_requested: "Account deletion request submitted. We will contact you within 30 days."
     user_gdpr_deleted: "Account deleted per GDPR request"
+    pipeline_advanced: "Request advanced to next stage"
+    pipeline_retreated: "Request moved back to previous stage"
+    pipeline_updated: "Pipeline updated"
+    consultation_sent: "Your consultation request has been sent. We will contact you soon."
   mailers:
     request_mailer:
       new_request:
@@ -98,6 +102,25 @@ en:
         one: "You have 1 unread message in the conversation \"%{title}\"."
         other: "You have %{count} unread messages in the conversation \"%{title}\"."
       cta: "Open the app to reply."
+  seo:
+    home:
+      title: "Space for Edu — European Education in Spain"
+      description: "Degree homologation, university admission, and Spanish courses. Full support from documents to enrollment. 10+ years, 500+ students."
+    homologation:
+      title: "Degree Homologation — Space for Edu"
+      description: "Professional degree homologation service for university titles in Spain."
+    university:
+      title: "University Admission in Spain — Space for Edu"
+      description: "We help you access Spanish universities: selectividad, admission, and enrollment."
+    spanish:
+      title: "Spanish Classes — Space for Edu"
+      description: "Spanish classes for foreigners: levels A1-C2, individual and group."
+    consultation:
+      title: "Expert Consultation — Space for Edu"
+      description: "Book a professional consultation about homologation, university admission, or Spanish courses."
+    pricing:
+      title: "Pricing — Space for Edu"
+      description: "Check our prices for homologation, university access, and Spanish classes."
   notifications:
     new_request: "New request from %{name}"
     new_message: "New message from %{name}"

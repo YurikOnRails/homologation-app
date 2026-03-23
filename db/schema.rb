@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_170038) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -78,6 +78,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_170038) do
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "discarded_at"
+    t.json "document_checklist", default: {}
     t.string "education_system"
     t.string "identity_card"
     t.string "language_certificate"
@@ -86,6 +87,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_170038) do
     t.decimal "payment_amount", precision: 10, scale: 2
     t.datetime "payment_confirmed_at"
     t.integer "payment_confirmed_by"
+    t.text "pipeline_notes"
+    t.string "pipeline_stage"
     t.boolean "privacy_accepted", default: false, null: false
     t.string "referral_source"
     t.string "service_type", null: false
@@ -100,8 +103,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_170038) do
     t.string "university"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.integer "year"
     t.index ["coordinator_id"], name: "index_homologation_requests_on_coordinator_id"
     t.index ["discarded_at"], name: "index_homologation_requests_on_discarded_at"
+    t.index ["pipeline_stage"], name: "index_homologation_requests_on_pipeline_stage"
     t.index ["status"], name: "index_homologation_requests_on_status"
     t.index ["updated_at"], name: "index_homologation_requests_on_updated_at"
     t.index ["user_id", "status"], name: "index_homologation_requests_on_user_id_and_status"

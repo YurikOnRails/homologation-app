@@ -1,5 +1,18 @@
+export function publicRoute(page: string, locale: string): string {
+  return page === "" ? `/${locale}` : `/${locale}/${page}`
+}
+
+export const publicPages = {
+  home: "",
+  homologacion: "homologation",
+  universidad: "university",
+  espanol: "spanish",
+  consulta: "consultation",
+  precios: "pricing",
+} as const
+
 export const routes = {
-  root: "/",
+  dashboard: "/dashboard",
   login: "/session/new",
   session: "/session",          // POST: create | DELETE: destroy
   register: "/registration/new",
@@ -53,5 +66,9 @@ export const routes = {
     removeRole: (id: number) => `/admin/users/${id}/remove_role`,
     gdprDelete: (id: number) => `/admin/users/${id}/gdpr_delete`,
     lessons: "/admin/lessons",
+    pipeline: "/admin/pipeline",
+    pipelineUpdate: (id: number) => `/admin/pipeline/${id}`,
+    pipelineAdvance: (id: number) => `/admin/pipeline/${id}/advance`,
+    pipelineRetreat: (id: number) => `/admin/pipeline/${id}/retreat`,
   },
 }

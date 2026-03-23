@@ -26,7 +26,7 @@ module Auth
         post "/auth/google_oauth2"
         follow_redirect!
       end
-      assert_redirected_to root_path
+      assert_redirected_to dashboard_path
       user = User.find_by(email_address: "oauth_new@example.com")
       assert_not_nil user
       assert user.student?
@@ -47,7 +47,7 @@ module Auth
         post "/auth/google_oauth2"
         follow_redirect!
       end
-      assert_redirected_to root_path
+      assert_redirected_to dashboard_path
     end
   end
 end
