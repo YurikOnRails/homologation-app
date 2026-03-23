@@ -5,6 +5,9 @@
 ```bash
 # Install mise (manages Ruby and Node versions)
 brew install mise
+
+# Optional: add mise to your shell so it activates automatically in every new terminal.
+# Without this, you'll need to run `mise install` manually each time you open a new terminal window.
 echo 'eval "$(mise activate zsh)"' >> ~/.zshrc && source ~/.zshrc
 
 # Clone and enter the project
