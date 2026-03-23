@@ -7,7 +7,7 @@ module Auth
       auth = request.env["omniauth.auth"]
       user = User.find_or_create_from_oauth(auth)
       start_new_session_for(user)
-      redirect_to root_path, notice: t("flash.signed_in")
+      redirect_to dashboard_path, notice: t("flash.signed_in")
     end
 
     def failure

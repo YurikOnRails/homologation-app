@@ -84,6 +84,7 @@ en:
     pipeline_advanced: "Request advanced to next stage"
     pipeline_retreated: "Request moved back to previous stage"
     pipeline_updated: "Pipeline updated"
+    consultation_sent: "Your consultation request has been sent. We will contact you soon."
   mailers:
     request_mailer:
       new_request:
@@ -101,6 +102,25 @@ en:
         one: "You have 1 unread message in the conversation \"%{title}\"."
         other: "You have %{count} unread messages in the conversation \"%{title}\"."
       cta: "Open the app to reply."
+  seo:
+    home:
+      title: "Space for Edu — Degree Homologation in Spain"
+      description: "Degree homologation, university admission, and Spanish language courses in Spain."
+    homologation:
+      title: "Degree Homologation — Space for Edu"
+      description: "Professional degree homologation service for university titles in Spain."
+    university:
+      title: "University Admission in Spain — Space for Edu"
+      description: "We help you access Spanish universities: selectividad, admission, and enrollment."
+    spanish:
+      title: "Spanish Classes — Space for Edu"
+      description: "Spanish classes for foreigners: levels A1-C2, individual and group."
+    consultation:
+      title: "Free Consultation — Space for Edu"
+      description: "Book a free consultation about homologation, university, or Spanish classes."
+    pricing:
+      title: "Pricing — Space for Edu"
+      description: "Check our prices for homologation, university access, and Spanish classes."
   notifications:
     new_request: "New request from %{name}"
     new_message: "New message from %{name}"

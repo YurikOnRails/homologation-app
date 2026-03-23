@@ -12,7 +12,7 @@ class ProfilesController < InertiaController
   def update
     authorize @user, :update?, policy_class: ProfilePolicy
     if @user.update(profile_params)
-      redirect_to root_path, notice: t("flash.profile_updated")
+      redirect_to dashboard_path, notice: t("flash.profile_updated")
     else
       redirect_to edit_profile_path, inertia: { errors: @user.errors }
     end

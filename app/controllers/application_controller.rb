@@ -73,12 +73,18 @@ class ApplicationController < ActionController::Base
     return unless Current.user
     return if Current.user.profile_complete?
     return if request.path.start_with?("/profile", "/settings", "/session", "/registration", "/auth", "/passwords")
+    return if request.path.match?(%r{\A/(#{I18n.available_locales.join("|")})/})
     redirect_to edit_profile_path, notice: t("flash.complete_profile")
   end
 
   def switch_locale(&action)
-    locale = extract_locale_from_user || extract_locale_from_header || I18n.default_locale
+    locale = extract_locale_from_params || extract_locale_from_user || extract_locale_from_header || I18n.default_locale
     I18n.with_locale(locale, &action)
+  end
+
+  def extract_locale_from_params
+    locale = params[:locale]
+    I18n.available_locales.map(&:to_s).include?(locale) ? locale : nil
   end
 
   def extract_locale_from_user

@@ -17,7 +17,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     user = User.find_by(email_address: "newuser@example.com")
     assert_not_nil user
     assert user.student?
-    assert_redirected_to root_path
+    assert_redirected_to dashboard_path
   end
 
   test "POST /registration with duplicate email does not create user" do

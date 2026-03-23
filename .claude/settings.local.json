@@ -4,7 +4,9 @@
       "Bash(bin/rails test:*)",
       "Bash(bin/rails db:migrate)",
       "Bash(find /home/wsl-user/homologation-app/app/frontend/pages -name *Pipeline* -type f)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx:*)",
+      "Bash(bin/rails routes:*)"
     ]
   }
 }

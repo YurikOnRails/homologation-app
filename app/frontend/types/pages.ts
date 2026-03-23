@@ -1,5 +1,14 @@
 // Page-specific props interfaces — one per page, added per step
 
+import type { PageProps } from "@inertiajs/core"
+import type { SeoProps } from "@/components/public/SeoHead"
+
+// All public marketing pages share this shape
+export interface PublicPageProps extends PageProps {
+  seo: SeoProps
+  [key: string]: unknown
+}
+
 // notifications/Index
 export interface NotificationItem {
   id: number
