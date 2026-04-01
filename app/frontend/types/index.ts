@@ -11,6 +11,9 @@ export interface User {
 }
 
 export interface AppFeatures {
+  // Cabinet access
+  hasHomologation: boolean
+  hasEducation: boolean
   // Action permissions
   canConfirmPayment: boolean
   canManageUsers: boolean

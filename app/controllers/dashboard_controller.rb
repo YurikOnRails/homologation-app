@@ -3,8 +3,8 @@ class DashboardController < InertiaController
 
   def index
     authorize :dashboard, :index?
-    return redirect_to lessons_path if current_user.teacher? && !current_user.super_admin?
-    return redirect_to teachers_path if current_user.coordinator? && !current_user.super_admin?
+
+    return smart_redirect if redirect_needed?
 
     if current_user.student?
       render inertia: "dashboard/Index", props: { stats: student_stats }
@@ -18,6 +18,27 @@ class DashboardController < InertiaController
   end
 
   private
+
+  def redirect_needed?
+    return true if current_user.teacher? && !current_user.super_admin?
+    return true if current_user.coordinator? && !current_user.super_admin?
+    return true if current_user.student? && !current_user.super_admin? && !both_cabinets?
+    false
+  end
+
+  def smart_redirect
+    if current_user.teacher?
+      redirect_to lessons_path
+    elsif current_user.coordinator?
+      redirect_to current_user.education_cabinet? ? teachers_path : chats_path
+    elsif current_user.student?
+      redirect_to current_user.homologation_cabinet? ? homologation_requests_path : lessons_path
+    end
+  end
+
+  def both_cabinets?
+    current_user.homologation_cabinet? && current_user.education_cabinet?
+  end
 
   def student_stats
     { myRequests: current_user.homologation_requests.count,

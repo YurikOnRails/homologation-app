@@ -49,6 +49,9 @@ class ApplicationController < ActionController::Base
 
   def build_features(user)
     {
+      # Cabinet access
+      hasHomologation: user.homologation_cabinet?,
+      hasEducation: user.education_cabinet?,
       # Action permissions
       canConfirmPayment: user.super_admin?,
       canManageUsers: user.super_admin?,
