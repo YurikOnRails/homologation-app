@@ -62,9 +62,9 @@ export default function Precios() {
 
       {/* Pricing cards */}
       <PublicSection className="bg-white">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-start">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map(({ key, features, highlighted }, i) => (
-            <Reveal key={key} direction="up" delay={i * 120}>
+            <Reveal key={key} direction="up" delay={i * 120} className="h-full">
               {highlighted ? (
                 <ShimmerBorder>
                   <PricingCard
@@ -137,8 +137,8 @@ function PricingCard({
 }) {
   return (
     <Card
-      className={`border relative transition-all duration-300 hover:shadow-xl group ${
-        highlighted ? "border-[#2D7FF9]/30 shadow-lg scale-[1.02]" : "hover:-translate-y-1"
+      className={`border relative transition-all duration-300 hover:shadow-xl group flex flex-col h-full ${
+        highlighted ? "overflow-visible border-[#2D7FF9]/30 shadow-lg scale-[1.02]" : "hover:-translate-y-1"
       }`}
     >
       {highlighted && (
@@ -157,8 +157,8 @@ function PricingCard({
           {t(`public.precios.plan_${planKey}_desc`)}
         </p>
       </CardHeader>
-      <CardContent className="pt-4">
-        <div className="space-y-3 mb-6">
+      <CardContent className="pt-4 flex-1 flex flex-col">
+        <div className="space-y-3 flex-1">
           {Array.from({ length: features }, (_, i) => (
             <div key={i} className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-[#2D7FF9] mt-0.5 shrink-0" />
@@ -166,7 +166,7 @@ function PricingCard({
             </div>
           ))}
         </div>
-        <Link href={routes.register}>
+        <Link href={routes.register} className="mt-6">
           <Button
             className={`w-full min-h-[44px] transition-all duration-300 ${
               highlighted
