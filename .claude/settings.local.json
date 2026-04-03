@@ -17,7 +17,8 @@
       "Bash(bin/rails runner:*)",
       "Bash(bundle list:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ruby -e \"puts Gem.paths.path.first\")"
     ]
   }
 }

@@ -7,6 +7,7 @@ class LessonPolicyTest < ActiveSupport::TestCase
     @pedro = create(:user, :student)
     @maria = create(:user, :coordinator)
     create(:teacher_profile, user: @ivan)
+    create(:teacher_student, teacher: @ivan, student: @ana, assigned_by: @maria.id)
     @lesson = create(:lesson, teacher: @ivan, student: @ana)
   end
 

@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :homologation_request do
+    # ⚠️ Default status is "draft". Always use explicit trait:
+    #   :submitted, :awaiting_payment, :payment_confirmed, :in_pipeline
     association :user, :student
     subject { Faker::Lorem.sentence(word_count: 3) }
     service_type { "equivalencia" }
@@ -24,7 +26,7 @@ FactoryBot.define do
     trait :payment_confirmed do
       status { "payment_confirmed" }
       privacy_accepted { true }
-      payment_amount { Faker::Commerce.price(range: 50..500.0) }
+      payment_amount { rand(50.0..500.0).round(2) }
       payment_confirmed_at { Time.current }
     end
 
@@ -39,6 +41,7 @@ FactoryBot.define do
       # For submitted requests, the after_save callback auto-creates the conversation.
       # This trait ensures conversation + participant exist regardless of status.
       after(:create) do |request|
+        request.reload # clear cached nil association after callback may have created it
         unless request.conversation
           conv = Conversation.create!(homologation_request: request)
           conv.conversation_participants.create!(user: request.user)

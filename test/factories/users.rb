@@ -4,11 +4,11 @@ FactoryBot.define do
       locale = %i[ru es].sample
       prev = Faker::Config.locale
       Faker::Config.locale = locale
-      n = Faker::Name.name
+      n = Faker::Name.name.truncate(100, omission: "")
       Faker::Config.locale = prev
       n
     }
-    email_address { Faker::Internet.unique.email }
+    sequence(:email_address) { |n| "user#{n}_#{Process.pid}@test.example.com" }
     password { "password123" }
     locale { "es" }
     is_minor { false }
