@@ -11,6 +11,9 @@ class AmoCrmClientTest < ActiveSupport::TestCase
       refresh_token: "test_refresh_token",
       expires_at: 1.hour.from_now
     )
+
+    @student = create(:user, :student)
+    @request = create(:homologation_request, :submitted, user: @student)
   end
 
   teardown do
@@ -29,7 +32,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
-    contact_id = client.find_or_create_contact(users(:student_ana))
+    contact_id = client.find_or_create_contact(@student)
     assert_equal 999, contact_id
   end
 
@@ -44,7 +47,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
-    contact_id = client.find_or_create_contact(users(:student_ana))
+    contact_id = client.find_or_create_contact(@student)
     assert_equal 777, contact_id
   end
 
@@ -55,7 +58,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
-    lead_id = client.create_lead(homologation_requests(:ana_equivalencia), 999)
+    lead_id = client.create_lead(@request, 999)
     assert_equal 888, lead_id
   end
 
@@ -76,7 +79,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
 
     client = AmoCrmClient.new
     assert_raises(AmoCrmClient::ApiError) do
-      client.find_or_create_contact(users(:student_ana))
+      client.find_or_create_contact(@student)
     end
   end
 
@@ -98,7 +101,7 @@ class AmoCrmClientTest < ActiveSupport::TestCase
                  headers: { "Content-Type" => "application/json" })
 
     client = AmoCrmClient.new
-    contact_id = client.find_or_create_contact(users(:student_ana))
+    contact_id = client.find_or_create_contact(@student)
     assert_equal 111, contact_id
     assert_equal "new_token", AmoCrmToken.last.access_token
   end

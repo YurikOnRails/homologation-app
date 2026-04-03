@@ -2,13 +2,22 @@ require "test_helper"
 
 class MessagePolicyTest < ActiveSupport::TestCase
   setup do
-    @ana = users(:student_ana)
-    @pedro = users(:student_pedro)
-    @maria = users(:coordinator_maria)
-    @boss = users(:super_admin_boss)
-    @ivan = users(:teacher_ivan)
-    @request_conversation = conversations(:ana_equivalencia_conversation)
-    @teacher_conversation = conversations(:ivan_ana_conversation)
+    @ana = create(:user, :student)
+    @pedro = create(:user, :student)
+    @maria = create(:user, :coordinator)
+    @boss = create(:user, :super_admin)
+    @ivan = create(:user, :teacher)
+
+    # Request conversation: ana is participant, maria is participant
+    @submitted_request = create(:homologation_request, :submitted, :with_conversation, user: @ana)
+    @request_conversation = @submitted_request.conversation
+    @request_conversation.conversation_participants.create!(user: @maria)
+
+    # Teacher-student conversation
+    @teacher_student = create(:teacher_student, teacher: @ivan, student: @ana, assigned_by: @maria.id)
+    @teacher_conversation = Conversation.create!(teacher_student_id: @teacher_student.id)
+    @teacher_conversation.conversation_participants.create!(user: @ivan)
+    @teacher_conversation.conversation_participants.create!(user: @ana)
   end
 
   # === Request conversations ===

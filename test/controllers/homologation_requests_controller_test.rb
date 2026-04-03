@@ -1,30 +1,40 @@
 require "test_helper"
 
 class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @admin = create(:user, :super_admin)
+    @coordinator = create(:user, :coordinator)
+    @teacher = create(:user, :teacher)
+    @student = create(:user, :student)
+    @other_student = create(:user, :student, :spanish_speaking)
+    @submitted_request = create(:homologation_request, :submitted, :with_conversation, user: @student)
+    @draft_request = create(:homologation_request, :draft, user: @student)
+  end
+
   # === Authorization: index ===
 
   test "student sees own requests" do
-    sign_in users(:student_ana)
+    sign_in @student
     get homologation_requests_path
     assert_response :ok
     assert_equal "requests/Index", inertia.component
   end
 
   test "coordinator cannot see requests" do
-    sign_in users(:coordinator_maria)
+    sign_in @coordinator
     get homologation_requests_path
     assert_response :forbidden
   end
 
   test "super_admin sees all requests" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     get homologation_requests_path
     assert_response :ok
     assert_equal "requests/Index", inertia.component
   end
 
   test "teacher cannot access requests" do
-    sign_in users(:teacher_ivan)
+    sign_in @teacher
     get homologation_requests_path
     assert_response :forbidden
   end
@@ -32,34 +42,34 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Authorization: show ===
 
   test "student can view own request" do
-    sign_in users(:student_ana)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @student
+    get homologation_request_path(@submitted_request)
     assert_response :ok
     assert_equal "requests/Show", inertia.component
   end
 
   test "student cannot see other student request" do
-    sign_in users(:student_pedro)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @other_student
+    get homologation_request_path(@submitted_request)
     assert_response :forbidden
   end
 
   test "coordinator cannot view requests" do
-    sign_in users(:coordinator_maria)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @coordinator
+    get homologation_request_path(@submitted_request)
     assert_response :forbidden
   end
 
   test "super_admin can view any request" do
-    sign_in users(:super_admin_boss)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @admin
+    get homologation_request_path(@submitted_request)
     assert_response :ok
   end
 
   # === Create ===
 
   test "student can create request" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_difference "HomologationRequest.count", 1 do
       post homologation_requests_path, params: {
         subject: "New Request", service_type: "equivalencia",
@@ -70,7 +80,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "student can save draft" do
-    sign_in users(:student_ana)
+    sign_in @student
     post homologation_requests_path, params: {
       commit: "draft",
       subject: "Draft", service_type: "equivalencia"
@@ -79,14 +89,14 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "student can access new request form" do
-    sign_in users(:student_ana)
+    sign_in @student
     get new_homologation_request_path
     assert_response :ok
     assert_equal "requests/New", inertia.component
   end
 
   test "coordinator cannot create request (only students can)" do
-    sign_in users(:coordinator_maria)
+    sign_in @coordinator
     assert_no_difference "HomologationRequest.count" do
       post homologation_requests_path, params: {
         subject: "Test", service_type: "equivalencia", privacy_accepted: true
@@ -98,7 +108,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Create: validation ===
 
   test "create fails without subject" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_no_difference "HomologationRequest.count" do
       post homologation_requests_path, params: {
         service_type: "equivalencia", privacy_accepted: true
@@ -108,7 +118,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create fails without service_type" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_no_difference "HomologationRequest.count" do
       post homologation_requests_path, params: {
         subject: "Test", privacy_accepted: true
@@ -118,7 +128,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create submit fails without privacy_accepted" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_no_difference "HomologationRequest.count" do
       post homologation_requests_path, params: {
         subject: "Test", service_type: "equivalencia", privacy_accepted: false
@@ -128,7 +138,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create draft allows privacy_accepted false" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_difference "HomologationRequest.count", 1 do
       post homologation_requests_path, params: {
         commit: "draft",
@@ -142,7 +152,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Create: optional fields ===
 
   test "create persists education and identity fields" do
-    sign_in users(:student_ana)
+    sign_in @student
     post homologation_requests_path, params: {
       subject: "Full request", service_type: "homologacion",
       privacy_accepted: true,
@@ -170,7 +180,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with only required fields leaves optional fields nil" do
-    sign_in users(:student_ana)
+    sign_in @student
     post homologation_requests_path, params: {
       subject: "Minimal", service_type: "equivalencia", privacy_accepted: true
     }
@@ -185,7 +195,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Create: file uploads ===
 
   test "create with file attachments persists files" do
-    sign_in users(:student_ana)
+    sign_in @student
     file = fixture_file_upload("test_document.pdf", "application/pdf")
 
     assert_difference "HomologationRequest.count", 1 do
@@ -200,7 +210,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create without files still succeeds" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_difference "HomologationRequest.count", 1 do
       post homologation_requests_path, params: {
         subject: "No files", service_type: "equivalencia", privacy_accepted: true
@@ -215,107 +225,96 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Update: status transitions ===
 
   test "super_admin can change status" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    patch homologation_request_path(request), params: { status: "in_review" }
-    assert_redirected_to homologation_request_path(request)
-    assert_equal "in_review", request.reload.status
+    sign_in @admin
+    patch homologation_request_path(@submitted_request), params: { status: "in_review" }
+    assert_redirected_to homologation_request_path(@submitted_request)
+    assert_equal "in_review", @submitted_request.reload.status
   end
 
   test "coordinator cannot change status" do
-    sign_in users(:coordinator_maria)
-    request = homologation_requests(:ana_equivalencia)
-    patch homologation_request_path(request), params: { status: "in_review" }
+    sign_in @coordinator
+    patch homologation_request_path(@submitted_request), params: { status: "in_review" }
     assert_response :forbidden
-    assert_equal "submitted", request.reload.status
+    assert_equal "submitted", @submitted_request.reload.status
   end
 
   test "student cannot update status" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_equivalencia)
-    patch homologation_request_path(request), params: { status: "in_review" }
+    sign_in @student
+    patch homologation_request_path(@submitted_request), params: { status: "in_review" }
     assert_response :forbidden
   end
 
   test "invalid status transition returns redirect with alert" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia) # status: submitted
-    patch homologation_request_path(request), params: { status: "resolved" }
+    sign_in @admin
+    patch homologation_request_path(@submitted_request), params: { status: "resolved" }
     assert_response :redirect
     assert flash[:alert].present?, "Expected flash alert for invalid transition"
-    assert_equal "submitted", request.reload.status
+    assert_equal "submitted", @submitted_request.reload.status
   end
 
   # === Update: field changes ===
 
   test "super_admin can update draft fields" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_draft)
-    patch homologation_request_path(request), params: {
+    sign_in @admin
+    patch homologation_request_path(@draft_request), params: {
       subject: "Updated subject", education_system: "colombia"
     }
-    assert_redirected_to homologation_request_path(request)
-    request.reload
-    assert_equal "Updated subject", request.subject
-    assert_equal "colombia", request.education_system
-    assert_equal "draft", request.status
+    assert_redirected_to homologation_request_path(@draft_request)
+    @draft_request.reload
+    assert_equal "Updated subject", @draft_request.subject
+    assert_equal "colombia", @draft_request.education_system
+    assert_equal "draft", @draft_request.status
   end
 
   test "super_admin can transition draft to submitted" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_draft)
-    request.update!(privacy_accepted: true)
-    patch homologation_request_path(request), params: { status: "submitted" }
-    assert_redirected_to homologation_request_path(request)
-    assert_equal "submitted", request.reload.status
+    sign_in @admin
+    @draft_request.update!(privacy_accepted: true)
+    patch homologation_request_path(@draft_request), params: { status: "submitted" }
+    assert_redirected_to homologation_request_path(@draft_request)
+    assert_equal "submitted", @draft_request.reload.status
   end
 
   test "student cannot update own draft (policy restricts update to super_admin)" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_draft)
-    patch homologation_request_path(request), params: { subject: "Hacked" }
+    sign_in @student
+    patch homologation_request_path(@draft_request), params: { subject: "Hacked" }
     assert_response :forbidden
-    assert_equal "Draft request", request.reload.subject
+    assert_equal @draft_request.subject, @draft_request.reload.subject
   end
 
   test "super_admin update with blank subject returns error" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    patch homologation_request_path(request), params: { subject: "" }
+    sign_in @admin
+    patch homologation_request_path(@submitted_request), params: { subject: "" }
     assert_response :redirect
-    assert_not_equal "", request.reload.subject
+    assert_not_equal "", @submitted_request.reload.subject
   end
 
   # === Confirm payment ===
 
   test "super_admin can confirm payment" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "awaiting_payment")
-    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
-    assert_redirected_to homologation_request_path(request)
-    assert_equal "payment_confirmed", request.reload.status
-    assert_equal 60.0, request.reload.payment_amount.to_f
+    sign_in @admin
+    @submitted_request.update!(status: "awaiting_payment")
+    post confirm_payment_homologation_request_path(@submitted_request), params: { payment_amount: 60 }
+    assert_redirected_to homologation_request_path(@submitted_request)
+    assert_equal "payment_confirmed", @submitted_request.reload.status
+    assert_equal 60.0, @submitted_request.reload.payment_amount.to_f
   end
 
   test "coordinator cannot confirm payment" do
-    sign_in users(:coordinator_maria)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "awaiting_payment")
-    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
+    sign_in @coordinator
+    @submitted_request.update!(status: "awaiting_payment")
+    post confirm_payment_homologation_request_path(@submitted_request), params: { payment_amount: 60 }
     assert_response :forbidden
   end
 
   test "student cannot confirm payment" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "awaiting_payment")
-    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
+    sign_in @student
+    @submitted_request.update!(status: "awaiting_payment")
+    post confirm_payment_homologation_request_path(@submitted_request), params: { payment_amount: 60 }
     assert_response :forbidden
   end
 
   test "confirm payment with empty amount is rejected with alert" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = awaiting_payment_request
     post confirm_payment_homologation_request_path(request), params: { payment_amount: "" }
     assert_response :redirect
@@ -324,7 +323,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "confirm payment with zero amount is rejected with alert" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = awaiting_payment_request
     post confirm_payment_homologation_request_path(request), params: { payment_amount: 0 }
     assert_response :redirect
@@ -333,7 +332,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "confirm payment with valid amount succeeds" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = awaiting_payment_request
     post confirm_payment_homologation_request_path(request), params: { payment_amount: 150 }
     assert_redirected_to homologation_request_path(request)
@@ -342,7 +341,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "payment confirmation triggers AmoCRM sync job" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = awaiting_payment_request
     assert_enqueued_with(job: AmoCrmSyncJob) do
       post confirm_payment_homologation_request_path(request), params: { payment_amount: 150 }
@@ -350,7 +349,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "double confirm payment — second attempt fails gracefully" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = awaiting_payment_request
     post confirm_payment_homologation_request_path(request), params: { payment_amount: 100 }
     assert_equal "payment_confirmed", request.reload.status
@@ -363,30 +362,27 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === AmoCRM retry ===
 
   test "super_admin can retry AmoCRM sync" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
+    sign_in @admin
+    @submitted_request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
 
-    post retry_sync_homologation_request_path(request)
-    assert_redirected_to homologation_request_path(request)
-    assert_nil request.reload.amo_crm_sync_error
+    post retry_sync_homologation_request_path(@submitted_request)
+    assert_redirected_to homologation_request_path(@submitted_request)
+    assert_nil @submitted_request.reload.amo_crm_sync_error
   end
 
   test "coordinator cannot retry AmoCRM sync" do
-    sign_in users(:coordinator_maria)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
+    sign_in @coordinator
+    @submitted_request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
 
-    post retry_sync_homologation_request_path(request)
+    post retry_sync_homologation_request_path(@submitted_request)
     assert_response :forbidden
   end
 
   test "student cannot retry AmoCRM sync" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
+    sign_in @student
+    @submitted_request.update!(status: "payment_confirmed", payment_amount: 100, amo_crm_sync_error: "API timeout")
 
-    post retry_sync_homologation_request_path(request)
+    post retry_sync_homologation_request_path(@submitted_request)
     assert_response :forbidden
   end
 
@@ -401,8 +397,8 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   ].freeze
 
   test "show props contain all keys expected by RequestDetail TS interface" do
-    sign_in users(:super_admin_boss)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @admin
+    get homologation_request_path(@submitted_request)
     assert_response :ok
 
     props = inertia.props[:request]
@@ -412,19 +408,18 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show props user has id, name, email" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    get homologation_request_path(request)
+    sign_in @admin
+    get homologation_request_path(@submitted_request)
 
     user_props = inertia.props[:request][:user]
-    assert_equal request.user.id, user_props[:id]
-    assert_equal request.user.name, user_props[:name]
-    assert_equal request.user.email_address, user_props[:email]
+    assert_equal @submitted_request.user.id, user_props[:id]
+    assert_equal @submitted_request.user.name, user_props[:name]
+    assert_equal @submitted_request.user.email_address, user_props[:email]
   end
 
   test "show props dates are ISO 8601 strings" do
-    sign_in users(:super_admin_boss)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @admin
+    get homologation_request_path(@submitted_request)
 
     props = inertia.props[:request]
     assert_match(/\d{4}-\d{2}-\d{2}T/, props[:createdAt])
@@ -432,13 +427,13 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show props files is an array" do
-    sign_in users(:super_admin_boss)
-    get homologation_request_path(homologation_requests(:ana_equivalencia))
+    sign_in @admin
+    get homologation_request_path(@submitted_request)
     assert_kind_of Array, inertia.props[:request][:files]
   end
 
   test "show props include file details when files attached" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = request_with_file
     get homologation_request_path(request)
 
@@ -453,16 +448,15 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Show: special cases ===
 
   test "super_admin is added as conversation participant on show" do
-    sign_in users(:super_admin_boss)
-    request = homologation_requests(:ana_equivalencia)
-    conv = request.conversation
+    sign_in @admin
+    conv = @submitted_request.conversation
 
-    get homologation_request_path(request)
-    assert_includes conv.participants, users(:super_admin_boss)
+    get homologation_request_path(@submitted_request)
+    assert_includes conv.participants, @admin
   end
 
   test "submitted request auto-creates conversation" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_difference "Conversation.count", 1 do
       post homologation_requests_path, params: {
         subject: "With conversation", service_type: "equivalencia",
@@ -471,11 +465,11 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     end
     new_request = HomologationRequest.last
     assert_not_nil new_request.conversation
-    assert_includes new_request.conversation.participants, users(:student_ana)
+    assert_includes new_request.conversation.participants, @student
   end
 
   test "draft request does not create conversation" do
-    sign_in users(:student_ana)
+    sign_in @student
     assert_no_difference "Conversation.count" do
       post homologation_requests_path, params: {
         commit: "draft",
@@ -485,9 +479,8 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "student can view own draft — conversation is nil" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_draft)
-    get homologation_request_path(request)
+    sign_in @student
+    get homologation_request_path(@draft_request)
     assert_response :ok
     assert_equal "requests/Show", inertia.component
     assert_nil inertia.props[:request][:conversation]
@@ -496,32 +489,31 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # === Soft delete ===
 
   test "soft-deleted request is not accessible via show" do
-    sign_in users(:student_ana)
-    request = homologation_requests(:ana_equivalencia)
-    request.discard
+    sign_in @student
+    @submitted_request.discard
 
-    get homologation_request_path(request)
+    get homologation_request_path(@submitted_request)
     assert_response :not_found
   end
 
   # === File download ===
 
   test "student can download own file" do
-    sign_in users(:student_ana)
+    sign_in @student
     request = request_with_file
     get download_document_homologation_request_path(request, document_id: request.originals.first.blob.id)
     assert_response :redirect
   end
 
   test "student cannot download file from another student request" do
-    sign_in users(:student_pedro)
+    sign_in @other_student
     request = request_with_file
     get download_document_homologation_request_path(request, document_id: request.originals.first.blob.id)
     assert_response :forbidden
   end
 
   test "super_admin can download any file" do
-    sign_in users(:super_admin_boss)
+    sign_in @admin
     request = request_with_file
     get download_document_homologation_request_path(request, document_id: request.originals.first.blob.id)
     assert_response :redirect
@@ -532,18 +524,16 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   # Shared setup helpers — reduce duplication in tests
 
   def awaiting_payment_request
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "awaiting_payment")
-    request
+    @submitted_request.update!(status: "awaiting_payment")
+    @submitted_request
   end
 
   def request_with_file
-    request = homologation_requests(:ana_equivalencia)
-    request.originals.attach(
+    @submitted_request.originals.attach(
       io: File.open(file_fixture("test_document.pdf")),
       filename: "diploma.pdf",
       content_type: "application/pdf"
     )
-    request
+    @submitted_request
   end
 end

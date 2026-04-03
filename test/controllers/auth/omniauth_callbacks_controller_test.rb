@@ -4,6 +4,7 @@ module Auth
   class OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
     setup do
       OmniAuth.config.test_mode = true
+      @existing_student = create(:user, :student)
     end
 
     teardown do
@@ -33,13 +34,12 @@ module Auth
     end
 
     test "OAuth finds existing user by email and logs in" do
-      existing_user = users(:student_ana)
       OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
         "provider" => "google_oauth2",
         "uid" => "google_uid_existing",
         "info" => {
-          "email" => existing_user.email_address,
-          "name" => existing_user.name,
+          "email" => @existing_student.email_address,
+          "name" => @existing_student.name,
           "image" => nil
         }
       )

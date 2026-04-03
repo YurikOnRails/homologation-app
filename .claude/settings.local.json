@@ -11,7 +11,13 @@
       "Bash(ruby -e \"require ''yaml''; YAML.load_file\\(''config/locales/es.yml''\\)\")",
       "Bash(git add:*)",
       "Bash(git commit -m ':*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(bundle install:*)",
+      "Bash(RAILS_ENV=test bin/rails runner:*)",
+      "Bash(bin/rails runner:*)",
+      "Bash(bundle list:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -1,7 +1,7 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
-  setup { @user = users(:student_ana) }
+  setup { @user = create(:user, :student) }
 
   test "GET /session/new renders login page" do
     get new_session_path

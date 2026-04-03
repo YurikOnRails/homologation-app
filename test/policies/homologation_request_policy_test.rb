@@ -2,12 +2,12 @@ require "test_helper"
 
 class HomologationRequestPolicyTest < ActiveSupport::TestCase
   setup do
-    @ana = users(:student_ana)
-    @pedro = users(:student_pedro)
-    @maria = users(:coordinator_maria)
-    @boss = users(:super_admin_boss)
-    @ivan = users(:teacher_ivan)
-    @ana_request = homologation_requests(:ana_equivalencia)
+    @ana = create(:user, :student)
+    @pedro = create(:user, :student)
+    @maria = create(:user, :coordinator)
+    @boss = create(:user, :super_admin)
+    @ivan = create(:user, :teacher)
+    @ana_request = create(:homologation_request, :submitted, user: @ana)
   end
 
   # === index? ===

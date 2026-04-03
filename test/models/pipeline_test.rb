@@ -4,13 +4,14 @@ class PipelineTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
 
   setup do
-    @request = homologation_requests(:ana_equivalencia)
+    @student = create(:user, :student, country: "RU")
+    @spanish_student = create(:user, :student, country: "CO")
+    @request = create(:homologation_request, :submitted, user: @student)
     @request.update_columns(
       status: "payment_confirmed",
       payment_confirmed_at: Time.current,
       payment_amount: 500.00
     )
-    @admin = users(:super_admin_boss)
   end
 
   # === enter_pipeline! ===
@@ -49,18 +50,15 @@ class PipelineTest < ActiveSupport::TestCase
   # === effective_pipeline_stages ===
 
   test "stages include traduccion for non-Spanish-speaking country (RU)" do
-    # student_ana has country: RU
     @request.enter_pipeline!
     stages = @request.effective_pipeline_stages
     assert_includes stages, "traduccion"
   end
 
   test "stages skip traduccion for Spanish-speaking country (CO)" do
-    # student_pedro has country: CO
-    request = homologation_requests(:ana_draft)
+    request = create(:homologation_request, :submitted, user: @spanish_student)
     request.update_columns(
       status: "payment_confirmed",
-      user_id: users(:student_pedro).id,
       payment_amount: 500,
       payment_confirmed_at: Time.current
     )
@@ -77,10 +75,9 @@ class PipelineTest < ActiveSupport::TestCase
   end
 
   test "cotejo routes to cotejo_delegacion for CO" do
-    request = homologation_requests(:ana_draft)
+    request = create(:homologation_request, :submitted, user: @spanish_student)
     request.update_columns(
       status: "payment_confirmed",
-      user_id: users(:student_pedro).id,
       payment_amount: 500,
       payment_confirmed_at: Time.current
     )
@@ -106,10 +103,9 @@ class PipelineTest < ActiveSupport::TestCase
   end
 
   test "advance from documentos skips traduccion for Spanish-speaking country" do
-    request = homologation_requests(:ana_draft)
+    request = create(:homologation_request, :submitted, user: @spanish_student)
     request.update_columns(
       status: "payment_confirmed",
-      user_id: users(:student_pedro).id,
       payment_amount: 500,
       payment_confirmed_at: Time.current
     )
@@ -127,10 +123,9 @@ class PipelineTest < ActiveSupport::TestCase
   end
 
   test "advance from redsara goes to cotejo_delegacion for CO" do
-    request = homologation_requests(:ana_draft)
+    request = create(:homologation_request, :submitted, user: @spanish_student)
     request.update_columns(
       status: "payment_confirmed",
-      user_id: users(:student_pedro).id,
       payment_amount: 500,
       payment_confirmed_at: Time.current
     )

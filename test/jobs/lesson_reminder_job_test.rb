@@ -1,9 +1,15 @@
 require "test_helper"
 
 class LessonReminderJobTest < ActiveJob::TestCase
+  setup do
+    @teacher = create(:user, :teacher)
+    @student = create(:user, :student)
+    create(:teacher_profile, user: @teacher)
+    @lesson = create(:lesson, teacher: @teacher, student: @student)
+  end
+
   test "sends reminder for lessons starting in ~1 hour" do
-    lesson = lessons(:ivan_ana_lesson)
-    lesson.update!(scheduled_at: 60.minutes.from_now, status: "scheduled")
+    @lesson.update!(scheduled_at: 60.minutes.from_now, status: "scheduled")
 
     assert_difference "Notification.count", 2 do  # teacher + student
       perform_enqueued_jobs { LessonReminderJob.perform_now }
@@ -11,8 +17,7 @@ class LessonReminderJobTest < ActiveJob::TestCase
   end
 
   test "does not send reminder for cancelled lessons" do
-    lesson = lessons(:ivan_ana_lesson)
-    lesson.update!(scheduled_at: 60.minutes.from_now, status: "cancelled")
+    @lesson.update!(scheduled_at: 60.minutes.from_now, status: "cancelled")
 
     assert_no_difference "Notification.count" do
       LessonReminderJob.perform_now
@@ -20,8 +25,7 @@ class LessonReminderJobTest < ActiveJob::TestCase
   end
 
   test "does not send reminder for lessons outside the 1-hour window" do
-    lesson = lessons(:ivan_ana_lesson)
-    lesson.update!(scheduled_at: 3.hours.from_now, status: "scheduled")
+    @lesson.update!(scheduled_at: 3.hours.from_now, status: "scheduled")
 
     assert_no_difference "Notification.count" do
       LessonReminderJob.perform_now

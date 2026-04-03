@@ -2,10 +2,10 @@ require "test_helper"
 
 class UserPolicyTest < ActiveSupport::TestCase
   setup do
-    @boss = users(:super_admin_boss)
-    @maria = users(:coordinator_maria)
-    @ana = users(:student_ana)
-    @target = users(:student_pedro)
+    @boss = create(:user, :super_admin)
+    @maria = create(:user, :coordinator)
+    @ana = create(:user, :student)
+    @target = create(:user, :student)
   end
 
   test "super_admin can manage users" do

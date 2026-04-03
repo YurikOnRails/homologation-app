@@ -8,6 +8,7 @@ class TelegramControllerTest < ActionDispatch::IntegrationTest
     WebMock.stub_request(:post, /api\.telegram\.org/).to_return(
       status: 200, body: '{"ok":true}', headers: { "Content-Type" => "application/json" }
     )
+    @student = create(:user, :student)
   end
 
   teardown do
@@ -16,8 +17,7 @@ class TelegramControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "webhook links telegram to user" do
-    user = users(:student_ana)
-    user.update!(telegram_link_token: "abc123")
+    @student.update!(telegram_link_token: "abc123")
 
     post "/telegram/webhook",
       params: { message: { text: "/start abc123", chat: { id: 999 } } }.to_json,
@@ -27,9 +27,9 @@ class TelegramControllerTest < ActionDispatch::IntegrationTest
       }
 
     assert_response :ok
-    assert_equal "999", user.reload.telegram_chat_id
-    assert user.notification_telegram?
-    assert_nil user.reload.telegram_link_token
+    assert_equal "999", @student.reload.telegram_chat_id
+    assert @student.notification_telegram?
+    assert_nil @student.reload.telegram_link_token
   end
 
   test "webhook rejects invalid secret" do

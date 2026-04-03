@@ -2,8 +2,11 @@ require "test_helper"
 
 class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @admin = users(:super_admin_boss)
-    @request_record = homologation_requests(:ana_equivalencia)
+    @admin = create(:user, :super_admin)
+    @coordinator = create(:user, :coordinator)
+    @teacher = create(:user, :teacher)
+    @student = create(:user, :student)
+    @request_record = create(:homologation_request, :submitted, user: @student)
     @request_record.update_columns(
       status: "payment_confirmed",
       payment_confirmed_at: Time.current,
@@ -17,19 +20,19 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
   # === Authorization ===
 
   test "student cannot access pipeline index" do
-    sign_in users(:student_ana)
+    sign_in @student
     get admin_pipeline_path
     assert_response :forbidden
   end
 
   test "coordinator cannot access pipeline index" do
-    sign_in users(:coordinator_maria)
+    sign_in @coordinator
     get admin_pipeline_path
     assert_response :forbidden
   end
 
   test "teacher cannot access pipeline index" do
-    sign_in users(:teacher_ivan)
+    sign_in @teacher
     get admin_pipeline_path
     assert_response :forbidden
   end
@@ -65,10 +68,10 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
 
   test "index returns filters" do
     sign_in @admin
-    get admin_pipeline_path, params: { year: 2026, q: "Ana" }
+    get admin_pipeline_path, params: { year: 2026, q: @student.name.split.first }
     filters = inertia.props[:filters]
     assert_equal "2026", filters[:year]
-    assert_equal "Ana", filters[:q]
+    assert_equal @student.name.split.first, filters[:q]
   end
 
   test "index filters by year" do
@@ -83,7 +86,7 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
   # === Advance ===
 
   test "student cannot advance pipeline" do
-    sign_in users(:student_ana)
+    sign_in @student
     patch admin_pipeline_advance_path(@request_record)
     assert_response :forbidden
   end
@@ -106,7 +109,7 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
   # === Retreat ===
 
   test "student cannot retreat pipeline" do
-    sign_in users(:student_ana)
+    sign_in @student
     patch admin_pipeline_retreat_path(@request_record)
     assert_response :forbidden
   end
@@ -129,7 +132,7 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
   # === Update ===
 
   test "student cannot update pipeline fields" do
-    sign_in users(:student_ana)
+    sign_in @student
     patch admin_pipeline_update_path(@request_record), params: {
       homologation_request: { pipeline_notes: "test" }
     }
