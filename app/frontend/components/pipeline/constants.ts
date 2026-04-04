@@ -5,18 +5,13 @@ import type { SharedProps } from "@/types/index"
 // ─── Color palette ──────────────────────────────────────────────────────────
 // Maps the `color` field from config/pipeline.yml to Tailwind classes.
 
+const MONO = { border: "border-border", bg: "bg-primary", text: "text-muted-foreground", dot: "bg-muted-foreground" }
+
 const COLOR_PALETTE: Record<string, { border: string; bg: string; text: string; dot: string }> = {
-  amber:   { border: "border-l-amber-400",   bg: "bg-amber-500",   text: "text-amber-700",   dot: "bg-amber-400" },
-  blue:    { border: "border-l-blue-400",    bg: "bg-blue-500",    text: "text-blue-700",    dot: "bg-blue-400" },
-  emerald: { border: "border-l-emerald-400", bg: "bg-emerald-500", text: "text-emerald-700", dot: "bg-emerald-400" },
-  orange:  { border: "border-l-orange-400",  bg: "bg-orange-500",  text: "text-orange-700",  dot: "bg-orange-400" },
-  violet:  { border: "border-l-violet-400",  bg: "bg-violet-500",  text: "text-violet-700",  dot: "bg-violet-400" },
-  pink:    { border: "border-l-pink-400",    bg: "bg-pink-500",    text: "text-pink-700",    dot: "bg-pink-400" },
-  cyan:    { border: "border-l-cyan-400",    bg: "bg-cyan-500",    text: "text-cyan-700",    dot: "bg-cyan-400" },
-  green:   { border: "border-l-green-400",   bg: "bg-green-500",   text: "text-green-700",   dot: "bg-green-400" },
+  amber: MONO, blue: MONO, emerald: MONO, orange: MONO, violet: MONO, pink: MONO, cyan: MONO, green: MONO,
 }
 
-const DEFAULT_COLOR = COLOR_PALETTE.blue
+const DEFAULT_COLOR = MONO
 
 // ─── Hook: pipeline config from server ──────────────────────────────────────
 
@@ -48,14 +43,17 @@ export function usePipeline() {
 
 export const CURRENT_YEAR = new Date().getFullYear()
 
+const OUTLINE_BADGE = { bg: "bg-transparent border border-border", text: "text-foreground" }
+const OUTLINE_DASHED = { bg: "bg-transparent border border-dashed border-border", text: "text-foreground" }
+
 export const YEAR_COLORS: Record<number, { bg: string; text: string }> = {
-  [CURRENT_YEAR - 1]: { bg: "bg-indigo-500", text: "text-white" },
-  [CURRENT_YEAR]:     { bg: "bg-amber-500", text: "text-white" },
-  [CURRENT_YEAR + 1]: { bg: "bg-emerald-500", text: "text-white" },
+  [CURRENT_YEAR - 1]: OUTLINE_BADGE,
+  [CURRENT_YEAR]:     OUTLINE_BADGE,
+  [CURRENT_YEAR + 1]: OUTLINE_BADGE,
 }
 
 export const SERVICE_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
-  homologacion: { bg: "bg-violet-500", text: "text-white" },
-  equivalencia: { bg: "bg-amber-500", text: "text-white" },
-  uned:         { bg: "bg-cyan-500", text: "text-white" },
+  homologacion: OUTLINE_DASHED,
+  equivalencia: OUTLINE_DASHED,
+  uned:         OUTLINE_DASHED,
 }

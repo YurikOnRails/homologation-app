@@ -55,8 +55,8 @@ export function DocumentTags({ checklist, total, cardId }: DocumentTagsProps) {
               "text-[11px] font-bold px-1.5 py-0.5 rounded uppercase leading-none transition-colors",
               cardId && "cursor-pointer hover:opacity-80",
               merged[key]
-                ? "bg-emerald-700/80 text-white"
-                : "bg-slate-200 text-slate-500"
+                ? "bg-foreground text-background"
+                : "bg-muted text-muted-foreground"
             )}
           >
             {key}

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next"
 import { cn, formatCurrency } from "@/lib/utils"
-import { CURRENT_YEAR } from "@/components/pipeline/constants"
 import type { PipelineStats } from "@/types/pages"
 
 interface StatsBarProps {
@@ -19,34 +18,26 @@ export function StatsBar({ stats }: StatsBarProps) {
       <StatCell
         label={t("pipeline.stats.active")}
         value={stats.active}
-        accent="text-amber-600"
       />
       <StatCell
         label={t("pipeline.stats.revenue")}
         value={formatCurrency(stats.revenue)}
-        accent="text-emerald-600"
       />
-      {yearEntries.map(([year, count]) => {
-        const isCurrentYear = Number(year) === CURRENT_YEAR
-        return (
-          <StatCell
-            key={year}
-            label={year}
-            value={count}
-            accent={isCurrentYear ? "text-amber-600" : "text-muted-foreground/60"}
-            labelAccent={isCurrentYear ? "text-amber-600" : "text-muted-foreground/60"}
-          />
-        )
-      })}
+      {yearEntries.map(([year, count]) => (
+        <StatCell
+          key={year}
+          label={year}
+          value={count}
+        />
+      ))}
       <StatCell
         label={t("pipeline.stats.no_payment")}
         value={stats.noPago}
-        accent={stats.noPago > 0 ? "text-red-600" : undefined}
+        accent={stats.noPago > 0 ? "text-destructive" : undefined}
       />
       <StatCell
         label={t("pipeline.stats.cotejo")}
         value={stats.cotejo}
-        accent="text-violet-600"
         sub={`${stats.cotejoMinisterio ?? 0}🏛 ${stats.cotejoDelegacion ?? 0}🏢`}
       />
     </div>
@@ -57,24 +48,19 @@ function StatCell({
   label,
   value,
   accent,
-  labelAccent,
   sub,
 }: {
   label: string
   value: string | number
   accent?: string
-  labelAccent?: string
   sub?: string
 }) {
   return (
     <div className="bg-card px-3 py-2.5 text-center">
-      <p className={cn(
-        "text-[11px] uppercase tracking-wide leading-tight",
-        labelAccent ?? "text-muted-foreground"
-      )}>
+      <p className="text-[11px] uppercase tracking-wide leading-tight text-muted-foreground">
         {label}
       </p>
-      <p className={cn("text-lg font-bold tabular-nums leading-tight mt-0.5", accent)}>
+      <p className={cn("text-lg font-bold tabular-nums leading-tight mt-0.5 text-foreground", accent)}>
         {value}
       </p>
       {sub && (

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next"
 import { PipelineCard } from "@/components/pipeline/PipelineCard"
-import { usePipeline } from "@/components/pipeline/constants"
 import type { PipelineCard as PipelineCardType } from "@/types/pages"
 
 interface HorizontalGroupProps {
@@ -12,8 +11,6 @@ interface HorizontalGroupProps {
 
 export function HorizontalGroup({ stage, cards, icon, onEditCard }: HorizontalGroupProps) {
   const { t } = useTranslation()
-  const { stageColors } = usePipeline()
-  const color = stageColors[stage]
   const subtitle = t(`pipeline.subtitles.${stage}`, { defaultValue: "" })
 
   return (
@@ -21,13 +18,12 @@ export function HorizontalGroup({ stage, cards, icon, onEditCard }: HorizontalGr
       {/* Header: icon + title + subtitle ... count right-aligned */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">{icon}</span>
-        <div className={`w-2 h-2 rounded-full ${color?.dot ?? "bg-gray-400"}`} />
         <div className="flex-1">
           <h3 className="text-sm font-semibold">
             {t(`pipeline.stages.${stage}`)}
           </h3>
           {subtitle && (
-            <p className={`text-[11px] ${color?.text ?? "text-muted-foreground"}`}>{subtitle}</p>
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
           )}
         </div>
         <span className="text-lg font-bold text-muted-foreground tabular-nums">
