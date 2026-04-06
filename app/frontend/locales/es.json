@@ -573,9 +573,12 @@
       "cta_subtitle": "Más de 500 estudiantes de 20 países ya estudian en España con nuestra ayuda."
     },
     "homologacion": {
-      "hero_title_1": "Homologación de títulos en España",
-      "hero_title_accent": "con acompañamiento experto",
-      "hero_subtitle": "Tutor personal, proceso transparente y cuenta personal con seguimiento en tiempo real. Trabajamos con clientes en todo el mundo.",
+      "hero_title_1": "Homologación de títulos",
+      "hero_title_accent": "en España",
+      "hero_subtitle": "<strong>Acompañamiento experto</strong>, tutor personal y <strong>cuenta personal</strong> con seguimiento en tiempo real. Trabajamos con clientes en todo el mundo.",
+      "hero_stat_homologations": "homologaciones",
+      "hero_stat_countries": "países",
+      "hero_stat_years": "años de experiencia",
       "cta_start": "Solicitar consulta personal",
 
       "adv_title": "Por qué nos eligen",

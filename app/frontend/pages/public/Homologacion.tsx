@@ -1,5 +1,5 @@
 import { usePage } from "@inertiajs/react"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import {
   FileCheck,
   CheckCircle2,
@@ -63,13 +63,35 @@ export default function Homologacion() {
       <PublicHero
         title1={t("public.homologacion.hero_title_1")}
         titleAccent={t("public.homologacion.hero_title_accent")}
-        subtitle={t("public.homologacion.hero_subtitle")}
+        subtitle={
+          <Trans
+            i18nKey="public.homologacion.hero_subtitle"
+            components={{ strong: <strong className="text-foreground" /> }}
+          />
+        }
         actions={
           <ConsultationDialog>
             <GradientButton className="w-full sm:w-auto">
               {t("public.homologacion.cta_start")}
             </GradientButton>
           </ConsultationDialog>
+        }
+        footer={
+          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
+            {[
+              { value: "500+", key: "homologations" },
+              { value: "20+", key: "countries" },
+              { value: "10+", key: "years" },
+            ].map(({ value, key }, i) => (
+              <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
+                {i > 0 && <span className="text-border">·</span>}
+                <span>
+                  <span className="font-semibold text-foreground">{value}</span>{" "}
+                  {t(`public.homologacion.hero_stat_${key}`)}
+                </span>
+              </div>
+            ))}
+          </div>
         }
       />
 
@@ -191,14 +213,14 @@ export default function Homologacion() {
           title={t("public.homologacion.proof_title")}
           subtitle={t("public.homologacion.proof_subtitle")}
         />
-        <div className="grid gap-8 sm:grid-cols-3 max-w-3xl mx-auto text-center">
+        <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-3xl mx-auto text-center">
           {[
             { value: 500, suffix: "+", key: "clients" },
             { value: 20, suffix: "+", key: "countries" },
             { value: 10, suffix: "+", key: "years" },
           ].map(({ value, suffix, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
                   <AnimatedCounter value={value} suffix={suffix} />
                 </div>

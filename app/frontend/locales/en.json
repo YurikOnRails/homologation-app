@@ -573,9 +573,12 @@
       "cta_subtitle": "Over 500 students from 20 countries already study in Spain with our help."
     },
     "homologacion": {
-      "hero_title_1": "Degree Homologation in Spain",
-      "hero_title_accent": "with Expert Guidance",
-      "hero_subtitle": "A personal advisor, transparent process and a personal dashboard with real-time tracking. Serving clients worldwide.",
+      "hero_title_1": "Degree Homologation",
+      "hero_title_accent": "in Spain",
+      "hero_subtitle": "<strong>Expert guidance</strong>, a personal advisor and a <strong>personal dashboard</strong> with real-time tracking. Serving clients worldwide.",
+      "hero_stat_homologations": "homologations",
+      "hero_stat_countries": "countries",
+      "hero_stat_years": "years of experience",
       "cta_start": "Request a Personal Consultation",
 
       "adv_title": "Why Clients Choose Us",

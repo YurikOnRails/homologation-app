@@ -60,18 +60,20 @@ export function PublicHero({
   titleAccent,
   subtitle,
   actions,
+  footer,
   illustration,
 }: {
   title1: string
   titleAccent: string
-  subtitle: string
+  subtitle: React.ReactNode
   actions?: React.ReactNode
+  footer?: React.ReactNode
   illustration?: React.ReactNode
 }) {
   const hasIllustration = !!illustration
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-20 sm:py-32 overflow-hidden min-h-[80vh] flex items-center">
+    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden min-h-[60vh] sm:min-h-[80vh] flex items-center">
       <Spotlight />
       <FloatingElements />
       <DotGrid className="opacity-[0.25]" />
@@ -85,7 +87,7 @@ export function PublicHero({
         >
           <div className={hasIllustration ? undefined : "max-w-3xl"}>
             <Reveal direction="up">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
                 {title1}{" "}
                 <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
                   {titleAccent}
@@ -102,6 +104,11 @@ export function PublicHero({
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                   {actions}
                 </div>
+              </Reveal>
+            )}
+            {footer && (
+              <Reveal direction="up" delay={450}>
+                <div className="mt-10">{footer}</div>
               </Reveal>
             )}
           </div>
