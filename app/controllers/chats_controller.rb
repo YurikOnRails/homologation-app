@@ -35,9 +35,9 @@ class ChatsController < InertiaController
       .find(params[:id])
     authorize @conversation, :show?
 
-    # Mark conversation as read for current user
-    participant = @conversation.conversation_participants.detect { |p| p.user_id == current_user.id }
-    participant&.update_columns(last_read_at: Time.current)
+    # Mark conversation as read for current user (create participant if admin viewing for the first time)
+    participant = @conversation.conversation_participants.find_or_create_by!(user: current_user)
+    participant.update_columns(last_read_at: Time.current)
 
     conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
       .includes(LIST_INCLUDES)

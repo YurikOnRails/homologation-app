@@ -28,8 +28,14 @@ export default function RequestsIndex() {
   const { t } = useTranslation()
   const { requests, features } = usePage<SharedProps & RequestsIndexProps>().props
 
+  const pageUrl = usePage<SharedProps & RequestsIndexProps>().url
   const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const initialStatus = (() => {
+    const qIdx = pageUrl.indexOf("?")
+    if (qIdx === -1) return "all"
+    return new URLSearchParams(pageUrl.slice(qIdx)).get("status") ?? "all"
+  })()
+  const [statusFilter, setStatusFilter] = useState(initialStatus)
 
   const filtered = requests.filter((r) => {
     const matchSearch = r.subject.toLowerCase().includes(search.toLowerCase())

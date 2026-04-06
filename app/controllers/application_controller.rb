@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   inertia_share do
     {
       auth: { user: Current.user ? user_json(Current.user) : nil },
-      flash: { notice: flash[:notice], alert: flash[:alert] },
+      flash: { notice: flash[:notice], alert: flash[:alert], stripeUrl: flash[:stripe_url] },
       features: Current.user ? build_features(Current.user) : {},
       unreadNotificationsCount: Current.user ? Current.user.notifications.unread.count : 0,
       unreadChatsCount: Current.user ? ConversationParticipant.unread(Current.user).count : 0,

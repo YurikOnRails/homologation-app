@@ -141,4 +141,7 @@ es:
     lesson_reminder: "Recordatorio de clase"
     lesson_starts_soon: "Tu clase empieza en 1 hora (%{time})"
     lesson_cancelled: "Clase cancelada: %{date}"
+    stripe_payment_received: "Pago Stripe de €%{amount} recibido de %{student}"
     deletion_requested: "Solicitud de eliminación de cuenta de %{name}"
+  stripe:
+    product_name: "Homologación: %{subject}"

@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { Paperclip, Download, MessageSquare, FileX } from "lucide-react"
+import { Paperclip, Download, MessageSquare, FileX, CreditCard, Copy, Check, Send } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { ChatWindow } from "@/components/chat/ChatWindow"
@@ -58,6 +58,11 @@ export default function RequestsShow() {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState("")
   const [pendingStatus, setPendingStatus] = useState<string | null>(null)
+  const [stripeUrl, setStripeUrl] = useState<string | null>(null)
+  const [stripeLoading, setStripeLoading] = useState(false)
+  const [stripeCopied, setStripeCopied] = useState(false)
+  const [stripeError, setStripeError] = useState<string | null>(null)
+  const [stripeSent, setStripeSent] = useState(false)
 
   const isCoordinator = features.canConfirmPayment
   const availableStatuses = COORDINATOR_STATUS_OPTIONS[request.status] ?? []
@@ -75,6 +80,54 @@ export default function RequestsShow() {
       { onSuccess: () => setPaymentDialogOpen(false) }
     )
   }
+
+  const handleCreateCheckoutSession = useCallback(() => {
+    if (!paymentAmount) return
+    setStripeLoading(true)
+    setStripeError(null)
+    setStripeUrl(null)
+
+    router.post(
+      routes.createCheckoutSession(request.id),
+      { payment_amount: paymentAmount },
+      {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: (page) => {
+          const props = page.props as SharedProps
+          if (props.flash?.stripeUrl) {
+            setStripeUrl(props.flash.stripeUrl)
+          } else if (props.flash?.alert) {
+            setStripeError(props.flash.alert)
+          }
+        },
+        onError: () => setStripeError(t("stripe.error")),
+        onFinish: () => setStripeLoading(false),
+      }
+    )
+  }, [paymentAmount, request.id, t])
+
+  const handleCopyStripeUrl = useCallback(() => {
+    if (!stripeUrl) return
+    navigator.clipboard.writeText(stripeUrl)
+    setStripeCopied(true)
+    setTimeout(() => setStripeCopied(false), 2000)
+  }, [stripeUrl])
+
+  const handleSendToChat = useCallback(() => {
+    if (!stripeUrl || !request.conversation) return
+    router.post(
+      routes.requestMessages(request.id),
+      { body: stripeUrl },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          setStripeSent(true)
+          setTimeout(() => setStripeSent(false), 3000)
+        },
+      }
+    )
+  }, [stripeUrl, request.id, request.conversation])
 
   const crmStatus =
     request.amoCrmLeadId && request.amoCrmSyncedAt
@@ -426,7 +479,10 @@ export default function RequestsShow() {
       />
 
       {/* Confirm payment dialog */}
-      <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+      <Dialog open={paymentDialogOpen} onOpenChange={(open) => {
+        setPaymentDialogOpen(open)
+        if (!open) { setStripeUrl(null); setStripeError(null); setStripeCopied(false); setStripeSent(false) }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("coordinator.confirm_dialog_title")}</DialogTitle>
@@ -439,18 +495,63 @@ export default function RequestsShow() {
               step="0.01"
               min="0"
               value={paymentAmount}
-              onChange={(e) => setPaymentAmount(e.target.value)}
+              onChange={(e) => { setPaymentAmount(e.target.value); setStripeUrl(null); setStripeError(null) }}
               placeholder="0.00"
               className="min-h-[44px]"
             />
           </div>
-          <DialogFooter>
+
+          {/* Stripe payment link result */}
+          {stripeUrl && (
+            <div className="space-y-2 rounded-md border p-3">
+              <p className="text-sm font-medium">{t("stripe.link_ready")}</p>
+              <div className="flex items-center gap-2">
+                <Input value={stripeUrl} readOnly className="text-xs min-h-[44px]" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="min-h-[44px] shrink-0"
+                  onClick={handleCopyStripeUrl}
+                  title={t("stripe.copy")}
+                >
+                  {stripeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+                {request.conversation && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="min-h-[44px] shrink-0"
+                    onClick={handleSendToChat}
+                    disabled={stripeSent}
+                    title={t("stripe.send_to_chat")}
+                  >
+                    {stripeSent ? <Check className="h-4 w-4" /> : <Send className="h-4 w-4" />}
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{t("stripe.link_hint")}</p>
+            </div>
+          )}
+          {stripeError && (
+            <p className="text-sm text-destructive">{stripeError}</p>
+          )}
+
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
             <Button
               variant="outline"
               className="min-h-[44px]"
               onClick={() => setPaymentDialogOpen(false)}
             >
               {t("common.cancel")}
+            </Button>
+            <Button
+              variant="outline"
+              className="min-h-[44px]"
+              onClick={handleCreateCheckoutSession}
+              disabled={!paymentAmount || stripeLoading}
+            >
+              <CreditCard className="h-4 w-4 mr-2" />
+              {stripeLoading ? t("stripe.creating") : t("stripe.send_link")}
             </Button>
             <Button
               className="min-h-[44px]"

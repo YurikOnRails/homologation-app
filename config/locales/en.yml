@@ -138,4 +138,7 @@ en:
     lesson_reminder: "Lesson reminder"
     lesson_starts_soon: "Your lesson starts in 1 hour (%{time})"
     lesson_cancelled: "Lesson cancelled: %{date}"
+    stripe_payment_received: "Stripe payment €%{amount} received from %{student}"
     deletion_requested: "Account deletion request from %{name}"
+  stripe:
+    product_name: "Homologation: %{subject}"

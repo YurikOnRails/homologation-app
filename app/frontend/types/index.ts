@@ -62,7 +62,7 @@ export interface PipelineConfig {
 
 export interface SharedProps extends PageProps {
   auth: { user: User | null }
-  flash: { notice?: string; alert?: string }
+  flash: { notice?: string; alert?: string; stripeUrl?: string }
   features: AppFeatures
   unreadNotificationsCount: number
   unreadChatsCount: number

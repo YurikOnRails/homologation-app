@@ -138,4 +138,7 @@ ru:
     lesson_reminder: "Напоминание об уроке"
     lesson_starts_soon: "Ваш урок начнётся через 1 час (%{time})"
     lesson_cancelled: "Урок отменён: %{date}"
+    stripe_payment_received: "Оплата Stripe €%{amount} получена от %{student}"
     deletion_requested: "Запрос на удаление аккаунта от %{name}"
+  stripe:
+    product_name: "Омологация: %{subject}"

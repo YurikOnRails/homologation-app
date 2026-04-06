@@ -1,4 +1,5 @@
 require "test_helper"
+require "ostruct"
 
 class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   setup do
@@ -357,6 +358,46 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     post confirm_payment_homologation_request_path(request), params: { payment_amount: 200 }
     assert_response :forbidden
     assert_equal 100.0, request.reload.payment_amount.to_f
+  end
+
+  # === Stripe checkout session ===
+
+  test "super_admin can create checkout session" do
+    sign_in @admin
+    request = awaiting_payment_request
+
+    mock_session = OpenStruct.new(id: "cs_test_123", url: "https://checkout.stripe.com/test")
+    mock_customer = OpenStruct.new(id: "cus_test_123")
+
+    original_customer_create = Stripe::Customer.method(:create)
+    original_session_create = Stripe::Checkout::Session.method(:create)
+    Stripe::Customer.define_singleton_method(:create) { |**_| mock_customer }
+    Stripe::Checkout::Session.define_singleton_method(:create) { |**_| mock_session }
+
+    post create_checkout_session_homologation_request_path(request),
+      params: { payment_amount: 100 }
+
+    assert_redirected_to homologation_request_path(request)
+    assert_equal "https://checkout.stripe.com/test", flash[:stripe_url]
+  ensure
+    Stripe::Customer.define_singleton_method(:create, original_customer_create)
+    Stripe::Checkout::Session.define_singleton_method(:create, original_session_create)
+  end
+
+  test "student cannot create checkout session" do
+    sign_in @student
+    @submitted_request.update!(status: "awaiting_payment")
+    post create_checkout_session_homologation_request_path(@submitted_request),
+      params: { payment_amount: 100 }
+    assert_response :forbidden
+  end
+
+  test "coordinator cannot create checkout session" do
+    sign_in @coordinator
+    @submitted_request.update!(status: "awaiting_payment")
+    post create_checkout_session_homologation_request_path(@submitted_request),
+      params: { payment_amount: 100 }
+    assert_response :forbidden
   end
 
   # === AmoCRM retry ===

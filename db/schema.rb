@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_01_174056) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_130725) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -226,6 +226,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_174056) do
     t.string "phone"
     t.datetime "privacy_accepted_at"
     t.string "provider"
+    t.string "stripe_customer_id"
     t.string "telegram_chat_id"
     t.string "telegram_link_token"
     t.string "uid"

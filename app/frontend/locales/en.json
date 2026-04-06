@@ -219,6 +219,16 @@
     "confirm_status_title": "Change Status",
     "confirm_status_description": "Are you sure you want to change the status to \"{{status}}\"?"
   },
+  "stripe": {
+    "send_link": "Stripe Link",
+    "creating": "Creating...",
+    "link_ready": "Payment link created",
+    "copy": "Copy link",
+    "send_to_chat": "Send to chat",
+    "link_hint": "Copy and send this link to the student. Payment will be confirmed automatically.",
+    "error": "Failed to create payment link. Check Stripe configuration.",
+    "product_name": "Homologation: {{subject}}"
+  },
   "admin": {
     "dashboard": "Admin Dashboard",
     "users": "Users",
@@ -230,6 +240,16 @@
       "resolved": "Resolved",
       "total_users": "Total Users",
       "total_teachers": "Total Teachers"
+    },
+    "finance": {
+      "title": "Finances",
+      "homologation": "Homologation",
+      "education": "Education",
+      "total": "Total",
+      "average_deal": "Avg Deal",
+      "paid_requests": "Paid",
+      "lessons_completed": "Lessons",
+      "no_data": "No financial data yet"
     },
     "user_management": {
       "add_user": "Add User",

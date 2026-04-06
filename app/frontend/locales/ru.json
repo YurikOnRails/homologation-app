@@ -219,6 +219,16 @@
     "confirm_status_title": "Изменить статус",
     "confirm_status_description": "Вы уверены, что хотите изменить статус на «{{status}}»?"
   },
+  "stripe": {
+    "send_link": "Ссылка Stripe",
+    "creating": "Создаём...",
+    "link_ready": "Ссылка на оплату создана",
+    "copy": "Скопировать ссылку",
+    "send_to_chat": "Отправить в чат",
+    "link_hint": "Скопируйте и отправьте эту ссылку студенту. Оплата подтвердится автоматически.",
+    "error": "Не удалось создать ссылку на оплату. Проверьте настройки Stripe.",
+    "product_name": "Омологация: {{subject}}"
+  },
   "admin": {
     "dashboard": "Панель управления",
     "users": "Пользователи",
@@ -230,6 +240,16 @@
       "resolved": "Завершённые",
       "total_users": "Всего пользователей",
       "total_teachers": "Всего преподавателей"
+    },
+    "finance": {
+      "title": "Финансы",
+      "homologation": "Омологация",
+      "education": "Образование",
+      "total": "Итого",
+      "average_deal": "Ср. чек",
+      "paid_requests": "Оплачено",
+      "lessons_completed": "Уроков",
+      "no_data": "Нет финансовых данных"
     },
     "user_management": {
       "add_user": "Добавить пользователя",

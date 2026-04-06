@@ -1,6 +1,6 @@
 class HomologationRequestsController < InertiaController
   include RequestSerializer
-  before_action :set_request, only: [ :show, :update, :confirm_payment, :download_document, :retry_sync ]
+  before_action :set_request, only: [ :show, :update, :confirm_payment, :create_checkout_session, :download_document, :retry_sync ]
 
   def index
     authorize HomologationRequest
@@ -76,6 +76,18 @@ class HomologationRequestsController < InertiaController
     redirect_to homologation_request_path(@request), notice: t("flash.payment_confirmed")
   rescue ActiveRecord::RecordInvalid => e
     redirect_to homologation_request_path(@request), alert: e.record.errors.full_messages.join(", ")
+  end
+
+  def create_checkout_session
+    authorize @request, :confirm_payment?
+
+    amount = BigDecimal(params[:payment_amount].to_s)
+    service = StripeCheckoutService.new(@request, created_by: current_user)
+    session = service.create_session(amount: amount)
+
+    redirect_to homologation_request_path(@request), flash: { stripe_url: session.url }
+  rescue StripeCheckoutService::Error => e
+    redirect_to homologation_request_path(@request), alert: e.message
   end
 
   def retry_sync

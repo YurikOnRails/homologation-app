@@ -23,6 +23,9 @@ gem "pundit"
 gem "faraday"
 gem "faraday-multipart"
 
+# Payments
+gem "stripe"
+
 # File validation
 gem "active_storage_validations"
 

@@ -219,6 +219,16 @@
     "confirm_status_title": "Cambiar estado",
     "confirm_status_description": "¿Estás seguro de que quieres cambiar el estado a \"{{status}}\"?"
   },
+  "stripe": {
+    "send_link": "Enlace Stripe",
+    "creating": "Creando...",
+    "link_ready": "Enlace de pago creado",
+    "copy": "Copiar enlace",
+    "send_to_chat": "Enviar al chat",
+    "link_hint": "Copia y envía este enlace al estudiante. El pago se confirmará automáticamente.",
+    "error": "Error al crear el enlace de pago. Verifica la configuración de Stripe.",
+    "product_name": "Homologación: {{subject}}"
+  },
   "admin": {
     "dashboard": "Panel de administración",
     "users": "Usuarios",
@@ -230,6 +240,16 @@
       "resolved": "Resueltas",
       "total_users": "Total usuarios",
       "total_teachers": "Total profesores"
+    },
+    "finance": {
+      "title": "Finanzas",
+      "homologation": "Homologación",
+      "education": "Educación",
+      "total": "Total",
+      "average_deal": "Cheque medio",
+      "paid_requests": "Pagadas",
+      "lessons_completed": "Clases",
+      "no_data": "Sin datos financieros"
     },
     "user_management": {
       "add_user": "Añadir usuario",

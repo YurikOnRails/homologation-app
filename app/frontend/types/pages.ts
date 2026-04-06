@@ -318,6 +318,16 @@ export interface AdminUser {
   hasEducation: boolean
 }
 
+export interface FinanceData {
+  homologationRevenue: number
+  homologationCount: number
+  averageDeal: number
+  revenueByYear: Record<string, number>
+  educationRevenue: number
+  educationLessons: number
+  totalRevenue: number
+}
+
 export interface AdminDashboardProps {
   stats: {
     totalRequests: number
@@ -327,6 +337,7 @@ export interface AdminDashboardProps {
     totalUsers: number
     totalTeachers: number
   }
+  finance: FinanceData
   requestsByMonth: Record<string, number>
   requestsByStatus: Record<string, number>
   recentRequests: RequestListItem[]
