@@ -1,9 +1,13 @@
 import { useState } from "react"
 import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { Rocket, Menu, X } from "lucide-react"
+import {
+  Rocket, Menu, X,
+  GraduationCap, Building2, BookOpen, MessageSquare, CreditCard,
+  LogIn,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { PublicLanguageSwitcher } from "@/components/public/PublicLanguageSwitcher"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { PublicPageProps } from "@/types/pages"
@@ -31,6 +35,14 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   )
 }
 
+const NAV_ICONS: Record<string, React.ElementType> = {
+  homologacion: GraduationCap,
+  universidad: Building2,
+  espanol: BookOpen,
+  consulta: MessageSquare,
+  precios: CreditCard,
+}
+
 function Navbar({
   t,
   locale,
@@ -42,6 +54,8 @@ function Navbar({
   open: boolean
   setOpen: (v: boolean) => void
 }) {
+  const { url } = usePage()
+
   const navLinks = [
     { key: "homologacion", href: publicRoute(publicPages.homologacion, locale) },
     { key: "universidad", href: publicRoute(publicPages.universidad, locale) },
@@ -91,38 +105,75 @@ function Navbar({
 
         {/* Mobile hamburger */}
         <div className="flex lg:hidden items-center gap-2">
-          <PublicLanguageSwitcher />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="size-10" aria-label={t("common.menu")}>
-                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 pt-10">
+            <SheetContent side="right" className="w-80 flex flex-col p-0" showCloseButton={false}>
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <nav className="flex flex-col gap-1 mt-4">
-                {navLinks.map(({ key, href }) => (
-                  <Link
-                    key={key}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="px-4 py-3 text-base font-medium text-foreground hover:bg-muted rounded-md transition-colors"
-                  >
-                    {t(`public.nav.${key}`)}
-                  </Link>
-                ))}
-                <div className="border-t my-4" />
-                <Link href={routes.login} onClick={() => setOpen(false)}>
-                  <Button variant="outline" className="w-full min-h-[44px]">
+
+              {/* Sheet header: logo + close */}
+              <div className="flex items-center justify-between px-5 py-4 border-b">
+                <Link
+                  href={publicRoute(publicPages.home, locale)}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <Rocket className="h-6 w-6 text-[#E8453C]" />
+                  <span className="text-lg font-bold tracking-tight">
+                    Space for <span className="text-[#2D7FF9]">Edu</span>
+                  </span>
+                </Link>
+                <SheetClose asChild>
+                  <Button variant="ghost" size="icon" className="size-9 shrink-0" aria-label={t("common.close")}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </SheetClose>
+              </div>
+
+              {/* Nav links */}
+              <nav className="flex-1 flex flex-col gap-0.5 px-3 pt-3 overflow-y-auto">
+                {navLinks.map(({ key, href }) => {
+                  const Icon = NAV_ICONS[key]
+                  const isActive = url.startsWith(href)
+                  return (
+                    <Link
+                      key={key}
+                      href={href}
+                      onClick={() => setOpen(false)}
+                      className={[
+                        "flex items-center gap-3 px-3 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px]",
+                        isActive
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                      ].join(" ")}
+                    >
+                      <Icon className={["h-5 w-5 shrink-0", isActive ? "text-[#E8453C]" : ""].join(" ")} />
+                      {t(`public.nav.${key}`)}
+                    </Link>
+                  )
+                })}
+              </nav>
+
+              {/* Bottom: language + actions */}
+              <div className="mt-auto px-4 pb-6 pt-4 border-t space-y-3">
+                <div className="flex justify-start">
+                  <PublicLanguageSwitcher />
+                </div>
+                <Link href={routes.login} onClick={() => setOpen(false)} className="block">
+                  <Button variant="outline" className="w-full min-h-[44px] gap-2">
+                    <LogIn className="h-4 w-4" />
                     {t("auth.sign_in")}
                   </Button>
                 </Link>
-                <Link href={routes.register} onClick={() => setOpen(false)}>
-                  <Button className="w-full min-h-[44px] mt-2 bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
+                <Link href={routes.register} onClick={() => setOpen(false)} className="block">
+                  <Button className="w-full min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
                     {t("public.nav.start")}
                   </Button>
                 </Link>
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
