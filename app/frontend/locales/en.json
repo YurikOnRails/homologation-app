@@ -772,6 +772,12 @@
       "hero_stat_formats": "study formats",
       "cta_trial": "Book a trial lesson",
       "cta_pricing": "See pricing",
+      "map_speakers_value": "500M+",
+      "map_speakers_label": "speak Spanish",
+      "map_countries_value": "20+",
+      "map_countries_label": "countries",
+      "map_rank_value": "2nd",
+      "map_rank_label": "most spoken language by native speakers",
 
       "formats_title": "Study formats",
       "formats_subtitle": "Every format is available online and in-person in Spain",

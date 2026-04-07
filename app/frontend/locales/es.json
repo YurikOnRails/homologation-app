@@ -772,6 +772,12 @@
       "hero_stat_formats": "formatos de estudio",
       "cta_trial": "Reservar clase de prueba",
       "cta_pricing": "Ver precios",
+      "map_speakers_value": "500M+",
+      "map_speakers_label": "hablan español",
+      "map_countries_value": "20+",
+      "map_countries_label": "países",
+      "map_rank_value": "2.º",
+      "map_rank_label": "idioma del mundo por hablantes nativos",
 
       "formats_title": "Formatos de estudio",
       "formats_subtitle": "Todos los formatos disponibles online y presencial en España",

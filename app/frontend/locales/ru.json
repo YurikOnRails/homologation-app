@@ -772,6 +772,12 @@
       "hero_stat_formats": "формата обучения",
       "cta_trial": "Записаться на пробный урок",
       "cta_pricing": "Посмотреть цены",
+      "map_speakers_value": "500M+",
+      "map_speakers_label": "говорят на испанском",
+      "map_countries_value": "20+",
+      "map_countries_label": "стран",
+      "map_rank_value": "2-й",
+      "map_rank_label": "язык мира по числу носителей",
 
       "formats_title": "Форматы обучения",
       "formats_subtitle": "Каждый формат доступен онлайн и очно в Испании",
