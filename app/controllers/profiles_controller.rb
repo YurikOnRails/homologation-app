@@ -1,5 +1,6 @@
 class ProfilesController < InertiaController
   include UserSerializer
+  include TelegramConnectable
 
   before_action :set_user
   skip_before_action :require_complete_profile
@@ -18,23 +19,11 @@ class ProfilesController < InertiaController
     end
   end
 
-  def connect_telegram
-    authorize @user, :update?, policy_class: ProfilePolicy
-    token = SecureRandom.hex(16)
-    @user.update!(telegram_link_token: token)
-    bot_name = Rails.application.credentials.dig(:telegram, :bot_name) || "HomologationBot"
-    redirect_to "https://t.me/#{bot_name}?start=#{token}", allow_other_host: true
-  end
-
-  def disconnect_telegram
-    authorize @user, :update?, policy_class: ProfilePolicy
-    @user.update!(telegram_chat_id: nil, notification_telegram: false)
-    redirect_to edit_profile_path, notice: t("flash.telegram_disconnected")
-  end
-
   private
 
   def set_user = @user = Current.user
+
+  def telegram_disconnect_redirect_path = edit_profile_path
 
   def profile_params
     params.permit(:name, :phone, :whatsapp, :birthday, :country, :locale,

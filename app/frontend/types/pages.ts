@@ -281,6 +281,7 @@ export interface UserProfile {
   email: string
   avatarUrl: string | null
   roles: string[]
+  isTeacher: boolean
   phone: string | null
   whatsapp: string | null
   conversationId: number | null
@@ -301,6 +302,7 @@ export interface AdminLessonsProps {
   monthStart?: string
   monthSummary?: Record<string, MonthDayLesson[]>
   userProfiles?: Record<number, UserProfile>
+  filters?: { teacherId?: string | null }
 }
 
 // admin/Dashboard

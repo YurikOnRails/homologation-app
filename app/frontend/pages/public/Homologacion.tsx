@@ -15,17 +15,9 @@ import {
   MessageSquare,
   Bell,
   Shield,
-  Quote,
-  Star,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, TiltCard, AnimatedCounter } from "@/components/public/animations"
 import {
@@ -36,14 +28,18 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
+import { FaqSection } from "@/components/public/FaqSection"
+import { TimelineSection } from "@/components/public/TimelineSection"
+import { TestimonialsSection } from "@/components/public/TestimonialsSection"
+import { FeatureCardGrid } from "@/components/public/FeatureCardGrid"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
 const ADVANTAGES = [
-  { icon: UserCheck, key: "advisor" },
-  { icon: Award, key: "expertise" },
-  { icon: Monitor, key: "transparency" },
-  { icon: Handshake, key: "partners" },
+  { icon: UserCheck, titleKey: "public.homologacion.adv_advisor_title", descKey: "public.homologacion.adv_advisor_desc" },
+  { icon: Award, titleKey: "public.homologacion.adv_expertise_title", descKey: "public.homologacion.adv_expertise_desc" },
+  { icon: Monitor, titleKey: "public.homologacion.adv_transparency_title", descKey: "public.homologacion.adv_transparency_desc" },
+  { icon: Handshake, titleKey: "public.homologacion.adv_partners_title", descKey: "public.homologacion.adv_partners_desc" },
 ] as const
 
 const DASHBOARD_FEATURES = [
@@ -113,23 +109,7 @@ export default function Homologacion() {
           title={t("public.homologacion.adv_title")}
           subtitle={t("public.homologacion.adv_subtitle")}
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {ADVANTAGES.map(({ icon: Icon, key }, i) => (
-            <Reveal key={key} direction="up" delay={i * 120}>
-              <TiltCard className="h-full">
-                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                    </div>
-                    <h3 className="font-semibold mb-2">{t(`public.homologacion.adv_${key}_title`)}</h3>
-                    <p className="text-sm text-muted-foreground">{t(`public.homologacion.adv_${key}_desc`)}</p>
-                  </CardContent>
-                </Card>
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
+        <FeatureCardGrid items={ADVANTAGES} columns={4} />
       </PublicSection>
 
       {/* What is homologation */}
@@ -187,21 +167,7 @@ export default function Homologacion() {
       {/* Process timeline */}
       <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.homologacion.process_title")} />
-        <div className="max-w-3xl mx-auto space-y-8">
-          {Array.from({ length: 4 }, (_, i) => (
-            <Reveal key={i} direction="left" delay={i * 150}>
-              <div className="flex gap-6 items-start group">
-                <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] text-white flex items-center justify-center font-bold text-sm shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2D7FF9]/20">
-                  {i + 1}
-                </div>
-                <div>
-                  <h3 className="font-semibold">{t(`public.homologacion.process_${i + 1}_title`)}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{t(`public.homologacion.process_${i + 1}_desc`)}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        <TimelineSection translationPrefix="public.homologacion" count={4} />
       </PublicSection>
 
       {/* Documents needed */}
@@ -225,34 +191,7 @@ export default function Homologacion() {
           title={t("public.homologacion.testimonials_title")}
           subtitle={t("public.homologacion.testimonials_subtitle")}
         />
-        <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
-          {[1, 2, 3].map((i) => (
-            <Reveal key={i} direction="up" delay={i * 120}>
-              <Card className="h-full border bg-white transition-all duration-300 hover:shadow-lg hover:shadow-[#2D7FF9]/5">
-                <CardContent className="p-6 flex flex-col h-full">
-                  <Quote className="h-6 w-6 text-[#2D7FF9]/20 mb-3 shrink-0" />
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-                    {t(`public.homologacion.testimonial_${i}_text`)}
-                  </p>
-                  <div className="mt-4 pt-4 border-t flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 flex items-center justify-center text-sm font-bold text-[#2D7FF9]">
-                      {t(`public.homologacion.testimonial_${i}_name`).charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{t(`public.homologacion.testimonial_${i}_name`)}</p>
-                      <p className="text-xs text-muted-foreground">{t(`public.homologacion.testimonial_${i}_role`)}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-0.5 mt-3">
-                    {Array.from({ length: 5 }, (_, j) => (
-                      <Star key={j} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
+        <TestimonialsSection translationPrefix="public.homologacion" />
       </PublicSection>
 
       {/* Social proof */}
@@ -303,22 +242,7 @@ export default function Homologacion() {
       {/* FAQ */}
       <PublicSection className="bg-white">
         <SectionHeading title={t("public.homologacion.faq_title")} />
-        <Reveal direction="up" delay={100}>
-          <div className="max-w-2xl mx-auto">
-            <Accordion type="single" collapsible className="w-full">
-              {Array.from({ length: 5 }, (_, i) => (
-                <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger className="text-left">
-                    {t(`public.homologacion.faq_${i + 1}_q`)}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {t(`public.homologacion.faq_${i + 1}_a`)}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </Reveal>
+        <FaqSection translationPrefix="public.homologacion" count={5} />
       </PublicSection>
 
       {/* CTA */}

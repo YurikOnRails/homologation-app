@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { router } from "@inertiajs/react"
-import { usePage } from "@inertiajs/react"
+import { router, usePage } from "@inertiajs/react"
 import { Check, ChevronDown } from "lucide-react"
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { routes } from "@/lib/routes"
 import { FlagIcon } from "@/components/common/FlagIcon"
 import type { SharedProps } from "@/types"
+import type { PublicPageProps } from "@/types/pages"
 
 const LANGUAGES = [
   { code: "es", label: "Español",  countryCode: "es" },
@@ -20,22 +20,52 @@ const LANGUAGES = [
 ]
 
 interface LanguageSwitcherProps {
+  /** "authenticated" patches user locale; "public" navigates to alternate URL */
+  mode?: "authenticated" | "public"
   /** Use on dark backgrounds (e.g. sidebar, dark panel) */
   variant?: "default" | "ghost-dark"
 }
 
-export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+  mode = "authenticated",
+  variant = "default",
+}: LanguageSwitcherProps) {
   const { i18n } = useTranslation()
-  const { auth } = usePage<SharedProps>().props
+  const page = usePage<SharedProps & PublicPageProps>()
 
   const changeLanguage = (code: string) => {
-    i18n.changeLanguage(code)
-    if (auth.user) {
-      router.patch(routes.profile, { locale: code }, { preserveState: true })
+    if (mode === "public") {
+      i18n.changeLanguage(code)
+      const alternates = page.props.seo?.alternates ?? []
+      const currentPath = page.url
+      const target = alternates.find((a) => a.locale === code)
+      if (target) {
+        try {
+          const url = new URL(target.url)
+          router.visit(url.pathname)
+        } catch {
+          const path = currentPath.replace(/^\/(es|en|ru)/, `/${code}`)
+          router.visit(path)
+        }
+      } else {
+        const path = currentPath.replace(/^\/(es|en|ru)/, `/${code}`)
+        router.visit(path)
+      }
+    } else {
+      i18n.changeLanguage(code)
+      if (page.props.auth?.user) {
+        router.patch(routes.profile, { locale: code }, { preserveState: true })
+      }
     }
   }
 
-  const current = LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[0]
+  // Determine which language is active
+  const activeCode =
+    mode === "public"
+      ? (page.props.seo?.locale ?? "en")
+      : i18n.language
+
+  const current = LANGUAGES.find((l) => l.code === activeCode) ?? LANGUAGES[0]
 
   const buttonClass =
     variant === "ghost-dark"
@@ -58,7 +88,7 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
 
       <DropdownMenuContent align="end" className="min-w-[10rem]">
         {LANGUAGES.map((lang) => {
-          const isActive = i18n.language === lang.code
+          const isActive = activeCode === lang.code
           return (
             <DropdownMenuItem
               key={lang.code}

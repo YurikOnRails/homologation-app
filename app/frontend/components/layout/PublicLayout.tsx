@@ -8,7 +8,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
-import { PublicLanguageSwitcher } from "@/components/public/PublicLanguageSwitcher"
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import { CONTACT_EMAIL, CONTACT_WHATSAPP, formatPhone } from "@/lib/constants"
 import type { PublicPageProps } from "@/types/pages"
@@ -91,7 +91,7 @@ function Navbar({
 
         {/* Desktop right */}
         <div className="hidden lg:flex items-center gap-3">
-          <PublicLanguageSwitcher />
+          <LanguageSwitcher mode="public" />
           <Link href={routes.login}>
             <Button variant="outline" className="min-h-[44px]">
               {t("auth.sign_in")}
@@ -161,7 +161,7 @@ function Navbar({
               {/* Bottom: language + actions */}
               <div className="mt-auto px-4 pb-6 pt-4 border-t space-y-3">
                 <div className="flex justify-start">
-                  <PublicLanguageSwitcher />
+                  <LanguageSwitcher mode="public" />
                 </div>
                 <Link href={routes.login} onClick={() => setOpen(false)} className="block">
                   <Button variant="outline" className="w-full min-h-[44px] gap-2">

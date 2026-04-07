@@ -16,14 +16,16 @@ class ApplicationController < ActionController::Base
   before_action :require_complete_profile
 
   inertia_share do
+    user = Current.user
+    user&.roles&.load # preload roles to avoid N+1 on every request
     {
-      auth: { user: Current.user ? user_json(Current.user) : nil },
+      auth: { user: user ? user_json(user) : nil },
       flash: { notice: flash[:notice], alert: flash[:alert], stripeUrl: flash[:stripe_url] },
-      features: Current.user ? build_features(Current.user) : {},
-      unreadNotificationsCount: Current.user ? Current.user.notifications.unread.count : 0,
-      unreadChatsCount: Current.user ? ConversationParticipant.unread(Current.user).count : 0,
+      features: user ? build_features(user) : {},
+      unreadNotificationsCount: user ? user.notifications.unread.count : 0,
+      unreadChatsCount: user ? ConversationParticipant.unread(user).count : 0,
       selectOptions: Rails.application.config.select_options,
-      pipelineConfig: Current.user&.super_admin? ? Rails.application.config.pipeline : { stages: [], document_checklist: [] }
+      pipelineConfig: user&.super_admin? ? Rails.application.config.pipeline : { stages: [], document_checklist: [] }
     }
   end
 
@@ -41,7 +43,7 @@ class ApplicationController < ActionController::Base
       id: u.id,
       name: u.name,
       email: u.email_address,
-      roles: u.roles.pluck(:name),
+      roles: u.roles.map(&:name),
       avatarUrl: u.avatar_url,
       locale: u.locale,
       profileComplete: u.profile_complete?

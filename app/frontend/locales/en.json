@@ -5,31 +5,18 @@
   "common": {
     "save": "Save",
     "cancel": "Cancel",
-    "submit": "Submit",
-    "delete": "Delete",
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
     "loading": "Loading...",
     "no_results": "No results found",
     "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "yes": "Yes",
-    "no": "No",
-    "or": "or",
-    "download": "Download",
-    "download_all": "Download all",
-    "required": "Required",
-    "optional": "Optional",
     "confirm": "Confirm",
     "error": "Error",
-    "success": "Success",
     "create": "Create",
     "clear": "Clear",
     "name": "Name",
     "created_at": "Created",
-    "actions": "Actions",
     "rows_per_page": "Rows per page",
     "page_of": "Page {{page}} of {{total}}",
     "menu": "Menu"
@@ -44,8 +31,6 @@
     "forgot_password": "Forgot your password?",
     "reset_password": "Reset Password",
     "forgot_password_hint": "Enter your email and we'll send you a reset link.",
-    "continue_with_google": "Continue with Google",
-    "continue_with_apple": "Continue with Apple",
     "no_account": "Don't have an account?",
     "has_account": "Already have an account?",
     "accept_privacy_prefix": "I have read and accept the",
@@ -135,10 +120,8 @@
       "section_request": "Your Request",
       "section_education": "Education",
       "section_optional": "Additional Information",
-      "section_optional_description": "This information will help us process your request faster",
       "section_documents": "Documents",
       "section_documents_description": "Attach the necessary documents for your request",
-      "name": "Name and Surname",
       "service_type": "Service Requested",
       "subject": "Subject",
       "subject_hint": "Briefly describe what you want to homologate, e.g.: Engineering degree from UNAM",
@@ -146,7 +129,6 @@
       "description_hint": "Please enter the details of your request. A member of our team will respond as soon as possible.",
       "identity_card": "Identity Card",
       "identity_card_hint": "NIE, DNI or passport number",
-      "passport": "Passport",
       "education_system": "Educational System of Studies",
       "education_system_hint": "Country where you obtained your degree",
       "studies_finished": "Studies Finished?",
@@ -160,7 +142,6 @@
       "referral_source": "How Did You Find Us?",
       "privacy_policy_prefix": "I have read and accept the",
       "privacy_policy_link": "Privacy Policy",
-      "placeholder_select": "Select...",
       "placeholder_service_type": "Select a service",
       "placeholder_education_system": "Select country of studies",
       "placeholder_studies_finished": "Select status",
@@ -169,9 +150,6 @@
       "placeholder_language_level": "Select your level",
       "placeholder_language_certificate": "Select certificate",
       "placeholder_referral_source": "Select an option",
-      "application_file": "Application Form",
-      "originals_files": "Original Documents",
-      "other_files": "Other Documents",
       "documents_hint": "Diploma copy, academic transcript, sworn translation (if available)",
       "drop_file": "Drop file here or click to browse",
       "drop_files": "Drop files here or click to browse",
@@ -183,18 +161,12 @@
   "chat": {
     "title": "Conversation",
     "type_message": "Type a message...",
-    "send": "Send",
-    "attach_file": "Attach file",
     "no_messages": "No messages yet. Start the conversation!"
   },
   "notifications": {
     "title": "Notifications",
     "mark_all_read": "Mark all as read",
     "no_notifications": "You have no notifications",
-    "new_request": "New request received",
-    "new_message": "New message from {{name}}",
-    "status_changed": "Status updated to {{status}}",
-    "payment_confirmed": "Payment confirmed: €{{amount}}",
     "unread": "Unread",
     "all": "All",
     "no_unread": "All caught up!",
@@ -209,8 +181,6 @@
     "confirm_dialog_title": "Confirm Payment Received",
     "confirm_dialog_description": "Enter the payment amount. This will sync the data to AmoCRM.",
     "change_status": "Change Status",
-    "assign_to_me": "Assign to Me",
-    "unassigned": "Unassigned",
     "crm_synced": "Synced to CRM",
     "crm_syncing": "Syncing...",
     "crm_error": "Sync Error",
@@ -226,13 +196,11 @@
     "copy": "Copy link",
     "send_to_chat": "Send to chat",
     "link_hint": "Copy and send this link to the student. Payment will be confirmed automatically.",
-    "error": "Failed to create payment link. Check Stripe configuration.",
-    "product_name": "Homologation: {{subject}}"
+    "error": "Failed to create payment link. Check Stripe configuration."
   },
   "admin": {
     "dashboard": "Admin Dashboard",
     "users": "Users",
-    "reports": "Reports",
     "stats": {
       "total_requests": "Total Requests",
       "open_requests": "Open",
@@ -242,7 +210,6 @@
       "total_teachers": "Total Teachers"
     },
     "finance": {
-      "title": "Finances",
       "homologation": "Homologation",
       "education": "Education",
       "total": "Total",
@@ -253,10 +220,7 @@
     },
     "user_management": {
       "add_user": "Add User",
-      "edit_user": "Edit User",
-      "role": "Role",
       "roles": "Roles",
-      "assign_role": "Assign Role",
       "remove_role": "Remove Role",
       "deactivate": "Deactivate",
       "deactivate_confirm": "Are you sure you want to deactivate {{name}}? You can reactivate them later.",
@@ -278,13 +242,11 @@
       "cabinet_homologation": "Homologation",
       "cabinet_homologation_hint": "Access to homologation requests, documents and chat",
       "cabinet_education": "Education",
-      "cabinet_education_hint": "Access to lessons, calendar and teacher chat",
-      "save_cabinets": "Save cabinets"
+      "cabinet_education_hint": "Access to lessons, calendar and teacher chat"
     },
     "charts": {
       "requests_over_time": "Requests Over Time",
       "by_status": "By Status",
-      "avg_response_time": "Average Response Time",
       "requests_label": "Requests",
       "no_data": "No data yet"
     },
@@ -294,10 +256,8 @@
     "recent_requests": "Recent Requests",
     "overview": "Overview",
     "new_users": "New Users",
-    "requests_this_month": "Requests This Month",
     "from_last_month": "from last month",
-    "recent_requests_desc": "{{count}} new request(s) this month.",
-    "no_users": "No users found"
+    "recent_requests_desc": "{{count}} new request(s) this month."
   },
   "chats": {
     "title": "Chats",
@@ -309,12 +269,10 @@
     "no_conversations": "No conversations",
     "select_chat": "Select a chat to get started",
     "your_messages": "Your messages",
-    "info": "Info",
     "yesterday": "Yesterday"
   },
   "teachers": {
     "title": "Teachers",
-    "add_teacher": "Add Teacher",
     "students": "Students",
     "lessons_this_week": "Lessons this week",
     "no_permanent_link": "No permanent link",
@@ -346,7 +304,6 @@
     "meeting_link": "Meeting Link",
     "meeting_link_hint": "Leave empty to use teacher's permanent link",
     "notes": "Notes (private, after lesson)",
-    "cancel_lesson": "Cancel Lesson",
     "edit_lesson": "Edit Lesson",
     "select_student": "Select Student",
     "status_label": "Status",
@@ -357,9 +314,7 @@
     }
   },
   "calendar": {
-    "title": "My Calendar",
     "week": "Week",
-    "day": "Day",
     "month": "Month",
     "list": "List",
     "today": "Today",
@@ -370,13 +325,11 @@
     "open_link": "Open Link",
     "no_lessons_week": "No lessons this week",
     "no_lessons_month": "No lessons this month",
-    "lessons_count": "{{count}} lesson(s)",
     "go_to_week": "Go to this week"
   },
   "nav": {
     "dashboard": "Dashboard",
     "chats": "Chats",
-    "requests": "Requests",
     "all_requests": "All Requests",
     "my_requests": "My Requests",
     "new_request": "New Request",
@@ -388,17 +341,12 @@
     "notifications": "Notifications",
     "profile": "Profile",
     "admin": "Admin",
-    "language": "Language",
-    "general": "General",
-    "management": "Management",
     "other": "Other",
     "homologation": "Homologation",
     "teaching": "Teaching",
     "administration": "Administration",
     "settings": "Settings",
-    "pipeline": "Pipeline",
-    "cabinet_homologation": "Homologation",
-    "cabinet_education": "Education"
+    "pipeline": "Pipeline"
   },
   "settings": {
     "title": "Settings",
@@ -423,7 +371,6 @@
       "new_password": "New Password",
       "update_password": "Update Password",
       "danger_zone": "Danger Zone",
-      "danger_description": "These actions are irreversible.",
       "delete_account": "Delete Account",
       "delete_description": "Request deletion of your account and all your data in accordance with GDPR.",
       "request_deletion": "Request Account Deletion",
@@ -432,7 +379,6 @@
       "delete_confirm_title": "Request account deletion?",
       "delete_confirm_description": "An administrator will be notified. Your account will be deleted within 30 days in accordance with GDPR. This action cannot be undone."
     },
-    "invalid_current_password": "Current password is incorrect",
     "notifications": {
       "description": "Choose how and when you receive notifications.",
       "email_title": "Email Notifications",
@@ -446,7 +392,6 @@
     "title": "Pipeline",
     "search_placeholder": "Search by name, country...",
     "advance": "Advance",
-    "retreat": "Back",
     "no_cards": "No requests in this stage",
     "empty_title": "Pipeline empty",
     "empty_hint": "Requests will appear here after payment confirmation.",
@@ -466,18 +411,6 @@
       "no_payment": "No payment",
       "cotejo": "Verification"
     },
-    "documents": {
-      "sol": "SOL",
-      "vol": "VOL",
-      "tas": "TAS",
-      "aut": "AUT",
-      "pas": "PAS",
-      "ori": "ORI",
-      "tra": "TRA",
-      "reg": "REG",
-      "not": "NOT",
-      "ent": "ENT"
-    },
     "subtitles": {
       "cotejo_ministerio": "Non-EU without treaty",
       "cotejo_delegacion": "LATAM · UAE · Treaty"
@@ -492,13 +425,11 @@
       "no_country": "No country"
     },
     "edit_dialog": {
-      "title": "Edit request",
       "student_data": "Student data",
       "admin_fields": "Management",
       "notes": "Notes",
       "amount": "Amount €",
       "year": "Year",
-      "documents": "Documents",
       "save": "Save",
       "cancel": "Cancel",
       "view_request": "View request",
@@ -700,7 +631,6 @@
       "hero_title_1": "Get into a",
       "hero_title_accent": "Spanish university",
       "hero_subtitle": "We'll find the right university and program for your goals, prepare your documents, and guide you through to enrollment. You won't face Spanish bureaucracy alone.",
-      "hero_photo_placeholder": "Student photos — coming soon",
       "map_universities_value": "80+",
       "map_universities_label": "universities",
       "map_programs_value": "1,000+",
@@ -945,36 +875,6 @@
       "cta_subtitle": "Choose a plan or book a consultation — we'll help you pick the right option.",
       "cta_start": "Create account",
       "cta_consult": "Book a consultation"
-    }
-  },
-  "seo": {
-    "home": {
-      "title": "Space for Edu — European Education in Spain",
-      "description": "Degree homologation, university admission, and Spanish courses. Full support from documents to enrollment. 10+ years, 500+ students."
-    },
-    "homologation": {
-      "title": "Degree Homologation — Space for Edu",
-      "description": "Professional degree homologation service for university titles in Spain."
-    },
-    "university": {
-      "title": "University Admission in Spain — Space for Edu",
-      "description": "We help you access Spanish universities: selectividad, admission, and enrollment."
-    },
-    "spanish": {
-      "title": "Spanish Classes — Space for Edu",
-      "description": "Spanish classes for foreigners: levels A1-C2, individual and group."
-    },
-    "consultation": {
-      "title": "Expert Consultation — Space for Edu",
-      "description": "Book an expert consultation about homologation, university, or Spanish classes."
-    },
-    "consultation_thank_you": {
-      "title": "Payment Successful — Space for Edu",
-      "description": "Thank you for your payment. We will contact you shortly."
-    },
-    "pricing": {
-      "title": "Pricing — Space for Edu",
-      "description": "Check our prices for homologation, university access, and Spanish classes."
     }
   }
 }

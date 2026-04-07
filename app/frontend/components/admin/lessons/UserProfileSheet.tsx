@@ -28,7 +28,7 @@ export function UserProfileSheet({ user, open, onOpenChange }: UserProfileSheetP
 
   if (!user) return null
 
-  const isTeacher = user.roles.includes("teacher")
+  const isTeacher = user.isTeacher
   const chatHref = user.conversationId ? routes.chat(user.conversationId) : routes.chats
 
   return (

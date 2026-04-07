@@ -194,6 +194,47 @@ class Admin::PipelineControllerTest < ActionDispatch::IntegrationTest
     assert_equal 10, checklist.size, "all 10 keys should be present"
   end
 
+  # === Stats regression (SQL aggregation) ===
+
+  test "stats active excludes completado" do
+    sign_in @admin
+    get admin_pipeline_path
+    stats = inertia.props[:stats]
+    assert_equal 1, stats[:active], "One request in pago_recibido should count as active"
+  end
+
+  test "stats revenue sums payment_amount" do
+    sign_in @admin
+    get admin_pipeline_path
+    stats = inertia.props[:stats]
+    assert_in_delta 500.0, stats[:revenue], 0.01
+  end
+
+  test "stats byYear groups correctly" do
+    sign_in @admin
+    get admin_pipeline_path
+    stats = inertia.props[:stats]
+    assert_equal 1, stats[:byYear][2026] || stats[:byYear]["2026"]
+  end
+
+  test "stats noPago counts zero-payment requests" do
+    sign_in @admin
+    @request_record.update_columns(payment_amount: 0)
+    get admin_pipeline_path
+    stats = inertia.props[:stats]
+    assert_equal 1, stats[:noPago]
+  end
+
+  test "stats cotejo counts cotejo stages" do
+    sign_in @admin
+    @request_record.update_columns(pipeline_stage: "cotejo_ministerio")
+    get admin_pipeline_path
+    stats = inertia.props[:stats]
+    assert_equal 1, stats[:cotejo]
+    assert_equal 1, stats[:cotejoMinisterio]
+    assert_equal 0, stats[:cotejoDelegacion]
+  end
+
   # === Card JSON structure ===
 
   test "pipeline card contains expected fields" do

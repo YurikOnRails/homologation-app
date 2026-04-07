@@ -28,16 +28,13 @@ import type { AdminLessonsProps, LessonItem, UserProfile } from "@/types/pages"
 
 export default function AdminLessons() {
   const { t, i18n } = useTranslation()
-  const { view, lessons, teachers, students, weekStart, monthStart, monthSummary, userProfiles } =
+  const { view, lessons, teachers, students, weekStart, monthStart, monthSummary, userProfiles, filters } =
     usePage<SharedProps & AdminLessonsProps>().props
 
   const [teacherFilter, setTeacherFilter] = useState("")
   const [studentFilter, setStudentFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  const [weekTeacherFilter, setWeekTeacherFilter] = useState(() => {
-    const url = new URL(window.location.href)
-    return url.searchParams.get("teacher_id") ?? ""
-  })
+  const [weekTeacherFilter, setWeekTeacherFilter] = useState(filters?.teacherId ?? "")
 
   // User profile sidebar state
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)

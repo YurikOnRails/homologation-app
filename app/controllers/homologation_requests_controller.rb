@@ -1,5 +1,6 @@
 class HomologationRequestsController < InertiaController
   include RequestSerializer
+  include ConversationSerializer
   before_action :set_request, only: [ :show, :update, :confirm_payment, :create_checkout_session, :download_document, :retry_sync ]
 
   def index
@@ -137,15 +138,8 @@ class HomologationRequestsController < InertiaController
       amoCrmSyncError: r.amo_crm_sync_error,
       createdAt: r.created_at.iso8601, updatedAt: r.updated_at.iso8601,
       user: { id: r.user.id, name: r.user.name, email: r.user.email_address },
-      conversation: r.conversation ? conversation_json(r.conversation) : nil,
+      conversation: r.conversation ? conversation_messages_json(r.conversation) : nil,
       files: files_json(r) }
-  end
-
-  def conversation_json(c)
-    {
-      id: c.id,
-      messages: c.messages.order(:created_at).map(&:as_json_for_cable)
-    }
   end
 
   def files_json(r)
@@ -162,7 +156,7 @@ class HomologationRequestsController < InertiaController
   end
 
   def notify_coordinators_new_request(request)
-    coordinators = User.joins(:roles).where(roles: { name: "super_admin" })
+    coordinators = User.super_admins
     coordinators.find_each do |coordinator|
       NotificationJob.perform_later(
         user_id: coordinator.id,

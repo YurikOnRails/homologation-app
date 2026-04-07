@@ -106,6 +106,41 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "google_oauth2", user.provider
   end
 
+  # --- Role scopes ---
+
+  test ".teachers returns only users with teacher role" do
+    teacher = create(:user, :teacher)
+    create(:user, :student)
+    assert_includes User.teachers, teacher
+    assert_equal User.teachers.count, User.teachers.distinct.count
+  end
+
+  test ".students returns only users with student role" do
+    create(:user, :teacher)
+    student = create(:user, :student)
+    assert_includes User.students, student
+    refute_includes User.students, User.teachers.first
+  end
+
+  test ".super_admins returns only super_admin users" do
+    admin = create(:user, :super_admin)
+    create(:user, :student)
+    assert_includes User.super_admins, admin
+  end
+
+  test ".coordinators returns only coordinator users" do
+    coord = create(:user, :coordinator)
+    create(:user, :student)
+    assert_includes User.coordinators, coord
+  end
+
+  test "role scopes do not duplicate users with multiple roles" do
+    user = create(:user, :teacher)
+    user.roles << Role.find_by!(name: "coordinator")
+    assert_equal 1, User.teachers.where(id: user.id).count
+    assert_equal 1, User.coordinators.where(id: user.id).count
+  end
+
   # --- Dual cabinet ---
 
   test "homologation_cabinet? returns true when has_homologation is true" do

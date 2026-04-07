@@ -113,6 +113,30 @@ class LessonsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "cancelled", @lesson.reload.status
   end
 
+  # --- Invalid date params fallback ---
+
+  test "invalid week_start param falls back to current week" do
+    sign_in @teacher
+    get lessons_path, params: { view: "week", week_start: "not-a-date" }
+    assert_response :ok
+    assert_equal "calendar/Index", inertia.component
+  end
+
+  test "invalid month param falls back to current month" do
+    sign_in @teacher
+    get lessons_path, params: { view: "month", month: "invalid" }
+    assert_response :ok
+    assert_equal "calendar/Index", inertia.component
+  end
+
+  test "empty date params use current dates" do
+    sign_in @teacher
+    get lessons_path, params: { view: "week", week_start: "" }
+    assert_response :ok
+    props = inertia.props
+    assert props[:weekStart].present?
+  end
+
   test "unauthenticated user cannot access lessons" do
     get lessons_path
     assert_redirected_to new_session_path

@@ -13,26 +13,29 @@ class Admin::PipelineController < InertiaController
     scope = scope.where(service_type: params[:service_type]) if params[:service_type].present?
     scope = search(scope, params[:q]) if params[:q].present?
 
-    all_requests = scope.order(created_at: :desc).to_a
+    # Compute stats via SQL aggregations — no .to_a / full load into memory
+    stage_counts = scope.group(:pipeline_stage).count
+    cotejo_min = stage_counts["cotejo_ministerio"] || 0
+    cotejo_del = stage_counts["cotejo_delegacion"] || 0
+    active = stage_counts.reject { |k, _| k == "completado" }.values.sum
 
-    grouped = HomologationRequest::PIPELINE_STAGES.each_with_object({}) do |stage, hash|
-      hash[stage] = all_requests
-        .select { |r| r.pipeline_stage == stage }
-        .map { |r| pipeline_card_json(r) }
-    end
-
-    not_completed = all_requests.reject { |r| r.pipeline_stage == "completado" }
-    cotejo_min = all_requests.count { |r| r.pipeline_stage == "cotejo_ministerio" }
-    cotejo_del = all_requests.count { |r| r.pipeline_stage == "cotejo_delegacion" }
     stats = {
-      active: not_completed.size,
-      revenue: all_requests.sum { |r| r.payment_amount.to_f },
-      byYear: all_requests.group_by(&:year).transform_values(&:size),
-      noPago: all_requests.count { |r| r.payment_amount.nil? || r.payment_amount.zero? },
+      active: active,
+      revenue: scope.sum(:payment_amount).to_f,
+      byYear: scope.group(:year).count,
+      noPago: scope.where(payment_amount: [nil, 0]).count,
       cotejo: cotejo_min + cotejo_del,
       cotejoMinisterio: cotejo_min,
       cotejoDelegacion: cotejo_del
     }
+
+    # Load cards grouped by stage — still needs full records for JSON, but ordered
+    all_requests = scope.order(created_at: :desc)
+    grouped = HomologationRequest::PIPELINE_STAGES.each_with_object({}) do |stage, hash|
+      hash[stage] = all_requests
+        .where(pipeline_stage: stage)
+        .map { |r| pipeline_card_json(r) }
+    end
 
     render inertia: "admin/Pipeline", props: {
       stages: grouped,

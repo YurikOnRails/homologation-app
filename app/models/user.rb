@@ -89,6 +89,13 @@ class User < ApplicationRecord
     age
   end
 
+  # Class-level role scopes — single query, used across controllers
+  scope :with_role, ->(name) { joins(:roles).where(roles: { name: name }) }
+  scope :super_admins, -> { with_role("super_admin") }
+  scope :coordinators,  -> { with_role("coordinator") }
+  scope :teachers,      -> { with_role("teacher") }
+  scope :students,      -> { with_role("student") }
+
   def super_admin? = has_role?("super_admin")
   def coordinator? = has_role?("coordinator")
   def teacher?     = has_role?("teacher")

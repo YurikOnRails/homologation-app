@@ -6,12 +6,6 @@ import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, ShimmerBorder } from "@/components/public/animations"
 import {
@@ -22,6 +16,7 @@ import {
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
+import { FaqSection } from "@/components/public/FaqSection"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
@@ -90,22 +85,7 @@ export default function Precios() {
       {/* FAQ */}
       <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.precios.faq_title")} />
-        <Reveal direction="up" delay={100}>
-          <div className="max-w-2xl mx-auto">
-            <Accordion type="single" collapsible className="w-full">
-              {Array.from({ length: 4 }, (_, i) => (
-                <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger className="text-left">
-                    {t(`public.precios.faq_${i + 1}_q`)}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {t(`public.precios.faq_${i + 1}_a`)}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </Reveal>
+        <FaqSection translationPrefix="public.precios" count={4} />
       </PublicSection>
 
       {/* CTA */}

@@ -6,19 +6,18 @@ class TeachersController < InertiaController
   def index
     authorize :teacher, :index?
 
-    teachers = User.joins(:roles).where(roles: { name: "teacher" })
+    teachers = User.teachers
       .includes(:teacher_profile, teacher_student_links: :student)
 
     # Load lesson counts for this week in one query
     week_range = Time.current.beginning_of_week..Time.current.end_of_week
-    teacher_ids = User.joins(:roles).where(roles: { name: "teacher" }).pluck(:id)
+    teacher_ids = teachers.pluck(:id)
     lessons_this_week = Lesson.where(teacher_id: teacher_ids, scheduled_at: week_range)
       .group(:teacher_id).count
 
     # Load available students (not already assigned to any teacher)
     assigned_student_ids = TeacherStudent.distinct.pluck(:student_id)
-    available_students = User.joins(:roles)
-      .where(roles: { name: "student" })
+    available_students = User.students
       .where.not(id: assigned_student_ids)
       .kept
 
