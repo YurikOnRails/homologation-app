@@ -2,11 +2,13 @@ require "test_helper"
 
 class LessonPolicyTest < ActiveSupport::TestCase
   setup do
-    @ana = users(:student_ana)
-    @pedro = users(:student_pedro)
-    @maria = users(:coordinator_maria)
-    @ivan = users(:teacher_ivan)
-    @lesson = lessons(:ivan_ana_lesson)
+    @ivan = create(:user, :teacher)
+    @ana = create(:user, :student)
+    @pedro = create(:user, :student)
+    @maria = create(:user, :coordinator)
+    create(:teacher_profile, user: @ivan)
+    create(:teacher_student, teacher: @ivan, student: @ana, assigned_by: @maria.id)
+    @lesson = create(:lesson, teacher: @ivan, student: @ana)
   end
 
   test "any authenticated user can list lessons" do

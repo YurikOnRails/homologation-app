@@ -53,7 +53,7 @@ export function Reveal({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all duration-500 ease-out ${
         inView ? "opacity-100 translate-x-0 translate-y-0" : `opacity-0 ${baseTransform}`
       } ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
@@ -145,7 +145,7 @@ export function ShimmerBorder({
   className?: string
 }) {
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group h-full ${className}`}>
       {/* Animated gradient border */}
       <div
         className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-[#E8453C] via-[#2D7FF9] to-[#E8453C] opacity-30 group-hover:opacity-60 blur-[1px] transition-opacity duration-500"
@@ -154,7 +154,7 @@ export function ShimmerBorder({
           animation: "shimmer 3s linear infinite",
         }}
       />
-      <div className="relative bg-white rounded-xl">{children}</div>
+      <div className="relative bg-white rounded-xl h-full">{children}</div>
     </div>
   )
 }

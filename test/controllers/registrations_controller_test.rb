@@ -1,6 +1,10 @@
 require "test_helper"
 
 class RegistrationsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @existing_student = create(:user, :student)
+  end
+
   test "GET /registration/new renders register page" do
     get new_registration_path
     assert_response :ok
@@ -22,10 +26,10 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
   test "POST /registration with duplicate email does not create user" do
     post registration_path, params: {
-      name: "Dup", email_address: users(:student_ana).email_address,
+      name: "Dup", email_address: @existing_student.email_address,
       password: "password123", password_confirmation: "password123"
     }
-    assert_equal 1, User.where(email_address: users(:student_ana).email_address).count
+    assert_equal 1, User.where(email_address: @existing_student.email_address).count
   end
 
   test "POST /registration with mismatched passwords does not create user" do

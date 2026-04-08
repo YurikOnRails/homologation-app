@@ -1,6 +1,7 @@
 class HomologationRequestsController < InertiaController
   include RequestSerializer
-  before_action :set_request, only: [ :show, :update, :confirm_payment, :download_document, :retry_sync ]
+  include ConversationSerializer
+  before_action :set_request, only: [ :show, :update, :confirm_payment, :create_checkout_session, :download_document, :retry_sync ]
 
   def index
     authorize HomologationRequest
@@ -46,7 +47,11 @@ class HomologationRequestsController < InertiaController
     authorize @request
 
     if params[:status].present?
-      @request.transition_to!(params[:status], changed_by: current_user)
+      begin
+        @request.transition_to!(params[:status], changed_by: current_user)
+      rescue HomologationRequest::InvalidTransition => e
+        return redirect_to homologation_request_path(@request), alert: e.message
+      end
       notify_student_status_changed(@request)
       redirect_to homologation_request_path(@request), notice: t("flash.status_updated")
     else
@@ -70,6 +75,20 @@ class HomologationRequestsController < InertiaController
     AmoCrmSyncJob.perform_later(@request.id)
     notify_student_payment_confirmed(@request)
     redirect_to homologation_request_path(@request), notice: t("flash.payment_confirmed")
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to homologation_request_path(@request), alert: e.record.errors.full_messages.join(", ")
+  end
+
+  def create_checkout_session
+    authorize @request, :confirm_payment?
+
+    amount = BigDecimal(params[:payment_amount].to_s)
+    service = StripeCheckoutService.new(@request, created_by: current_user)
+    session = service.create_session(amount: amount)
+
+    redirect_to homologation_request_path(@request), flash: { stripe_url: session.url }
+  rescue StripeCheckoutService::Error => e
+    redirect_to homologation_request_path(@request), alert: e.message
   end
 
   def retry_sync
@@ -119,15 +138,8 @@ class HomologationRequestsController < InertiaController
       amoCrmSyncError: r.amo_crm_sync_error,
       createdAt: r.created_at.iso8601, updatedAt: r.updated_at.iso8601,
       user: { id: r.user.id, name: r.user.name, email: r.user.email_address },
-      conversation: r.conversation ? conversation_json(r.conversation) : nil,
+      conversation: r.conversation ? conversation_messages_json(r.conversation) : nil,
       files: files_json(r) }
-  end
-
-  def conversation_json(c)
-    {
-      id: c.id,
-      messages: c.messages.order(:created_at).map(&:as_json_for_cable)
-    }
   end
 
   def files_json(r)
@@ -144,7 +156,7 @@ class HomologationRequestsController < InertiaController
   end
 
   def notify_coordinators_new_request(request)
-    coordinators = User.joins(:roles).where(roles: { name: "super_admin" })
+    coordinators = User.super_admins
     coordinators.find_each do |coordinator|
       NotificationJob.perform_later(
         user_id: coordinator.id,

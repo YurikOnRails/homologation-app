@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     get  "consultation",  to: "pages#consultation",  as: :localized_consultation
     post "consultation",  to: "pages#create_consultation"
     get "pricing",       to: "pages#pricing",       as: :localized_pricing
+    get "consultation-thank-you", to: "pages#consultation_thank_you", as: :localized_consultation_thank_you
   end
 
   # Authenticated app — logged-in users
@@ -51,6 +52,7 @@ Rails.application.routes.draw do
     member do
       get  :download_document
       post :confirm_payment
+      post :create_checkout_session
       post :retry_sync
     end
   end
@@ -85,6 +87,7 @@ Rails.application.routes.draw do
   end
 
   post "/telegram/webhook", to: "telegram#webhook"
+  post "/webhooks/stripe", to: "stripe_webhooks#create"
 
   resources :teachers, only: [ :index, :update ] do
     member do

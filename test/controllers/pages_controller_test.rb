@@ -8,7 +8,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "privacy policy page is accessible when authenticated" do
-    sign_in users(:student_ana)
+    sign_in create(:user, :student)
     get privacy_policy_path
     assert_response :ok
     assert_equal "PrivacyPolicy", inertia.component
@@ -25,7 +25,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "root redirects logged-in user to localized home" do
-    sign_in users(:student_ana)
+    sign_in create(:user, :student)
     get root_path
     assert_response :redirect
   end
@@ -52,7 +52,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "home page is accessible to logged-in user" do
-    sign_in users(:student_ana)
+    sign_in create(:user, :student)
     get localized_home_path(locale: "en")
     assert_response :ok
     assert_equal "public/Home", inertia.component

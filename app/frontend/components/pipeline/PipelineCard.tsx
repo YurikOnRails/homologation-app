@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DocumentTags } from "@/components/pipeline/DocumentTags"
-import { STAGE_COLORS, STAGE_SHORT_LABELS, SERVICE_TYPE_COLORS, YEAR_COLORS } from "@/components/pipeline/constants"
+import { usePipeline, SERVICE_TYPE_COLORS, YEAR_COLORS } from "@/components/pipeline/constants"
 import { routes } from "@/lib/routes"
 import { cn, getOptionLabel } from "@/lib/utils"
 import type { SharedProps } from "@/types"
@@ -17,12 +17,11 @@ interface PipelineCardProps {
   onEdit: (card: PipelineCardType) => void
 }
 
-export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
+export function PipelineCard({ card, onEdit }: PipelineCardProps) {
   const { t, i18n } = useTranslation()
   const { selectOptions } = usePage<SharedProps>().props
+  const { stageShortLabels } = usePipeline()
   const [busy, setBusy] = useState(false)
-  const stageKey = stage ?? card.pipelineStage
-  const color = STAGE_COLORS[stageKey]
 
   const countryLabel = card.country
     ? (selectOptions.countries ?? []).find((o) => o.key === card.country)
@@ -31,13 +30,13 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
     ? getOptionLabel(countryLabel, i18n.language)
     : card.country
 
-  const yearColor = YEAR_COLORS[card.year] ?? { bg: "bg-blue-600", text: "text-white" }
+  const yearColor = YEAR_COLORS[card.year] ?? { bg: "bg-transparent border border-border", text: "text-foreground" }
 
   // Smart advance label: show next stage short name
   const advanceLabel = card.nextStageName
     ? card.nextStageName === "completado"
       ? "\u2713 Fin"
-      : `\u2192 ${STAGE_SHORT_LABELS[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
+      : `\u2192 ${stageShortLabels[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
     : `${t("pipeline.advance")} \u2192`
 
   function moveStage(e: React.MouseEvent, url: string) {
@@ -53,10 +52,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
 
   return (
     <Card
-      className={cn(
-        "cursor-pointer hover:shadow-md transition-all border-l-4 min-h-[180px]",
-        color?.border ?? "border-l-gray-300"
-      )}
+      className="cursor-pointer hover:shadow-md transition-all border border-border"
       onClick={() => onEdit(card)}
     >
       <CardContent className="p-3 flex flex-col gap-2 h-full">
@@ -88,9 +84,9 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
           {card.country && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white cursor-default">
-                  <span className={`fi fi-${card.country.toLowerCase()} rounded-sm`} />
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium cursor-default">
                   {card.country}
+                  {card.requiresTranslation && <span title="Traducción jurada">🌐</span>}
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top">
@@ -98,13 +94,11 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
               </TooltipContent>
             </Tooltip>
           )}
-          {card.requiresTranslation && (
-            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white" title="Traducción jurada">
-              🌐
-            </span>
+          {!card.country && card.requiresTranslation && (
+            <span className="text-[11px] font-medium" title="Traducción jurada">🌐</span>
           )}
           {card.countryMissing && (
-            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-white">❓ Sin país</span>
+            <span className="text-[11px] font-bold text-destructive">❓ Sin país</span>
           )}
         </div>
 
@@ -135,12 +129,9 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
             &larr;
           </Button>
           <Button
+            variant="outline"
             size="sm"
-            className={cn(
-              "min-h-[44px] md:min-h-0 md:h-8 flex-[2] text-xs text-white",
-              color?.bg ?? "bg-emerald-700",
-              `hover:opacity-90`,
-            )}
+            className="min-h-[44px] md:min-h-0 md:h-8 flex-[2] text-xs"
             disabled={busy || !card.canAdvance}
             onClick={(e) => moveStage(e, routes.admin.pipelineAdvance(card.id))}
           >

@@ -5,8 +5,8 @@ module Admin
     def index
       authorize :admin_lesson, :index?
 
-      teachers = User.joins(:roles).where(roles: { name: "teacher" }).order(:name).map { |u| { id: u.id, name: u.name } }
-      students = User.joins(:roles).where(roles: { name: "student" }).order(:name).map { |u| { id: u.id, name: u.name } }
+      teachers = User.teachers.order(:name).pluck(:id, :name).map { |id, name| { id: id, name: name } }
+      students = User.students.order(:name).pluck(:id, :name).map { |id, name| { id: id, name: name } }
 
       view = params[:view].presence || "week"
 
@@ -25,7 +25,8 @@ module Admin
           lessons: lessons.map { |l| lesson_json(l) },
           teachers: teachers,
           students: students,
-          weekStart: week_start.iso8601
+          weekStart: week_start.iso8601,
+          filters: { teacherId: params[:teacher_id].presence }
         }
 
       when "month"
@@ -107,6 +108,7 @@ module Admin
         email: u.email_address,
         avatarUrl: u.avatar_url,
         roles: u.roles.map(&:name),
+        isTeacher: u.teacher?,
         phone: u.phone,
         whatsapp: u.whatsapp,
         country: u.country,

@@ -14,6 +14,7 @@ import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
 import { StatsCard } from "@/components/admin/StatsCard"
+import { FinanceSummary } from "@/components/admin/FinanceSummary"
 import { RequestsByMonthChart, RequestsByStatusChart } from "@/components/admin/Charts"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,7 +25,7 @@ import type { AdminDashboardProps, RequestListItem } from "@/types/pages"
 
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
-  const { stats, requestsByMonth, requestsByStatus, recentRequests, failedSyncs } =
+  const { stats, finance, requestsByMonth, requestsByStatus, recentRequests, failedSyncs } =
     usePage<SharedProps & AdminDashboardProps>().props
 
   const columns: ColumnDef<RequestListItem>[] = [
@@ -65,37 +66,46 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold tracking-tight">{t("admin.dashboard")}</h1>
         </div>
 
+        {/* Finance summary */}
+        <FinanceSummary finance={finance} />
+
         {/* Stats grid */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <StatsCard
             icon={<FileText className="h-5 w-5" />}
             label={t("admin.stats.total_requests")}
             value={stats.totalRequests}
+            href={routes.requests}
           />
           <StatsCard
             icon={<FolderOpen className="h-5 w-5" />}
             label={t("admin.stats.open_requests")}
             value={stats.openRequests}
+            href={`${routes.requests}?status=submitted`}
           />
           <StatsCard
             icon={<CreditCard className="h-5 w-5" />}
             label={t("admin.stats.awaiting_payment")}
             value={stats.awaitingPayment}
+            href={`${routes.requests}?status=awaiting_payment`}
           />
           <StatsCard
             icon={<CheckCircle className="h-5 w-5" />}
             label={t("admin.stats.resolved")}
             value={stats.resolved}
+            href={`${routes.requests}?status=resolved`}
           />
           <StatsCard
             icon={<Users className="h-5 w-5" />}
             label={t("admin.stats.total_users")}
             value={stats.totalUsers}
+            href={routes.admin.users}
           />
           <StatsCard
             icon={<GraduationCap className="h-5 w-5" />}
             label={t("admin.stats.total_teachers")}
             value={stats.totalTeachers}
+            href={routes.teachers}
           />
         </div>
 

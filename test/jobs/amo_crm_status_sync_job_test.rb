@@ -14,6 +14,9 @@ class AmoCrmStatusSyncJobTest < ActiveJob::TestCase
     stub_request(:patch, /api\/v4\/leads/)
       .to_return(status: 200, body: "{}",
                  headers: { "Content-Type" => "application/json" })
+
+    @student = create(:user, :student)
+    @request = create(:homologation_request, :submitted, user: @student)
   end
 
   teardown do
@@ -22,19 +25,17 @@ class AmoCrmStatusSyncJobTest < ActiveJob::TestCase
   end
 
   test "updates lead status in AmoCRM" do
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(amo_crm_lead_id: "888", status: "in_progress")
+    @request.update!(amo_crm_lead_id: "888", status: "in_progress")
 
-    AmoCrmStatusSyncJob.perform_now(request.id)
+    AmoCrmStatusSyncJob.perform_now(@request.id)
 
     assert_requested :patch, /api\/v4\/leads\/888/
   end
 
   test "skips when no amo_crm_lead_id" do
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(amo_crm_lead_id: nil, status: "in_progress")
+    @request.update!(amo_crm_lead_id: nil, status: "in_progress")
 
-    AmoCrmStatusSyncJob.perform_now(request.id)
+    AmoCrmStatusSyncJob.perform_now(@request.id)
 
     assert_not_requested :patch, /api\/v4\/leads/
   end

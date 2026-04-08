@@ -19,7 +19,7 @@ module Admin
 
     def create
       authorize User
-      @user = User.new(user_params)
+      @user = User.new({ has_homologation: true }.merge(user_params))
       if @user.save
         redirect_to admin_users_path, notice: t("flash.user_created")
       else
@@ -40,7 +40,7 @@ module Admin
       if @user.update(user_params)
         redirect_to admin_users_path, notice: t("flash.user_updated")
       else
-        redirect_to edit_admin_user_path(@user), inertia: { errors: @user.errors }
+        redirect_to admin_users_path, inertia: { errors: @user.errors.to_hash(true) }
       end
     end
 
@@ -81,7 +81,7 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:name, :email_address, :password, :locale)
+      params.require(:user).permit(:name, :email_address, :password, :locale, :has_homologation, :has_education)
     end
 
     def admin_user_json(u)
@@ -89,7 +89,9 @@ module Admin
         roles: u.roles.map(&:name), locale: u.locale,
         avatarUrl: u.avatar_url, createdAt: u.created_at.iso8601,
         discarded: u.discarded?,
-        deletionRequestedAt: u.deletion_requested_at&.iso8601 }
+        deletionRequestedAt: u.deletion_requested_at&.iso8601,
+        hasHomologation: u.has_homologation?,
+        hasEducation: u.has_education? }
     end
   end
 end

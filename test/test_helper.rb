@@ -8,13 +8,17 @@ InertiaRails::Testing.install!
 
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    fixtures :all
+    include FactoryBot::Syntax::Methods
 
-    # Add more helper methods to be used by all tests here...
+    setup do
+      %w[super_admin coordinator teacher student].each do |name|
+        Role.find_or_create_by!(name: name)
+      rescue ActiveRecord::RecordNotUnique
+        retry
+      end
+    end
   end
 end
 

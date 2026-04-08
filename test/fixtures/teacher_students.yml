@@ -1,5 +1,0 @@
-ivan_ana:
-  teacher_id: <%= ActiveRecord::FixtureSet.identify(:teacher_ivan) %>
-  student_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
-  assigned_by: <%= ActiveRecord::FixtureSet.identify(:coordinator_maria) %>
-  created_at: 2026-01-01 00:00:00

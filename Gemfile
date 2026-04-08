@@ -23,6 +23,9 @@ gem "pundit"
 gem "faraday"
 gem "faraday-multipart"
 
+# Payments
+gem "stripe"
+
 # File validation
 gem "active_storage_validations"
 
@@ -74,6 +77,8 @@ group :test do
   gem "selenium-webdriver"
   # Mock HTTP calls to AmoCRM/Telegram in tests
   gem "webmock"
+  # Test data factories
+  gem "factory_bot_rails"
 end
 
 gem "inertia_rails", "~> 3.18"

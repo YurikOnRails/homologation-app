@@ -5,15 +5,16 @@ import { createRoot } from "react-dom/client"
 import { AuthLayout } from "@/components/layout/AuthLayout"
 
 void createInertiaApp({
-  resolve: (name) => {
+  resolve: async (name) => {
     const pages = import.meta.glob<{ default: ResolvedComponent }>(
       "../pages/**/*.tsx",
-      { eager: true }
     )
-    const page = pages[`../pages/${name}.tsx`]
-    if (!page) {
-      console.error(`Missing Inertia page component: '${name}.tsx'`)
+    const loader = pages[`../pages/${name}.tsx`]
+    if (!loader) {
+      throw new Error(`Missing Inertia page component: '${name}.tsx'`)
     }
+
+    const page = await loader()
 
     // Auth pages get AuthLayout as default persistent layout.
     // Authenticated pages manage their own layout (AuthenticatedLayout)

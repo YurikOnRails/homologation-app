@@ -9,6 +9,7 @@ export const publicPages = {
   espanol: "spanish",
   consulta: "consultation",
   precios: "pricing",
+  consultationThankYou: "consultation-thank-you",
 } as const
 
 export const routes = {
@@ -37,6 +38,7 @@ export const routes = {
   newRequest: "/requests/new",
   request: (id: number) => `/requests/${id}`,
   confirmPayment: (id: number) => `/requests/${id}/confirm_payment`,
+  createCheckoutSession: (id: number) => `/requests/${id}/create_checkout_session`,
   retrySync: (id: number) => `/requests/${id}/retry_sync`,
   downloadDocument: (id: number, docId: number) =>
     `/requests/${id}/download_document?document_id=${docId}`,

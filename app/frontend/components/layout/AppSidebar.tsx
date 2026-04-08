@@ -86,7 +86,6 @@ export function AppSidebar() {
   const { auth, features, unreadNotificationsCount, unreadChatsCount } = props
   const user = auth.user
 
-  // Super admin gets 4 domain-oriented groups; other roles get the flat layout
   const isSuperAdmin = features.canAccessAdmin
 
   const navGroups = useMemo<NavGroup[]>(() => isSuperAdmin
@@ -95,27 +94,27 @@ export function AppSidebar() {
           label: t("nav.homologation"),
           items: [
             {
-              show: true,
+              show: features.hasHomologation,
               href: routes.dashboard,
               icon: LayoutDashboard,
               label: t("nav.dashboard"),
             },
             {
-              show: true,
+              show: features.hasHomologation,
               href: routes.requests,
               icon: FileText,
               label: t("nav.all_requests"),
               exact: true,
             },
             {
-              show: true,
+              show: features.hasHomologation,
               href: routes.chats,
               icon: MessagesSquare,
               label: t("nav.chats"),
               badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
             },
             {
-              show: features.canAccessPipeline,
+              show: features.hasHomologation && features.canAccessPipeline,
               href: routes.admin.pipeline,
               icon: Kanban,
               label: t("nav.pipeline"),
@@ -126,19 +125,19 @@ export function AppSidebar() {
           label: t("nav.teaching"),
           items: [
             {
-              show: true,
+              show: features.hasEducation,
               href: routes.teachers,
               icon: GraduationCap,
               label: t("nav.teachers"),
             },
             {
-              show: true,
+              show: features.hasEducation,
               href: routes.admin.lessons,
               icon: BookOpen,
               label: t("nav.all_lessons"),
             },
             {
-              show: true,
+              show: features.hasEducation,
               href: routes.lessons,
               icon: Calendar,
               label: t("nav.calendar"),
@@ -183,60 +182,63 @@ export function AppSidebar() {
         },
       ]
     : [
+        // Homologation group — visible only if user has homologation cabinet
         {
-          label: t("nav.general"),
+          label: t("nav.homologation"),
           items: [
             {
-              show: features.canSeeDashboard,
+              show: features.canSeeDashboard && features.hasHomologation && features.hasEducation,
               href: routes.dashboard,
               icon: LayoutDashboard,
               label: t("nav.dashboard"),
             },
             {
-              show: features.canSeeMyRequests,
+              show: features.canSeeMyRequests && features.hasHomologation,
               href: routes.requests,
               icon: FileText,
               label: t("nav.my_requests"),
               exact: true,
             },
             {
-              show: features.canCreateRequest,
+              show: features.canCreateRequest && features.hasHomologation,
               href: routes.newRequest,
               icon: FilePlus,
               label: t("nav.new_request"),
             },
-            {
-              show: features.canSeeChat,
-              href: routes.conversations,
-              icon: MessageCircle,
-              label: t("nav.chat"),
-              badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
-            },
-            {
-              show: features.canSeeCalendar,
-              href: routes.lessons,
-              icon: BookOpen,
-              label: t("nav.my_lessons"),
-            },
           ],
         },
+        // Education group — visible only if user has education cabinet
         {
-          label: t("nav.management"),
+          label: t("nav.teaching"),
           items: [
             {
-              show: features.canManageTeachers,
+              show: features.canManageTeachers && features.hasEducation,
               href: routes.teachers,
               icon: GraduationCap,
               label: t("nav.teachers"),
             },
             {
-              show: features.canSeeAllLessons,
+              show: features.canSeeAllLessons && features.hasEducation,
               href: routes.admin.lessons,
               icon: BookOpen,
               label: t("nav.all_lessons"),
             },
+            {
+              show: features.canSeeCalendar && features.hasEducation,
+              href: routes.lessons,
+              icon: BookOpen,
+              label: t("nav.my_lessons"),
+            },
+            {
+              show: features.canSeeChat && features.hasEducation,
+              href: routes.conversations,
+              icon: MessageCircle,
+              label: t("nav.chat"),
+              badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
+            },
           ],
         },
+        // Common items
         {
           label: t("nav.other"),
           items: [
@@ -265,7 +267,7 @@ export function AppSidebar() {
         items: group.items.filter((item) => item.show),
       }))
       .filter((group) => group.items.length > 0),
-    [navGroups, url])
+    [navGroups])
 
   const initials = useMemo(() =>
     user?.name ? getInitials(user.name) : "?",

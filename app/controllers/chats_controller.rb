@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ChatsController < InertiaController
+  include ConversationSerializer
+
   LIST_INCLUDES = [
     :homologation_request, :teacher_student_link,
     :conversation_participants,
@@ -25,7 +27,7 @@ class ChatsController < InertiaController
       .order(last_message_at: :desc)
 
     render inertia: "chats/Index", props: {
-      conversations: conversations.map { |c| chat_conversation_json(c) }
+      conversations: conversations.map { |c| conversation_list_json(c, current_user: current_user) }
     }
   end
 
@@ -35,37 +37,24 @@ class ChatsController < InertiaController
       .find(params[:id])
     authorize @conversation, :show?
 
-    # Mark conversation as read for current user
-    participant = @conversation.conversation_participants.detect { |p| p.user_id == current_user.id }
-    participant&.update_columns(last_read_at: Time.current)
+    # Mark conversation as read for current user (create participant if admin viewing for the first time)
+    participant = @conversation.conversation_participants.find_or_create_by!(user: current_user)
+    participant.update_columns(last_read_at: Time.current)
 
     conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
       .includes(LIST_INCLUDES)
       .order(last_message_at: :desc)
 
     render inertia: "chats/Index", props: {
-      conversations: conversations.map { |c| chat_conversation_json(c) },
-      selectedConversation: chat_conversation_detail_json(@conversation)
+      conversations: conversations.map { |c| conversation_list_json(c, current_user: current_user) },
+      selectedConversation: chat_detail_json(@conversation)
     }
   end
 
   private
 
-  def chat_conversation_json(c)
-    last_msg = c.latest_message
-    {
-      id: c.id,
-      type: c.homologation_request_id.present? ? "request" : "teacher_student",
-      title: c.title,
-      lastMessage: last_msg ? { body: last_msg.body.truncate(80), createdAt: last_msg.created_at.iso8601 } : nil,
-      unread: c.unread_for?(current_user),
-      lastMessageAt: c.last_message_at&.iso8601
-    }
-  end
-
-  def chat_conversation_detail_json(c)
-    base = chat_conversation_json(c)
-    base[:messages] = c.messages.sort_by(&:created_at).map(&:as_json_for_cable)
+  def chat_detail_json(c)
+    base = conversation_detail_json(c, current_user: current_user)
 
     if c.homologation_request_id?
       r = c.homologation_request

@@ -1,7 +1,7 @@
 require "test_helper"
 
 class PasswordsControllerTest < ActionDispatch::IntegrationTest
-  setup { @user = users(:student_ana) }
+  setup { @user = create(:user, :student) }
 
   test "GET /passwords/new renders forgot password page" do
     get new_password_path

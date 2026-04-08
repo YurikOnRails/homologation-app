@@ -26,29 +26,38 @@ export function Container({
 }
 
 // ─── GradientButton — primary CTA with brand gradient ───────────────────────────
+// When `href` is provided, wraps in an Inertia Link. Without `href`, renders a
+// plain button (useful as a Dialog trigger, form submit, etc.).
 export function GradientButton({
   children,
   href,
   className,
+  ...rest
 }: {
   children: React.ReactNode
-  href: string
+  href?: string
   className?: string
-}) {
-  return (
-    <Link href={href}>
-      <Button
-        size="lg"
-        className={cn(
-          "group min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
-          className,
-        )}
-      >
+} & Omit<React.ComponentProps<typeof Button>, "size">) {
+  const btn = (
+    <Button
+      size="lg"
+      className={cn(
+        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
+        className,
+      )}
+      {...rest}
+    >
+      <span
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+        style={{ backgroundSize: "200% 100%", animation: "shimmer 3s ease-in-out infinite" }}
+      />
+      <span className="relative flex items-center">
         {children}
         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </Button>
-    </Link>
+      </span>
+    </Button>
   )
+  return href ? <Link href={href}>{btn}</Link> : btn
 }
 
 // ─── PublicHero — shared hero section ────────────────────────────────────────────
@@ -57,18 +66,20 @@ export function PublicHero({
   titleAccent,
   subtitle,
   actions,
+  footer,
   illustration,
 }: {
   title1: string
   titleAccent: string
-  subtitle: string
+  subtitle: React.ReactNode
   actions?: React.ReactNode
+  footer?: React.ReactNode
   illustration?: React.ReactNode
 }) {
   const hasIllustration = !!illustration
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-20 sm:py-32 overflow-hidden min-h-[80vh] flex items-center">
+    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden min-h-[60vh] sm:min-h-[80vh] flex items-center">
       <Spotlight />
       <FloatingElements />
       <DotGrid className="opacity-[0.25]" />
@@ -82,28 +93,33 @@ export function PublicHero({
         >
           <div className={hasIllustration ? undefined : "max-w-3xl"}>
             <Reveal direction="up">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
                 {title1}{" "}
                 <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
                   {titleAccent}
                 </span>
               </h1>
             </Reveal>
-            <Reveal direction="up" delay={150}>
+            <Reveal direction="up" delay={100}>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl">
                 {subtitle}
               </p>
             </Reveal>
             {actions && (
-              <Reveal direction="up" delay={300}>
+              <Reveal direction="up" delay={200}>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                   {actions}
                 </div>
               </Reveal>
             )}
+            {footer && (
+              <Reveal direction="up" delay={300}>
+                <div className="mt-10">{footer}</div>
+              </Reveal>
+            )}
           </div>
           {illustration && (
-            <Reveal direction="right" delay={200}>
+            <Reveal direction="right" delay={100}>
               {illustration}
             </Reveal>
           )}

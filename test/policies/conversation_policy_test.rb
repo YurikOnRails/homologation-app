@@ -2,13 +2,22 @@ require "test_helper"
 
 class ConversationPolicyTest < ActiveSupport::TestCase
   setup do
-    @ana = users(:student_ana)
-    @pedro = users(:student_pedro)
-    @maria = users(:coordinator_maria)
-    @ivan = users(:teacher_ivan)
-    @boss = users(:super_admin_boss)
-    @request_conv = conversations(:ana_equivalencia_conversation)
-    @teacher_conv = conversations(:ivan_ana_conversation)
+    @ana = create(:user, :student)
+    @pedro = create(:user, :student)
+    @maria = create(:user, :coordinator)
+    @ivan = create(:user, :teacher)
+    @boss = create(:user, :super_admin)
+
+    # Request conversation: ana + maria as participants
+    @submitted_request = create(:homologation_request, :submitted, :with_conversation, user: @ana)
+    @request_conv = @submitted_request.conversation
+    @request_conv.conversation_participants.create!(user: @maria)
+
+    # Teacher-student conversation: ivan + ana as participants
+    @teacher_student = create(:teacher_student, teacher: @ivan, student: @ana, assigned_by: @maria.id)
+    @teacher_conv = Conversation.create!(teacher_student_id: @teacher_student.id)
+    @teacher_conv.conversation_participants.create!(user: @ivan)
+    @teacher_conv.conversation_participants.create!(user: @ana)
   end
 
   test "any authenticated user can list conversations" do
@@ -25,12 +34,10 @@ class ConversationPolicyTest < ActiveSupport::TestCase
   end
 
   test "coordinator can view conversation they participate in" do
-    # Maria is a participant in the request conversation (via fixture)
     assert ConversationPolicy.new(@maria, @request_conv).show?
   end
 
   test "coordinator cannot view conversation they do not participate in" do
-    # Maria is NOT a participant in the teacher-student conversation
     refute ConversationPolicy.new(@maria, @teacher_conv).show?
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_07_200000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -126,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
     t.index ["status"], name: "index_lessons_on_status"
     t.index ["student_id", "scheduled_at"], name: "index_lessons_on_student_id_and_scheduled_at"
     t.index ["teacher_id", "scheduled_at"], name: "index_lessons_on_teacher_id_and_scheduled_at"
+    t.index ["teacher_id"], name: "index_lessons_on_teacher_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -189,6 +190,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
     t.integer "teacher_id", null: false
     t.index ["student_id"], name: "index_teacher_students_on_student_id"
     t.index ["teacher_id", "student_id"], name: "index_teacher_students_on_teacher_id_and_student_id", unique: true
+    t.index ["teacher_id"], name: "index_teacher_students_on_teacher_id"
   end
 
   create_table "user_roles", force: :cascade do |t|
@@ -215,6 +217,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
     t.string "guardian_phone"
     t.integer "guardian_user_id"
     t.string "guardian_whatsapp"
+    t.boolean "has_education", default: false, null: false
+    t.boolean "has_homologation", default: false, null: false
     t.boolean "is_minor", default: false, null: false
     t.string "locale", default: "es"
     t.string "name", default: "", null: false
@@ -224,6 +228,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
     t.string "phone"
     t.datetime "privacy_accepted_at"
     t.string "provider"
+    t.string "stripe_customer_id"
     t.string "telegram_chat_id"
     t.string "telegram_link_token"
     t.string "uid"

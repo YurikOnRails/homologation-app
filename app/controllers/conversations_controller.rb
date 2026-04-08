@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ConversationsController < InertiaController
+  include ConversationSerializer
+
   def index
     authorize :conversation, :index?
     @conversations = current_user_conversations
@@ -10,7 +12,7 @@ class ConversationsController < InertiaController
       .order(last_message_at: :desc)
 
     render inertia: "chat/Index", props: {
-      conversations: @conversations.map { |c| conversation_list_json(c) }
+      conversations: @conversations.map { |c| conversation_list_json(c, current_user: current_user) }
     }
   end
 
@@ -26,7 +28,7 @@ class ConversationsController < InertiaController
     participant&.update_columns(last_read_at: Time.current)
 
     render inertia: "chat/Show", props: {
-      conversation: conversation_detail_json(@conversation)
+      conversation: conversation_detail_json(@conversation, current_user: current_user)
     }
   end
 
@@ -36,29 +38,5 @@ class ConversationsController < InertiaController
     Conversation
       .joins(:conversation_participants)
       .where(conversation_participants: { user_id: current_user.id })
-  end
-
-  def conversation_list_json(c)
-    last_msg = c.messages.max_by(&:created_at)
-    other = c.participants.reject { |p| p.id == current_user.id }.first
-
-    {
-      id: c.id,
-      type: c.homologation_request_id.present? ? "request" : "teacher_student",
-      title: c.title,
-      otherUser: other ? { id: other.id, name: other.name, avatarUrl: other.avatar_url } : nil,
-      lastMessage: last_msg ? { body: last_msg.body.truncate(80), createdAt: last_msg.created_at.iso8601 } : nil,
-      unread: c.unread_for?(current_user),
-      lastMessageAt: c.last_message_at&.iso8601
-    }
-  end
-
-  def conversation_detail_json(c)
-    {
-      id: c.id,
-      type: c.homologation_request_id.present? ? "request" : "teacher_student",
-      title: c.title,
-      messages: c.messages.sort_by(&:created_at).map(&:as_json_for_cable)
-    }
   end
 end

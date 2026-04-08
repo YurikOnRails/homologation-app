@@ -7,11 +7,12 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "role check methods work" do
-    assert users(:super_admin_boss).super_admin?
-    assert users(:coordinator_maria).coordinator?
-    assert users(:teacher_ivan).teacher?
-    assert users(:student_ana).student?
-    refute users(:student_ana).coordinator?
+    assert create(:user, :super_admin).super_admin?
+    assert create(:user, :coordinator).coordinator?
+    assert create(:user, :teacher).teacher?
+    student = create(:user, :student)
+    assert student.student?
+    refute student.coordinator?
   end
 
   test "find_or_create_from_oauth creates new user" do
@@ -27,39 +28,40 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "find_or_create_from_oauth finds existing by email" do
+    existing = create(:user, :student)
     auth = OmniAuth::AuthHash.new(
       provider: "google_oauth2",
       uid: "99999",
-      info: { email: users(:student_ana).email_address, name: "Ana", image: nil }
+      info: { email: existing.email_address, name: "Ana", image: nil }
     )
     user = User.find_or_create_from_oauth(auth)
-    assert_equal users(:student_ana).id, user.id
+    assert_equal existing.id, user.id
   end
 
   test "profile_complete? returns true when all fields present" do
-    assert users(:student_ana).profile_complete?
+    assert create(:user, :student).profile_complete?
   end
 
   test "profile_complete? returns false when whatsapp missing" do
-    user = users(:student_ana)
+    user = create(:user, :student)
     user.whatsapp = nil
     refute user.profile_complete?
   end
 
   test "profile_complete? returns false when birthday missing" do
-    user = users(:student_ana)
+    user = create(:user, :student)
     user.birthday = nil
     refute user.profile_complete?
   end
 
   test "profile_complete? returns false when country missing" do
-    user = users(:student_ana)
+    user = create(:user, :student)
     user.country = nil
     refute user.profile_complete?
   end
 
   test "soft delete discard and kept scopes" do
-    user = users(:student_ana)
+    user = create(:user, :student)
     assert_includes User.kept, user
     user.discard
     refute_includes User.kept.reload, user
@@ -67,7 +69,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "undiscard restores user to kept" do
-    user = users(:student_pedro)
+    user = create(:user, :student)
     user.discard
     user.undiscard
     assert_includes User.kept, user
@@ -102,5 +104,93 @@ class UserTest < ActiveSupport::TestCase
     assert user.persisted?
     assert user.student?
     assert_equal "google_oauth2", user.provider
+  end
+
+  # --- Role scopes ---
+
+  test ".teachers returns only users with teacher role" do
+    teacher = create(:user, :teacher)
+    create(:user, :student)
+    assert_includes User.teachers, teacher
+    assert_equal User.teachers.count, User.teachers.distinct.count
+  end
+
+  test ".students returns only users with student role" do
+    create(:user, :teacher)
+    student = create(:user, :student)
+    assert_includes User.students, student
+    refute_includes User.students, User.teachers.first
+  end
+
+  test ".super_admins returns only super_admin users" do
+    admin = create(:user, :super_admin)
+    create(:user, :student)
+    assert_includes User.super_admins, admin
+  end
+
+  test ".coordinators returns only coordinator users" do
+    coord = create(:user, :coordinator)
+    create(:user, :student)
+    assert_includes User.coordinators, coord
+  end
+
+  test "role scopes do not duplicate users with multiple roles" do
+    user = create(:user, :teacher)
+    user.roles << Role.find_by!(name: "coordinator")
+    assert_equal 1, User.teachers.where(id: user.id).count
+    assert_equal 1, User.coordinators.where(id: user.id).count
+  end
+
+  # --- Dual cabinet ---
+
+  test "homologation_cabinet? returns true when has_homologation is true" do
+    user = create(:user, :student)
+    user.has_homologation = true
+    assert user.homologation_cabinet?
+  end
+
+  test "homologation_cabinet? returns false when has_homologation is false" do
+    user = create(:user, :student)
+    user.has_homologation = false
+    user.has_education = true
+    refute user.homologation_cabinet?
+  end
+
+  test "education_cabinet? returns true when has_education is true" do
+    user = create(:user, :teacher)
+    user.has_education = true
+    assert user.education_cabinet?
+  end
+
+  test "education_cabinet? returns false when has_education is false" do
+    user = create(:user, :student)
+    user.has_education = false
+    refute user.education_cabinet?
+  end
+
+  test "user with both cabinets is valid" do
+    user = create(:user, :student)
+    user.has_homologation = true
+    user.has_education = true
+    assert user.valid?
+  end
+
+  test "user must have at least one cabinet" do
+    user = create(:user, :student)
+    user.has_homologation = false
+    user.has_education = false
+    refute user.valid?
+    assert user.errors[:base].any?
+  end
+
+  test "new student via OAuth gets has_homologation true by default" do
+    auth = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "newstudent999",
+      info: { email: "newstudent@example.com", name: "New Student", image: nil }
+    )
+    user = User.find_or_create_from_oauth(auth)
+    assert user.has_homologation?
+    refute user.has_education?
   end
 end

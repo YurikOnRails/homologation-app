@@ -1,8 +1,0 @@
-ivan_ana_lesson:
-  teacher_id: <%= ActiveRecord::FixtureSet.identify(:teacher_ivan) %>
-  student_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
-  scheduled_at: 2026-03-22 10:00:00
-  duration_minutes: 60
-  status: scheduled
-  created_at: 2026-03-10 10:00:00
-  updated_at: 2026-03-10 10:00:00

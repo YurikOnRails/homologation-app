@@ -8,6 +8,7 @@ ru:
         subject: "Тема"
         service_type: "Тип услуги"
         status: "Статус"
+        payment_amount: "Сумма оплаты"
       user:
         name: "Имя"
         email_address: "Электронная почта"
@@ -26,7 +27,14 @@ ru:
           attributes:
             privacy_accepted:
               accepted: "необходимо принять политику конфиденциальности"
+            service_type:
+              inclusion: "недопустимый тип услуги"
+            payment_amount:
+              blank: "обязательна при подтверждении оплаты"
+              greater_than: "должна быть больше 0"
         user:
+          base:
+            no_cabinet_selected: "необходимо выбрать хотя бы один кабинет (гомологация или обучение)"
           attributes:
             phone:
               invalid: "неверный формат (например: +7 912 345-67-89)"
@@ -130,4 +138,7 @@ ru:
     lesson_reminder: "Напоминание об уроке"
     lesson_starts_soon: "Ваш урок начнётся через 1 час (%{time})"
     lesson_cancelled: "Урок отменён: %{date}"
+    stripe_payment_received: "Оплата Stripe €%{amount} получена от %{student}"
     deletion_requested: "Запрос на удаление аккаунта от %{name}"
+  stripe:
+    product_name: "Омологация: %{subject}"

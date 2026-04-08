@@ -15,7 +15,7 @@ class LessonsController < InertiaController
 
       case view
       when "month"
-        month_date = params[:month].present? ? Date.parse("#{params[:month]}-01") : Date.current.beginning_of_month
+        month_date = parse_month(params[:month]) || Date.current.beginning_of_month
         month_start = month_date.beginning_of_month
         month_end = month_date.end_of_month
         lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile)
@@ -38,7 +38,7 @@ class LessonsController < InertiaController
           assignedStudents: assigned_students
         }
       else # week
-        week_start = params[:week_start].present? ? Date.parse(params[:week_start]).beginning_of_week(:monday) : Date.current.beginning_of_week(:monday)
+        week_start = parse_date(params[:week_start])&.beginning_of_week(:monday) || Date.current.beginning_of_week(:monday)
         week_lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile)
                                            .where(scheduled_at: week_start.beginning_of_day..(week_start + 6.days).end_of_day)
                                            .order(:scheduled_at)
@@ -50,8 +50,6 @@ class LessonsController < InertiaController
     else
       redirect_to admin_lessons_path
     end
-  rescue Date::Error
-    redirect_to lessons_path
   end
 
   def show
@@ -110,5 +108,17 @@ class LessonsController < InertiaController
 
   def update_lesson_params
     params.require(:lesson).permit(:status, :notes, :meeting_link, :duration_minutes)
+  end
+
+  def parse_date(value)
+    Date.parse(value) if value.present?
+  rescue Date::Error
+    nil
+  end
+
+  def parse_month(value)
+    Date.parse("#{value}-01") if value.present?
+  rescue Date::Error
+    nil
   end
 end

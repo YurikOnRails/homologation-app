@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
 import { cn, getOptionLabel } from "@/lib/utils"
-import { CURRENT_YEAR, SERVICE_TYPE_COLORS, STAGE_COLORS } from "@/components/pipeline/constants"
+import { usePipeline, CURRENT_YEAR, SERVICE_TYPE_COLORS } from "@/components/pipeline/constants"
 import type { SharedProps } from "@/types"
 import type { PipelineCard } from "@/types/pages"
 
@@ -74,8 +74,9 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
     ? getOptionLabel(countryOption, i18n.language)
     : null
 
+  const { stageColors } = usePipeline()
   const serviceTypeColor = SERVICE_TYPE_COLORS[card.serviceType]
-  const stageColor = STAGE_COLORS[card.pipelineStage]
+  const stageColor = stageColors[card.pipelineStage]
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -120,7 +121,6 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
             <div className="flex items-center gap-1.5 flex-wrap">
               {card.country ? (
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
-                  <span className={`fi fi-${card.country.toLowerCase()} rounded-sm`} />
                   {countryName ?? card.country}
                 </span>
               ) : null}

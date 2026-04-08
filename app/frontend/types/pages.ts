@@ -281,6 +281,7 @@ export interface UserProfile {
   email: string
   avatarUrl: string | null
   roles: string[]
+  isTeacher: boolean
   phone: string | null
   whatsapp: string | null
   conversationId: number | null
@@ -301,6 +302,7 @@ export interface AdminLessonsProps {
   monthStart?: string
   monthSummary?: Record<string, MonthDayLesson[]>
   userProfiles?: Record<number, UserProfile>
+  filters?: { teacherId?: string | null }
 }
 
 // admin/Dashboard
@@ -314,6 +316,18 @@ export interface AdminUser {
   createdAt: string
   discarded: boolean
   deletionRequestedAt: string | null
+  hasHomologation: boolean
+  hasEducation: boolean
+}
+
+export interface FinanceData {
+  homologationRevenue: number
+  homologationCount: number
+  averageDeal: number
+  revenueByYear: Record<string, number>
+  educationRevenue: number
+  educationLessons: number
+  totalRevenue: number
 }
 
 export interface AdminDashboardProps {
@@ -325,6 +339,7 @@ export interface AdminDashboardProps {
     totalUsers: number
     totalTeachers: number
   }
+  finance: FinanceData
   requestsByMonth: Record<string, number>
   requestsByStatus: Record<string, number>
   recentRequests: RequestListItem[]

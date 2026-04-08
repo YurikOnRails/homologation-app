@@ -11,6 +11,7 @@ es:
         subject: "Asunto"
         service_type: "Tipo de servicio"
         status: "Estado"
+        payment_amount: "Monto del pago"
       user:
         name: "Nombre"
         email_address: "Correo electrónico"
@@ -29,7 +30,14 @@ es:
           attributes:
             privacy_accepted:
               accepted: "debe aceptar la política de privacidad"
+            service_type:
+              inclusion: "tipo de servicio no válido"
+            payment_amount:
+              blank: "es obligatorio al confirmar el pago"
+              greater_than: "debe ser mayor que 0"
         user:
+          base:
+            no_cabinet_selected: "debe tener acceso a al menos un gabinete (homologación o educación)"
           attributes:
             phone:
               invalid: "formato incorrecto (ej: +34 612 345 678)"
@@ -133,4 +141,7 @@ es:
     lesson_reminder: "Recordatorio de clase"
     lesson_starts_soon: "Tu clase empieza en 1 hora (%{time})"
     lesson_cancelled: "Clase cancelada: %{date}"
+    stripe_payment_received: "Pago Stripe de €%{amount} recibido de %{student}"
     deletion_requested: "Solicitud de eliminación de cuenta de %{name}"
+  stripe:
+    product_name: "Homologación: %{subject}"

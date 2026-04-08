@@ -8,6 +8,8 @@
 # --- Роли (нужны везде: dev, test, production) --------------------------------
 %w[super_admin coordinator teacher student].each do |role_name|
   Role.find_or_create_by!(name: role_name)
+rescue ActiveRecord::RecordNotUnique
+  retry
 end
 puts "✅ #{Role.count} roles"
 
