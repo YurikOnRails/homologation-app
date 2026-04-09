@@ -17,7 +17,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
 import {
   Reveal,
-  AnimatedCounter,
   TiltCard,
 } from "@/components/public/animations"
 import {
@@ -45,8 +44,7 @@ export default function Home() {
     <PublicLayout>
       <SeoHead {...seo} />
       <HeroSection t={t} />
-      <TrustSection t={t} />
-      <UniversityLogoBar titleKey="public.home.logo_bar_title" />
+      <UniversityLogoBar titleKey="public.home.logo_bar_title" noBorderTop />
       <ServicesSection t={t} locale={locale} />
       <HowItWorksSection t={t} />
       <TestimonialsBlock t={t} />
@@ -107,6 +105,13 @@ function HeroSection({ t }: { t: (key: string) => string }) {
     </div>
   )
 
+  const stats = [
+    { value: "500+", label: t("public.home.stat_students") },
+    { value: "98%", label: t("public.home.stat_success") },
+    { value: "10+", label: t("public.home.stat_years") },
+    { value: "20+", label: t("public.home.stat_countries") },
+  ]
+
   return (
     <PublicHero
       title1={t("public.home.hero_title_1")}
@@ -131,37 +136,19 @@ function HeroSection({ t }: { t: (key: string) => string }) {
           </Link>
         </>
       }
-    />
-  )
-}
-
-/* ── Trust stats bar ────────────────────────────────────────────────────────── */
-
-function TrustSection({ t }: { t: (key: string) => string }) {
-  const stats = [
-    { value: 500, suffix: "+", label: t("public.home.stat_students") },
-    { value: 98, suffix: "%", label: t("public.home.stat_success") },
-    { value: 10, suffix: "+", label: t("public.home.stat_years") },
-    { value: 20, suffix: "+", label: t("public.home.stat_countries") },
-  ]
-
-  return (
-    <section className="border-y bg-white py-16">
-      <Container>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {stats.map(({ value, suffix, label }, i) => (
-            <Reveal key={label} direction="up" delay={i * 100}>
-              <div className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
-                  <AnimatedCounter value={value} suffix={suffix} />
-                </div>
-                <div className="mt-2 text-sm text-muted-foreground">{label}</div>
-              </div>
-            </Reveal>
+      footer={
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          {stats.map(({ value, label }) => (
+            <div key={value} className="flex items-baseline gap-1.5">
+              <span className="text-lg font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                {value}
+              </span>
+              <span className="text-sm text-muted-foreground">{label}</span>
+            </div>
           ))}
         </div>
-      </Container>
-    </section>
+      }
+    />
   )
 }
 

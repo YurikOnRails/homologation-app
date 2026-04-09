@@ -22,11 +22,11 @@ const UNIVERSITY_LOGOS = [
  * To add/replace logos: put SVG/PNG files in public/images/universities/
  * and update the UNIVERSITY_LOGOS array above.
  */
-export function UniversityLogoBar({ titleKey }: { titleKey?: string } = {}) {
+export function UniversityLogoBar({ titleKey, noBorderTop = false }: { titleKey?: string; noBorderTop?: boolean } = {}) {
   const { t } = useTranslation()
 
   return (
-    <section className="border-y border-slate-100 py-8 sm:py-10 bg-white/80 overflow-hidden">
+    <section className={`${noBorderTop ? "border-b" : "border-y"} border-slate-100 py-8 sm:py-10 bg-white/80 overflow-hidden`}>
       <Container>
         <p className="text-center text-xs uppercase tracking-wider text-muted-foreground mb-8 py-1">
           {t(titleKey ?? "public.precios.trust_bar_title")}
