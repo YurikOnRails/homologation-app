@@ -608,6 +608,9 @@
       "consultation_dialog_pay": "Pay & Book",
       "consultation_dialog_spots": "Spots available this week: {{count}}",
       "consultation_dialog_secure": "Secure payment via Stripe",
+      "consultation_dialog_wa_button": "Book via WhatsApp",
+      "consultation_dialog_wa_message": "Hello! I'd like to book an expert consultation on degree homologation.",
+      "consultation_dialog_wa_hint": "We'll respond within a few hours",
 
       "cta_title": "Ready to Start Your Homologation?",
       "cta_subtitle": "Book an expert consultation — we'll analyze your case, define the path and timelines.",
@@ -911,6 +914,19 @@
       "cta_subtitle": "Choose a plan or book a consultation — we'll help you pick the right option.",
       "cta_start": "Create account",
       "cta_consult": "Book a consultation"
+    },
+
+    "consultation_thanks": {
+      "title": "Thank you! Your consultation is booked",
+      "subtitle": "We have received your payment. Our expert will contact you within 24 hours to schedule the consultation at a convenient time.",
+      "step_1_title": "Payment confirmation",
+      "step_1_desc": "A receipt has been sent to your email by Stripe.",
+      "step_2_title": "We'll contact you",
+      "step_2_desc": "Within 24 hours our expert will reach out to schedule the session.",
+      "step_3_title": "Consultation",
+      "step_3_desc": "A 60-minute personal session where we'll analyze your case and create an action plan.",
+      "contact_hint": "Have questions? Contact us anytime:",
+      "cta": "Create an account while you wait"
     }
   }
 }

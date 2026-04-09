@@ -125,6 +125,9 @@ en:
     pricing:
       title: "Pricing — Space for Edu"
       description: "Check our prices for homologation, university access, and Spanish classes."
+    consultation_thank_you:
+      title: "Thank You — Space for Edu"
+      description: "Your consultation has been booked successfully. We will contact you within 24 hours."
   notifications:
     new_request: "New request from %{name}"
     new_message: "New message from %{name}"

@@ -608,6 +608,9 @@
       "consultation_dialog_pay": "Pagar y reservar",
       "consultation_dialog_spots": "Plazas disponibles esta semana: {{count}}",
       "consultation_dialog_secure": "Pago seguro a través de Stripe",
+      "consultation_dialog_wa_button": "Reservar por WhatsApp",
+      "consultation_dialog_wa_message": "¡Hola! Me gustaría reservar una consulta con un experto en homologación de títulos.",
+      "consultation_dialog_wa_hint": "Respondemos en pocas horas",
 
       "cta_title": "¿Listo para empezar la homologación?",
       "cta_subtitle": "Reserva una consulta con un experto — analizamos tu caso, definimos la ruta y los plazos.",
@@ -911,6 +914,19 @@
       "cta_subtitle": "Elige un plan o reserva una consulta — te ayudaremos a elegir la mejor opción.",
       "cta_start": "Crear cuenta",
       "cta_consult": "Solicitar consulta"
+    },
+
+    "consultation_thanks": {
+      "title": "¡Gracias! Tu consulta está reservada",
+      "subtitle": "Hemos recibido tu pago. Nuestro experto se pondrá en contacto contigo en las próximas 24 horas para programar la consulta en un horario conveniente.",
+      "step_1_title": "Confirmación de pago",
+      "step_1_desc": "Stripe ha enviado un recibo a tu correo electrónico.",
+      "step_2_title": "Te contactaremos",
+      "step_2_desc": "En las próximas 24 horas nuestro experto se comunicará contigo para agendar la sesión.",
+      "step_3_title": "Consulta",
+      "step_3_desc": "Una sesión personalizada de 60 minutos donde analizaremos tu caso y crearemos un plan de acción.",
+      "contact_hint": "¿Tienes preguntas? Contáctanos en cualquier momento:",
+      "cta": "Crea una cuenta mientras esperas"
     }
   }
 }

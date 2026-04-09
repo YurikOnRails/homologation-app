@@ -13,7 +13,7 @@ gem "bcrypt", "~> 3.1.7"
 # Auth: OAuth
 gem "omniauth"
 gem "omniauth-google-oauth2"
-gem "omniauth-apple"
+gem "omniauth-facebook"
 gem "omniauth-rails_csrf_protection"
 
 # Authorization

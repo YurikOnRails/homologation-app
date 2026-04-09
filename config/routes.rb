@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     get "university",    to: "pages#university",    as: :localized_university
     get "spanish",       to: "pages#spanish",       as: :localized_spanish
     get "pricing",       to: "pages#pricing",       as: :localized_pricing
+    get "consultation-thank-you", to: "pages#consultation_thank_you", as: :localized_consultation_thank_you
   end
 
   # Authenticated app — logged-in users

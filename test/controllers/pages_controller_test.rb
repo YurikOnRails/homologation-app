@@ -92,6 +92,12 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert seo[:alternates].any? { |a| a[:locale] == "ru" }
   end
 
+  test "consultation thank you page renders" do
+    get localized_consultation_thank_you_path(locale: "es")
+    assert_response :ok
+    assert_equal "public/ConsultationThankYou", inertia.component
+  end
+
   test "SEO alternate URLs include locale prefix" do
     get localized_homologation_path(locale: "en")
     seo = inertia.props[:seo]

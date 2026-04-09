@@ -24,14 +24,14 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
-
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # ─── SSL ────────────────────────────────────────────────────────────────────
+  # Activated when APP_HOST is set (i.e. you have a real domain).
+  # Kamal's SSL proxy terminates TLS, so we assume_ssl + force_ssl.
+  if ENV["APP_HOST"].present?
+    config.assume_ssl = true
+    config.force_ssl = true
+    config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  end
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -53,21 +53,22 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # ─── Email (SMTP) ──────────────────────────────────────────────────────────
+  # Activated when smtp credentials are present in Rails credentials.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost") }
 
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
-
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  if (smtp_user = Rails.application.credentials.dig(:smtp, :user_name))
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      user_name: smtp_user,
+      password: Rails.application.credentials.dig(:smtp, :password),
+      address: Rails.application.credentials.dig(:smtp, :address) || "smtp.gmail.com",
+      port: Rails.application.credentials.dig(:smtp, :port) || 587,
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
@@ -79,12 +80,13 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # ─── Host authorization (DNS rebinding protection) ─────────────────────────
+  # Activated when APP_HOST is set.
+  if ENV["APP_HOST"].present?
+    config.hosts = [
+      ENV["APP_HOST"],
+      /.*\.#{Regexp.escape(ENV["APP_HOST"])}/
+    ]
+    config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  end
 end

@@ -125,6 +125,9 @@ ru:
     pricing:
       title: "Тарифы и цены — Space for Edu"
       description: "Наши цены на омологацию, поступление в университеты и курсы испанского."
+    consultation_thank_you:
+      title: "Спасибо — Space for Edu"
+      description: "Ваша консультация успешно забронирована. Мы свяжемся с вами в течение 24 часов."
   notifications:
     new_request: "Новая заявка от %{name}"
     new_message: "Новое сообщение от %{name}"

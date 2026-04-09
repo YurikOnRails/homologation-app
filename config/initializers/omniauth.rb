@@ -7,14 +7,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     Rails.application.credentials.dig(:google, :client_secret) || "placeholder",
     { scope: "email,profile", prompt: "select_account" }
 
-  if (apple_client_id = Rails.application.credentials.dig(:apple, :client_id))
-    provider :apple,
-      apple_client_id, "",
-      {
-        scope: "email name",
-        team_id: Rails.application.credentials.dig(:apple, :team_id),
-        key_id:  Rails.application.credentials.dig(:apple, :key_id),
-        pem:     Rails.application.credentials.dig(:apple, :pem)
-      }
-  end
+  provider :facebook,
+    Rails.application.credentials.dig(:facebook, :app_id) || "placeholder",
+    Rails.application.credentials.dig(:facebook, :app_secret) || "placeholder",
+    { scope: "email,public_profile", info_fields: "email,name" }
 end
