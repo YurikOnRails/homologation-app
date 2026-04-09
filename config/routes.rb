@@ -69,6 +69,8 @@ Rails.application.routes.draw do
         post :assign_role
         delete :remove_role
         delete :gdpr_delete
+        post :schedule_purge
+        delete :cancel_purge
       end
     end
     resources :lessons, only: [ :index ]

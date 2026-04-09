@@ -2,7 +2,7 @@ import { useState } from "react"
 import { usePage, router, useForm } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Plus, ShieldAlert, Settings2, Trash2, X } from "lucide-react"
+import { Plus, ShieldAlert, Settings2, Trash2, X, AlertTriangle, Ban } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table/DataTable"
@@ -35,7 +35,7 @@ import { formatDate, getInitials, cn } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { AdminUsersProps, AdminUser } from "@/types/pages"
 
-type FilterTab = "active" | "gdpr" | "archived"
+type FilterTab = "active" | "gdpr" | "archived" | "purge"
 
 export default function AdminUsers() {
   const { t, i18n } = useTranslation()
@@ -44,19 +44,23 @@ export default function AdminUsers() {
   const [editingUserId, setEditingUserId] = useState<number | null>(editUser?.id ?? null)
   const [deactivatingUser, setDeactivatingUser] = useState<AdminUser | null>(null)
   const [gdprDeletingUser, setGdprDeletingUser] = useState<AdminUser | null>(null)
+  const [purgingUser, setPurgingUser] = useState<AdminUser | null>(null)
+  const [cancellingPurgeUser, setCancellingPurgeUser] = useState<AdminUser | null>(null)
   const [filter, setFilter] = useState<FilterTab>("active")
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
   const [search, setSearch] = useState("")
 
-  const activeCount = users.filter((u) => !u.discarded).length
-  const gdprCount = users.filter((u) => u.deletionRequestedAt !== null && !u.discarded).length
-  const archivedCount = users.filter((u) => u.discarded).length
+  const activeCount = users.filter((u) => !u.discarded && !u.purgeScheduledAt).length
+  const gdprCount = users.filter((u) => u.deletionRequestedAt !== null && !u.discarded && !u.purgeScheduledAt).length
+  const archivedCount = users.filter((u) => u.discarded && !u.purgeScheduledAt).length
+  const purgeCount = users.filter((u) => u.purgeScheduledAt !== null).length
 
   // Count per role within current status filter (before role filter)
   const usersInStatusFilter = users.filter((u) => {
-    if (filter === "active") return !u.discarded
-    if (filter === "gdpr") return u.deletionRequestedAt !== null && !u.discarded
-    if (filter === "archived") return u.discarded
+    if (filter === "active") return !u.discarded && !u.purgeScheduledAt
+    if (filter === "gdpr") return u.deletionRequestedAt !== null && !u.discarded && !u.purgeScheduledAt
+    if (filter === "archived") return u.discarded && !u.purgeScheduledAt
+    if (filter === "purge") return u.purgeScheduledAt !== null
     return true
   })
   const roleCountMap = Object.fromEntries(
@@ -132,6 +136,14 @@ export default function AdminUsers() {
       enableSorting: false,
       cell: ({ row }) => {
         const user = row.original
+        if (user.purgeScheduledAt) {
+          return (
+            <Badge variant="destructive" className="gap-1">
+              <Trash2 className="h-3 w-3" />
+              {t("admin.user_management.status_purge_queued")}
+            </Badge>
+          )
+        }
         if (user.discarded) {
           return <Badge variant="secondary">{t("admin.user_management.deactivated")}</Badge>
         }
@@ -180,6 +192,7 @@ export default function AdminUsers() {
     { key: "active", label: t("admin.user_management.filter_active"), count: activeCount },
     ...(gdprCount > 0 ? [{ key: "gdpr" as FilterTab, label: "GDPR", count: gdprCount }] : []),
     ...(archivedCount > 0 ? [{ key: "archived" as FilterTab, label: t("admin.user_management.filter_archived"), count: archivedCount }] : []),
+    ...(purgeCount > 0 ? [{ key: "purge" as FilterTab, label: t("admin.user_management.filter_purge"), count: purgeCount }] : []),
   ]
 
   return (
@@ -209,15 +222,16 @@ export default function AdminUsers() {
                   {filterTabs.map(({ key, label, count }) => (
                     <Button
                       key={key}
-                      variant={filter === key ? (key === "gdpr" ? "destructive" : "default") : "outline"}
+                      variant={filter === key ? ((key === "gdpr" || key === "purge") ? "destructive" : "default") : "outline"}
                       size="sm"
                       className={cn(
                         "min-h-[44px] gap-1.5 shrink-0",
-                        filter !== key && key === "gdpr" && "text-destructive border-destructive/30"
+                        filter !== key && (key === "gdpr" || key === "purge") && "text-destructive border-destructive/30"
                       )}
                       onClick={() => { setFilter(key); setSelectedRoles([]) }}
                     >
                       {key === "gdpr" && <ShieldAlert className="h-3.5 w-3.5" />}
+                      {key === "purge" && <Trash2 className="h-3.5 w-3.5" />}
                       {label}
                       <span className={cn(
                         "text-xs rounded px-1.5 py-0.5",
@@ -301,6 +315,16 @@ export default function AdminUsers() {
                 setEditingUserId(null)
                 setGdprDeletingUser(u)
               }}
+              onPurge={() => {
+                const u = editingUser
+                setEditingUserId(null)
+                setPurgingUser(u)
+              }}
+              onCancelPurge={() => {
+                const u = editingUser
+                setEditingUserId(null)
+                setCancellingPurgeUser(u)
+              }}
             />
           )}
 
@@ -333,6 +357,27 @@ export default function AdminUsers() {
             }}
             destructive
           />
+
+          {purgingUser && (
+            <PurgeDialog
+              user={purgingUser}
+              onClose={() => setPurgingUser(null)}
+            />
+          )}
+
+          <ConfirmDialog
+            open={!!cancellingPurgeUser}
+            onOpenChange={(open) => !open && setCancellingPurgeUser(null)}
+            title={t("admin.user_management.purge_cancel_title")}
+            description={t("admin.user_management.purge_cancel_confirm", { name: cancellingPurgeUser?.name })}
+            onConfirm={() => {
+              if (cancellingPurgeUser) {
+                router.delete(routes.admin.cancelPurge(cancellingPurgeUser.id), {
+                  onSuccess: () => setCancellingPurgeUser(null),
+                })
+              }
+            }}
+          />
         </div>
       </Main>
     </AuthenticatedLayout>
@@ -344,11 +389,15 @@ function EditUserSheet({
   onClose,
   onDeactivate,
   onGdprDelete,
+  onPurge,
+  onCancelPurge,
 }: {
   user: AdminUser
   onClose: () => void
   onDeactivate: () => void
   onGdprDelete: () => void
+  onPurge: () => void
+  onCancelPurge: () => void
 }) {
   const { t, i18n } = useTranslation()
   const { data, setData, patch, processing, errors } = useForm({
@@ -492,43 +541,100 @@ function EditUserSheet({
             )}
           </div>
 
-          {!user.discarded && (
-            <>
-              <Separator />
+          {/* Danger zone — always visible */}
+          <Separator />
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-destructive" />
+              <p className="text-sm font-semibold text-destructive">{t("admin.user_management.danger_zone")}</p>
+            </div>
 
-              {/* Danger zone */}
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-destructive">{t("admin.user_management.danger_zone")}</p>
-
-                {user.deletionRequestedAt ? (
-                  <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 space-y-3">
-                    <p className="text-xs text-muted-foreground">
-                      {t("admin.user_management.deletion_requested_on", {
-                        date: formatDate(user.deletionRequestedAt, "date", i18n.language),
-                      })}
-                    </p>
-                    <Button
-                      variant="destructive"
-                      className="min-h-[44px] gap-2 w-full"
-                      onClick={onGdprDelete}
-                    >
-                      <ShieldAlert className="h-4 w-4" />
-                      {t("admin.user_management.gdpr_delete")}
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="min-h-[44px] gap-2 w-full text-destructive border-destructive/30 hover:bg-destructive/10"
-                    onClick={onDeactivate}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    {t("admin.user_management.deactivate")}
-                  </Button>
-                )}
+            {/* 1. Deactivate — only for active, non-queued users */}
+            {!user.discarded && !user.purgeScheduledAt && (
+              <div className="rounded-md border p-3 space-y-2">
+                <p className="text-xs font-medium">{t("admin.user_management.deactivate")}</p>
+                <p className="text-xs text-muted-foreground">{t("admin.user_management.deactivate_description")}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="min-h-[44px] gap-2 w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                  onClick={onDeactivate}
+                >
+                  <Ban className="h-4 w-4" />
+                  {t("admin.user_management.deactivate")}
+                </Button>
               </div>
-            </>
-          )}
+            )}
+
+            {/* 2. GDPR — only when user requested deletion */}
+            {user.deletionRequestedAt && !user.discarded && !user.purgeScheduledAt && (
+              <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 space-y-2">
+                <p className="text-xs font-medium flex items-center gap-1.5">
+                  <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
+                  {t("admin.user_management.gdpr_section_title")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t("admin.user_management.deletion_requested_on", {
+                    date: formatDate(user.deletionRequestedAt, "date", i18n.language),
+                  })}
+                </p>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="min-h-[44px] gap-2 w-full"
+                  onClick={onGdprDelete}
+                >
+                  <ShieldAlert className="h-4 w-4" />
+                  {t("admin.user_management.gdpr_delete")}
+                </Button>
+              </div>
+            )}
+
+            {/* 3. Permanent purge */}
+            {user.purgeScheduledAt ? (
+              <div className="rounded-md border border-destructive/50 bg-destructive/5 p-3 space-y-2">
+                <p className="text-xs font-medium text-destructive">{t("admin.user_management.purge_queued")}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("admin.user_management.purge_queued_at", {
+                    date: formatDate(user.purgeScheduledAt, "datetime", i18n.language),
+                  })}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="min-h-[44px] gap-2 w-full"
+                  onClick={onCancelPurge}
+                >
+                  {t("admin.user_management.purge_cancel")}
+                </Button>
+              </div>
+            ) : (
+              <div className="rounded-md border border-destructive/30 p-3 space-y-2">
+                <p className="text-xs font-medium">{t("admin.user_management.purge_title")}</p>
+                {!user.purgeable && (
+                  <div className="flex items-start gap-1.5 text-xs text-amber-700">
+                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                    <span>{t("admin.user_management.purge_has_active_requests")}</span>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {t("admin.user_management.purge_stats_description", {
+                    requests: user.purgeStats.requests,
+                    files: user.purgeStats.files,
+                  })}
+                </p>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="min-h-[44px] gap-2 w-full"
+                  onClick={onPurge}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  {t("admin.user_management.purge_button")}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
 
         <ConfirmDialog
@@ -561,8 +667,9 @@ function UserMobileCard({ user, onManage }: { user: AdminUser; onManage: () => v
     <div
       className={cn(
         "rounded-lg border p-3 space-y-3",
-        user.deletionRequestedAt && !user.discarded && "border-destructive/30 bg-destructive/5",
-        user.discarded && "opacity-60"
+        user.purgeScheduledAt && "border-destructive/50 bg-destructive/5 opacity-60",
+        !user.purgeScheduledAt && user.deletionRequestedAt && !user.discarded && "border-destructive/30 bg-destructive/5",
+        !user.purgeScheduledAt && user.discarded && "opacity-60"
       )}
     >
       <div className="flex items-start gap-3">
@@ -575,7 +682,12 @@ function UserMobileCard({ user, onManage }: { user: AdminUser; onManage: () => v
             <p className={cn("font-medium truncate", user.discarded && "line-through text-muted-foreground")}>
               {user.name}
             </p>
-            {user.discarded ? (
+            {user.purgeScheduledAt ? (
+              <Badge variant="destructive" className="gap-1 text-xs shrink-0">
+                <Trash2 className="h-3 w-3" />
+                {t("admin.user_management.status_purge_queued")}
+              </Badge>
+            ) : user.discarded ? (
               <Badge variant="secondary" className="text-xs shrink-0">{t("admin.user_management.deactivated")}</Badge>
             ) : user.deletionRequestedAt ? (
               <Badge variant="destructive" className="gap-1 text-xs shrink-0">
@@ -615,6 +727,80 @@ function UserMobileCard({ user, onManage }: { user: AdminUser; onManage: () => v
         </Button>
       </div>
     </div>
+  )
+}
+
+function PurgeDialog({ user, onClose }: { user: AdminUser; onClose: () => void }) {
+  const { t } = useTranslation()
+  const [emailInput, setEmailInput] = useState("")
+  const [processing, setProcessing] = useState(false)
+  const confirmed = emailInput === user.email
+
+  function handlePurge() {
+    setProcessing(true)
+    router.post(routes.admin.schedulePurge(user.id), {}, {
+      onSuccess: () => { setProcessing(false); onClose() },
+      onError: () => setProcessing(false),
+    })
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <Trash2 className="h-5 w-5" />
+            {t("admin.user_management.purge_dialog_title", { name: user.name })}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 space-y-2">
+            <p className="text-xs font-medium">{t("admin.user_management.purge_will_delete")}</p>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>• {t("admin.user_management.purge_stat_requests", { count: user.purgeStats.requests })}</li>
+              <li>• {t("admin.user_management.purge_stat_files", { count: user.purgeStats.files })}</li>
+              <li>• {t("admin.user_management.purge_stat_account")}</li>
+            </ul>
+          </div>
+
+          {!user.purgeable && (
+            <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3">
+              <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-800">{t("admin.user_management.purge_active_warning")}</p>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">
+              {t("admin.user_management.purge_type_email")}{" "}
+              <span className="font-mono bg-muted px-1 py-0.5 rounded">{user.email}</span>
+            </Label>
+            <Input
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              placeholder={user.email}
+              className="font-mono text-sm"
+              autoComplete="off"
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} className="min-h-[44px]">
+            {t("common.cancel")}
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={!confirmed || processing}
+            onClick={handlePurge}
+            className="min-h-[44px]"
+          >
+            {processing ? t("common.loading") : t("admin.user_management.purge_confirm_button")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 

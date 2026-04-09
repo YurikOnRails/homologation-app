@@ -318,6 +318,9 @@ export interface AdminUser {
   deletionRequestedAt: string | null
   hasHomologation: boolean
   hasEducation: boolean
+  purgeScheduledAt: string | null
+  purgeable: boolean
+  purgeStats: { requests: number; files: number }
 }
 
 export interface FinanceData {

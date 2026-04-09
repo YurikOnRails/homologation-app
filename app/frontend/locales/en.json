@@ -242,7 +242,28 @@
       "cabinet_homologation": "Homologation",
       "cabinet_homologation_hint": "Access to homologation requests, documents and chat",
       "cabinet_education": "Education",
-      "cabinet_education_hint": "Access to lessons, calendar and teacher chat"
+      "cabinet_education_hint": "Access to lessons, calendar and teacher chat",
+      "deactivate_description": "Blocks access. Data is preserved. Can be undone.",
+      "gdpr_section_title": "GDPR Erasure Request",
+      "purge_title": "Permanent Deletion",
+      "purge_button": "Delete Forever",
+      "purge_has_active_requests": "This user has active requests. They will be terminated.",
+      "purge_stats_description": "{{requests}} requests and {{files}} files will be permanently deleted.",
+      "purge_queued": "Queued for deletion",
+      "purge_queued_at": "Scheduled at {{date}}. Will be deleted within 5 minutes.",
+      "purge_cancel": "Cancel Deletion",
+      "purge_cancel_title": "Cancel deletion",
+      "purge_cancel_confirm": "Cancel the scheduled deletion of {{name}}?",
+      "purge_dialog_title": "Delete {{name}} permanently",
+      "purge_will_delete": "This will permanently delete:",
+      "purge_stat_requests": "{{count}} homologation requests",
+      "purge_stat_files": "{{count}} uploaded files",
+      "purge_stat_account": "Account, sessions, messages and all data",
+      "purge_active_warning": "This user has requests in progress. Deletion will terminate them without completing the service.",
+      "purge_type_email": "Type the email to confirm:",
+      "purge_confirm_button": "Delete Forever",
+      "status_purge_queued": "Queued",
+      "filter_purge": "Purge queue"
     },
     "charts": {
       "requests_over_time": "Requests Over Time",
@@ -552,7 +573,6 @@
       "hero_stat_countries": "countries",
       "hero_stat_years": "years of experience",
       "cta_start": "Request a Personal Consultation",
-
       "adv_title": "Why Clients Choose Us",
       "adv_subtitle": "An expert service for those who value reliability, transparency and results.",
       "adv_advisor_title": "Personal Advisor",
@@ -563,7 +583,6 @@
       "adv_transparency_desc": "Application status, documents and communication history with your advisor — in your dashboard 24/7.",
       "adv_partners_title": "Verified Partners",
       "adv_partners_desc": "Sworn translators, notaries, apostille — a network of partners we trust.",
-
       "what_title": "What Is Homologation?",
       "what_desc": "Homologation is the official recognition of your foreign degree in Spain, opening the door to professional practice and further education.",
       "what_legal_title": "Legal Validity",
@@ -572,7 +591,6 @@
       "what_work_desc": "You can practice your profession and access the Spanish job market.",
       "what_study_title": "Continue Studies",
       "what_study_desc": "Access master's and postgraduate programs at Spanish universities.",
-
       "dashboard_title": "Full Control — From Anywhere in the World",
       "dashboard_subtitle": "Track the process, exchange documents and communicate with your advisor in your personal dashboard. No calls, no waiting for messenger replies.",
       "dash_realtime_title": "Real-Time Status",
@@ -583,7 +601,6 @@
       "dash_chat_desc": "Ask questions and get answers right in the platform.",
       "dash_notifications_title": "Notifications at Every Stage",
       "dash_notifications_desc": "Email and push notifications — you won't miss a single update.",
-
       "process_title": "How It Works",
       "process_1_title": "Expert Consultation",
       "process_1_desc": "We review your degree and define the optimal homologation path.",
@@ -593,7 +610,6 @@
       "process_3_desc": "We file the application and monitor every step — you track progress in your dashboard.",
       "process_4_title": "Resolution",
       "process_4_desc": "We notify you of the result and help with any additional requirements if needed.",
-
       "docs_title": "Required Documents",
       "doc_1": "Original university degree or certified copy",
       "doc_2": "Academic transcript with grades and credit hours",
@@ -601,7 +617,6 @@
       "doc_4": "Valid ID, NIE, or passport",
       "doc_5": "Hague Apostille or consular legalization",
       "doc_6": "Completed application form",
-
       "testimonials_title": "Client Stories",
       "testimonials_subtitle": "Real results from people who trusted us with their degree homologation.",
       "testimonial_1_name": "Maria Ivanova",
@@ -613,19 +628,16 @@
       "testimonial_3_name": "Elena Smirnova",
       "testimonial_3_role": "Mother of a student, Kazan",
       "testimonial_3_text": "My daughter was enrolling in a Spanish university and needed her diploma homologated. Everything was fast and professional, we didn't have to worry about anything.",
-
       "proof_title": "Trusted by Clients Worldwide",
       "proof_subtitle": "From Russia and CIS to Latin America and the Middle East — we help achieve degree recognition in Spain.",
       "proof_clients": "successful homologations",
       "proof_countries": "countries",
       "proof_years": "years of experience",
-
       "costs_title": "Timelines & Costs",
       "timeline_title": "Timelines",
       "timeline_desc": "The process can take between 6 months and 2 years depending on the type of degree and processing route.",
       "cost_title": "Our Rates",
       "cost_desc": "Check our pricing page for updated rates on all our services.",
-
       "faq_title": "Frequently Asked Questions",
       "faq_1_q": "How long does the homologation process take?",
       "faq_1_a": "It depends on the type of degree and processing route. Generally between 6 months and 2 years. Your advisor keeps you informed at every step through your personal dashboard.",
@@ -637,7 +649,6 @@
       "faq_4_a": "We analyze the reasons for denial and propose a strategy: appeal, supplementary exams or alternative routes.",
       "faq_5_q": "What's the difference between homologation and equivalence?",
       "faq_5_a": "Homologation recognizes your degree as equivalent to a specific Spanish one. Equivalence recognizes a general academic level without a specific title.",
-
       "consultation_dialog_title": "Expert Homologation Consultation",
       "consultation_dialog_desc": "A 60-minute personal consultation with an expert who will analyze your case and create an action plan.",
       "consultation_dialog_item_1": "Analysis of your degree and homologation type determination",
@@ -652,7 +663,6 @@
       "consultation_dialog_wa_button": "Book via WhatsApp",
       "consultation_dialog_wa_message": "Hello! I'd like to book an expert consultation on degree homologation.",
       "consultation_dialog_wa_hint": "We'll respond within a few hours",
-
       "cta_title": "Ready to Start Your Homologation?",
       "cta_subtitle": "Book an expert consultation — we'll analyze your case, define the path and timelines.",
       "cta_button": "Book a Consultation"
@@ -748,7 +758,6 @@
       "map_countries_label": "countries",
       "map_rank_value": "2nd",
       "map_rank_label": "most spoken language by native speakers",
-
       "formats_title": "Study formats",
       "formats_subtitle": "Every format is available online and in-person in Spain",
       "format_individual_title": "One-on-one",
@@ -760,7 +769,6 @@
       "format_intensive_title": "Intensive",
       "format_intensive_desc": "Accelerated course for those who need results fast. 3–5 classes per week.",
       "format_intensive_note": "DELE prep · Relocation · University",
-
       "journey_title": "Your Spanish journey",
       "journey_subtitle": "Each level unlocks new opportunities. We'll show you where you are and how far you can go.",
       "journey_beginner_label": "Start",
@@ -778,7 +786,6 @@
       "journey_advanced_2": "Read professional literature and news with ease",
       "journey_advanced_3": "Pass DELE C1 for academic and professional career",
       "journey_advanced_time": "~ 6–10 months to C1 at 2–3 classes/week",
-
       "steps_title": "How to get started",
       "steps_subtitle": "From application to your first lesson — 48 hours max",
       "step_1_title": "Submit your request — it's free",
@@ -789,7 +796,6 @@
       "step_3_desc": "Program tailored to your level, goals, and lifestyle. Preparing for DELE? A dedicated track with deadlines.",
       "step_4_title": "Start learning in your personal dashboard",
       "step_4_desc": "Schedule, video calls, materials, and progress — all in one place. Reschedule with 24h notice, no penalties.",
-
       "adv_title": "Why students choose us",
       "adv_subtitle": "Not just lessons — a system that delivers results",
       "adv_native_title": "Qualified natives",
@@ -800,20 +806,17 @@
       "adv_method_desc": "Articles, subjunctive, ser/estar — we know where Russian speakers struggle and focus specifically on that.",
       "adv_flexible_title": "Flexible schedule",
       "adv_flexible_desc": "Morning, afternoon, or evening classes. Reschedule with 24h notice, no penalties. No rigid schedules.",
-
       "proof_title": "Our students' results",
       "proof_subtitle": "Numbers that speak for themselves",
       "proof_students": "students trained",
       "proof_dele": "pass DELE on the first attempt",
       "proof_months": "months — average time to gain 1 level",
       "proof_years": "years teaching Spanish",
-
       "crosssell_title": "Learning Spanish for study or work in Spain?",
       "crosssell_desc": "We also help with degree homologation and university admission. We manage all processes in parallel — you don't lose time.",
       "crosssell_homologacion": "Degree homologation",
       "crosssell_universidad": "University admission",
       "crosssell_badge": "All services — one team",
-
       "faq_title": "Frequently asked questions",
       "faq_1_q": "What is my Spanish level?",
       "faq_1_a": "In the trial lesson, your teacher will assess your level on the CEFR scale (A1–C2) and suggest a suitable program. It's free and no commitment.",
@@ -825,7 +828,6 @@
       "faq_4_a": "Depends on your current level and goal. On average: B2 preparation from B1 — 3–4 months at 2–3 classes per week. We create an individual schedule tied to the exam date.",
       "faq_5_q": "How are you different from a regular language school?",
       "faq_5_a": "We work exclusively with Russian-speaking students in Spain. We know the context: homologation, NIE, university admission. Our teachers understand the typical challenges of transitioning from Russian to Spanish. Plus a personal dashboard with progress tracking.",
-
       "cta_title": "Start speaking Spanish",
       "cta_subtitle": "Free trial lesson. Your teacher will assess your level and create a study plan."
     },
@@ -834,16 +836,13 @@
       "hero_title_accent": "goal",
       "hero_subtitle": "From degree homologation to full university enrollment support. Transparent pricing, no hidden fees.",
       "popular": "Most popular",
-
       "hero_action_plans": "See plans",
       "hero_action_consult": "Expert consultation",
       "hero_stat_clients": "satisfied clients",
       "hero_stat_success": "success rate",
       "hero_stat_years": "years of experience",
       "hero_photo_alt": "Space for Edu team",
-
       "trust_bar_title": "Our students study at top Spanish universities",
-
       "stats_1_value": "500+",
       "stats_1_label": "Satisfied clients",
       "stats_2_value": "98%",
@@ -852,7 +851,6 @@
       "stats_3_label": "Years of experience",
       "stats_4_value": "24/7",
       "stats_4_label": "Support available",
-
       "plan_basico_title": "Homologation",
       "plan_basico_price": "€499",
       "plan_basico_desc": "Degree homologation with full expert support",
@@ -883,7 +881,6 @@
       "plan_premium_feature_7": "Visa guidance (if applicable)",
       "plan_premium_feature_8": "Results guarantee",
       "choose_plan": "Choose plan",
-
       "testimonials_title": "What parents say about us",
       "testimonials_subtitle": "Real stories from families we've helped",
       "testimonial_1_quote": "Space for Edu handled everything from document preparation to university enrollment. My son is now studying at the University of Barcelona. I couldn't have navigated this process alone.",
@@ -895,7 +892,6 @@
       "testimonial_3_quote": "The VIP service was worth every euro. Personal curator, Spanish classes, even visa guidance. My daughter felt supported from day one in Spain.",
       "testimonial_3_name": "Dinara S.",
       "testimonial_3_role": "Mother of a student, Kazakhstan",
-
       "included_title": "Included in every plan",
       "included_1_title": "Personal dashboard",
       "included_1_desc": "Track your case status in real time from any device",
@@ -905,7 +901,6 @@
       "included_3_desc": "See exactly where your documents are at every stage",
       "included_4_title": "Secure storage",
       "included_4_desc": "Your documents are encrypted and safely stored in your account",
-
       "compare_title": "Compare plans in detail",
       "compare_feature": "Feature",
       "compare_feature_1": "Complete document preparation",
@@ -921,7 +916,6 @@
       "compare_feature_11": "Document apostille",
       "compare_feature_12": "24/7 WhatsApp support",
       "compare_feature_13": "Visa guidance",
-
       "steps_title": "How it works",
       "steps_subtitle": "Four simple steps from application to resolution",
       "step_1_title": "Submit your application",
@@ -932,10 +926,8 @@
       "step_3_desc": "Pay only after we verify your documents are in order",
       "step_4_title": "We handle everything",
       "step_4_desc": "Sit back — we manage the entire process from start to finish",
-
       "risk_title": "No risk — pay only after document review",
       "risk_desc": "We review your documents first and confirm we can help before you pay anything. If we can't assist with your case, you owe nothing.",
-
       "faq_title": "Frequently asked questions",
       "faq_1_q": "When do I have to pay?",
       "faq_1_a": "Payment is made once your documentation is reviewed and we confirm we can help. We don't charge upfront without verification.",
@@ -956,7 +948,6 @@
       "cta_start": "Create account",
       "cta_consult": "Book a consultation"
     },
-
     "consultation_thanks": {
       "title": "Thank you! Your consultation is booked",
       "subtitle": "We have received your payment. Our expert will contact you within 24 hours to schedule the consultation at a convenient time.",

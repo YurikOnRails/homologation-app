@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_07_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -184,7 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_200000) do
   end
 
   create_table "teacher_students", force: :cascade do |t|
-    t.integer "assigned_by", null: false
+    t.integer "assigned_by"
     t.datetime "created_at", null: false
     t.integer "student_id", null: false
     t.integer "teacher_id", null: false
@@ -228,6 +228,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_07_200000) do
     t.string "phone"
     t.datetime "privacy_accepted_at"
     t.string "provider"
+    t.datetime "purge_scheduled_at"
     t.string "stripe_customer_id"
     t.string "telegram_chat_id"
     t.string "telegram_link_token"

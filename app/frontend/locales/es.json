@@ -242,7 +242,28 @@
       "cabinet_homologation": "Homologación",
       "cabinet_homologation_hint": "Acceso a solicitudes de homologación, documentos y chat",
       "cabinet_education": "Educación",
-      "cabinet_education_hint": "Acceso a lecciones, calendario y chat con el profesor"
+      "cabinet_education_hint": "Acceso a lecciones, calendario y chat con el profesor",
+      "deactivate_description": "Bloquea el acceso. Los datos se conservan. Se puede deshacer.",
+      "gdpr_section_title": "Solicitud de eliminación RGPD",
+      "purge_title": "Eliminación permanente",
+      "purge_button": "Eliminar definitivamente",
+      "purge_has_active_requests": "Este usuario tiene solicitudes activas. Serán canceladas.",
+      "purge_stats_description": "Se eliminarán permanentemente {{requests}} solicitudes y {{files}} archivos.",
+      "purge_queued": "En cola de eliminación",
+      "purge_queued_at": "Programado el {{date}}. Se eliminará en 5 minutos.",
+      "purge_cancel": "Cancelar eliminación",
+      "purge_cancel_title": "Cancelar eliminación",
+      "purge_cancel_confirm": "¿Cancelar la eliminación programada de {{name}}?",
+      "purge_dialog_title": "Eliminar permanentemente a {{name}}",
+      "purge_will_delete": "Esto eliminará permanentemente:",
+      "purge_stat_requests": "{{count}} solicitudes de homologación",
+      "purge_stat_files": "{{count}} archivos subidos",
+      "purge_stat_account": "Cuenta, sesiones, mensajes y todos los datos",
+      "purge_active_warning": "Este usuario tiene solicitudes en curso. La eliminación las cancelará sin completar el servicio.",
+      "purge_type_email": "Escribe el email para confirmar:",
+      "purge_confirm_button": "Eliminar definitivamente",
+      "status_purge_queued": "En cola",
+      "filter_purge": "Cola de eliminación"
     },
     "charts": {
       "requests_over_time": "Solicitudes a lo largo del tiempo",
@@ -552,7 +573,6 @@
       "hero_stat_countries": "países",
       "hero_stat_years": "años de experiencia",
       "cta_start": "Solicitar consulta personal",
-
       "adv_title": "Por qué nos eligen",
       "adv_subtitle": "Un servicio experto para quienes valoran la fiabilidad, la transparencia y los resultados.",
       "adv_advisor_title": "Tutor personal",
@@ -563,7 +583,6 @@
       "adv_transparency_desc": "Estado de la solicitud, documentos e historial de comunicación con tu tutor — en tu cuenta 24/7.",
       "adv_partners_title": "Socios verificados",
       "adv_partners_desc": "Traductores jurados, notarios, apostilla — una red de socios en quienes confiamos.",
-
       "what_title": "¿Qué es la homologación?",
       "what_desc": "La homologación es el reconocimiento oficial de tu título extranjero en España, que abre las puertas al ejercicio profesional y a la continuación de estudios.",
       "what_legal_title": "Validez legal",
@@ -572,7 +591,6 @@
       "what_work_desc": "Podrás ejercer tu profesión y acceder al mercado laboral español.",
       "what_study_title": "Continuar estudios",
       "what_study_desc": "Accede a másters y posgrados en universidades españolas.",
-
       "dashboard_title": "Control total — desde cualquier parte del mundo",
       "dashboard_subtitle": "Sigue el proceso, intercambia documentos y comunícate con tu tutor en tu cuenta personal. Sin llamadas, sin esperar respuestas en mensajeros.",
       "dash_realtime_title": "Estado en tiempo real",
@@ -583,7 +601,6 @@
       "dash_chat_desc": "Haz preguntas y recibe respuestas directamente en la plataforma.",
       "dash_notifications_title": "Notificaciones en cada etapa",
       "dash_notifications_desc": "Email y notificaciones push — no te perderás ninguna actualización.",
-
       "process_title": "Cómo funciona",
       "process_1_title": "Consulta con un experto",
       "process_1_desc": "Analizamos tu título y definimos la ruta óptima de homologación.",
@@ -593,7 +610,6 @@
       "process_3_desc": "Presentamos la solicitud y controlamos cada etapa — sigues el progreso en tu cuenta personal.",
       "process_4_title": "Resolución",
       "process_4_desc": "Te notificamos del resultado y te ayudamos con requisitos adicionales si los hubiera.",
-
       "docs_title": "Documentos necesarios",
       "doc_1": "Título universitario original o copia compulsada",
       "doc_2": "Certificado académico con notas y horas lectivas",
@@ -601,7 +617,6 @@
       "doc_4": "DNI, NIE o pasaporte vigente",
       "doc_5": "Apostilla de La Haya o legalización consular",
       "doc_6": "Formulario de solicitud cumplimentado",
-
       "testimonials_title": "Historias de nuestros clientes",
       "testimonials_subtitle": "Resultados reales de personas que nos confiaron la homologación de su título.",
       "testimonial_1_name": "María Ivanova",
@@ -613,19 +628,16 @@
       "testimonial_3_name": "Elena Smirnova",
       "testimonial_3_role": "Madre de estudiante, Kazán",
       "testimonial_3_text": "Mi hija se matriculaba en una universidad en España y necesitaba la homologación del bachillerato. Todo fue rápido y profesional, no tuvimos que preocuparnos por nada.",
-
       "proof_title": "Confían en nosotros clientes de todo el mundo",
       "proof_subtitle": "Desde Rusia y la CEI hasta Latinoamérica y Oriente Medio — ayudamos a conseguir el reconocimiento de títulos en España.",
       "proof_clients": "homologaciones exitosas",
       "proof_countries": "países",
       "proof_years": "años de experiencia",
-
       "costs_title": "Plazos y costes",
       "timeline_title": "Plazos",
       "timeline_desc": "El proceso puede tardar entre 6 meses y 2 años según el tipo de título y la vía de tramitación.",
       "cost_title": "Nuestras tarifas",
       "cost_desc": "Consulta nuestra página de precios para ver las tarifas actualizadas de todos nuestros servicios.",
-
       "faq_title": "Preguntas frecuentes",
       "faq_1_q": "¿Cuánto tarda el proceso de homologación?",
       "faq_1_a": "Depende del tipo de título y la vía de tramitación. Por lo general, entre 6 meses y 2 años. Tu tutor te mantiene informado en cada paso a través de tu cuenta personal.",
@@ -637,7 +649,6 @@
       "faq_4_a": "Analizamos los motivos de la denegación y proponemos una estrategia: recurso, exámenes complementarios o vías alternativas.",
       "faq_5_q": "¿Cuál es la diferencia entre homologación y equivalencia?",
       "faq_5_a": "La homologación reconoce tu título como equivalente a uno específico español. La equivalencia reconoce un nivel académico general sin título específico.",
-
       "consultation_dialog_title": "Consulta con un experto en homologación",
       "consultation_dialog_desc": "Consulta personalizada de 60 minutos con un experto que analizará tu caso y elaborará un plan de acción.",
       "consultation_dialog_item_1": "Análisis de tu título y determinación del tipo de homologación",
@@ -652,7 +663,6 @@
       "consultation_dialog_wa_button": "Reservar por WhatsApp",
       "consultation_dialog_wa_message": "¡Hola! Me gustaría reservar una consulta con un experto en homologación de títulos.",
       "consultation_dialog_wa_hint": "Respondemos en pocas horas",
-
       "cta_title": "¿Listo para empezar la homologación?",
       "cta_subtitle": "Reserva una consulta con un experto — analizamos tu caso, definimos la ruta y los plazos.",
       "cta_button": "Reservar consulta"
@@ -748,7 +758,6 @@
       "map_countries_label": "países",
       "map_rank_value": "2.º",
       "map_rank_label": "idioma del mundo por hablantes nativos",
-
       "formats_title": "Formatos de estudio",
       "formats_subtitle": "Todos los formatos disponibles online y presencial en España",
       "format_individual_title": "Individual",
@@ -760,7 +769,6 @@
       "format_intensive_title": "Intensivo",
       "format_intensive_desc": "Curso acelerado para quienes necesitan resultados en poco tiempo. 3–5 clases por semana.",
       "format_intensive_note": "Preparación DELE · Mudanza · Estudios",
-
       "journey_title": "Tu camino en español",
       "journey_subtitle": "Cada nivel abre nuevas oportunidades. Te mostramos dónde estás y hasta dónde puedes llegar.",
       "journey_beginner_label": "Inicio",
@@ -778,7 +786,6 @@
       "journey_advanced_2": "Leer literatura profesional y prensa sin dificultad",
       "journey_advanced_3": "Aprobar el DELE C1 para carrera académica y profesional",
       "journey_advanced_time": "~ 6–10 meses hasta C1 con 2–3 clases/sem.",
-
       "steps_title": "Cómo empezar",
       "steps_subtitle": "De la solicitud a tu primera clase — máximo 48 horas",
       "step_1_title": "Envía tu solicitud — es gratis",
@@ -789,7 +796,6 @@
       "step_3_desc": "Programa adaptado a tu nivel, objetivos y ritmo de vida. Si preparas DELE — track específico con fechas límite.",
       "step_4_title": "Empieza a estudiar en tu panel personal",
       "step_4_desc": "Horario, videollamadas, materiales y progreso — todo en un solo lugar. Cambios con 24h de antelación sin penalización.",
-
       "adv_title": "Por qué nos eligen los estudiantes",
       "adv_subtitle": "No son solo clases, es un sistema que lleva a resultados",
       "adv_native_title": "Nativos con título",
@@ -800,20 +806,17 @@
       "adv_method_desc": "Artículos, subjuntivo, ser/estar — sabemos dónde tropiezan los rusohablantes y trabajamos exactamente en eso.",
       "adv_flexible_title": "Horario flexible",
       "adv_flexible_desc": "Clases por la mañana, tarde o noche. Cambio con 24h de antelación sin penalización. Sin horarios rígidos.",
-
       "proof_title": "Resultados de nuestros estudiantes",
       "proof_subtitle": "Cifras que hablan por sí solas",
       "proof_students": "estudiantes formados",
       "proof_dele": "aprueban DELE a la primera",
       "proof_months": "meses — crecimiento medio de 1 nivel",
       "proof_years": "años enseñando español",
-
       "crosssell_title": "¿Estudias español para estudiar o trabajar en España?",
       "crosssell_desc": "También ayudamos con la homologación del título y la admisión universitaria. Gestionamos todos los procesos en paralelo — no pierdes tiempo.",
       "crosssell_homologacion": "Homologación de título",
       "crosssell_universidad": "Admisión universitaria",
       "crosssell_badge": "Todos los servicios — un equipo",
-
       "faq_title": "Preguntas frecuentes",
       "faq_1_q": "¿Cuál es mi nivel de español?",
       "faq_1_a": "En la clase de prueba el profesor determinará tu nivel según el MCER (A1–C2) y te propondrá un programa adecuado. Es gratis y sin compromiso.",
@@ -825,7 +828,6 @@
       "faq_4_a": "Depende de tu nivel actual y objetivo. De media: preparación para B2 desde B1 — 3–4 meses con 2–3 clases por semana. Diseñamos un calendario individual vinculado a la fecha del examen.",
       "faq_5_q": "¿En qué os diferenciáis de una academia de idiomas normal?",
       "faq_5_a": "Trabajamos exclusivamente con estudiantes rusohablantes en España. Conocemos el contexto: homologación, NIE, admisión. Los profesores entienden las dificultades típicas de la transición del ruso al español. Además, panel personal con seguimiento del progreso.",
-
       "cta_title": "Empieza a hablar español",
       "cta_subtitle": "Clase de prueba gratuita. El profesor evaluará tu nivel y elaborará un plan de estudio."
     },
@@ -834,16 +836,13 @@
       "hero_title_accent": "objetivo",
       "hero_subtitle": "Desde la homologación del título hasta el acompañamiento completo en la matriculación. Precios transparentes, sin costes ocultos.",
       "popular": "Más popular",
-
       "hero_action_plans": "Ver planes",
       "hero_action_consult": "Consulta de experto",
       "hero_stat_clients": "clientes satisfechos",
       "hero_stat_success": "tasa de éxito",
       "hero_stat_years": "años de experiencia",
       "hero_photo_alt": "Equipo de Space for Edu",
-
       "trust_bar_title": "Nuestros alumnos estudian en las mejores universidades de España",
-
       "stats_1_value": "500+",
       "stats_1_label": "Clientes satisfechos",
       "stats_2_value": "98%",
@@ -852,7 +851,6 @@
       "stats_3_label": "Años de experiencia",
       "stats_4_value": "24/7",
       "stats_4_label": "Soporte disponible",
-
       "plan_basico_title": "Homologación",
       "plan_basico_price": "€499",
       "plan_basico_desc": "Homologación de título con soporte experto completo",
@@ -883,7 +881,6 @@
       "plan_premium_feature_7": "Asesoramiento de visado (si aplica)",
       "plan_premium_feature_8": "Garantía de resultado",
       "choose_plan": "Elegir plan",
-
       "testimonials_title": "Lo que dicen los padres sobre nosotros",
       "testimonials_subtitle": "Historias reales de familias a las que hemos ayudado",
       "testimonial_1_quote": "Space for Edu se encargó de todo, desde la preparación de documentos hasta la matriculación universitaria. Mi hijo ahora estudia en la Universidad de Barcelona. No habría podido hacerlo sola.",
@@ -895,7 +892,6 @@
       "testimonial_3_quote": "El servicio VIP valió cada euro. Curador personal, clases de español, incluso asesoramiento de visado. Mi hija se sintió acompañada desde el primer día en España.",
       "testimonial_3_name": "Dinara S.",
       "testimonial_3_role": "Madre de estudiante, Kazajistán",
-
       "included_title": "Incluido en todos los planes",
       "included_1_title": "Panel personal",
       "included_1_desc": "Sigue el estado de tu expediente en tiempo real desde cualquier dispositivo",
@@ -905,7 +901,6 @@
       "included_3_desc": "Consulta exactamente en qué punto se encuentran tus documentos",
       "included_4_title": "Almacenamiento seguro",
       "included_4_desc": "Tus documentos están cifrados y almacenados de forma segura en tu cuenta",
-
       "compare_title": "Compara los planes en detalle",
       "compare_feature": "Característica",
       "compare_feature_1": "Preparación completa de documentos",
@@ -921,7 +916,6 @@
       "compare_feature_11": "Apostilla de documentos",
       "compare_feature_12": "Soporte 24/7 por WhatsApp",
       "compare_feature_13": "Asesoramiento de visado",
-
       "steps_title": "Cómo funciona",
       "steps_subtitle": "Cuatro pasos sencillos desde la solicitud hasta la resolución",
       "step_1_title": "Envía tu solicitud",
@@ -932,10 +926,8 @@
       "step_3_desc": "Paga solo después de que verifiquemos que tus documentos están en orden",
       "step_4_title": "Nos encargamos de todo",
       "step_4_desc": "Relájate — gestionamos todo el proceso de principio a fin",
-
       "risk_title": "Sin riesgo — paga solo tras la revisión de documentos",
       "risk_desc": "Primero revisamos tus documentos y confirmamos que podemos ayudarte antes de que pagues nada. Si no podemos asistirte, no debes nada.",
-
       "faq_title": "Preguntas frecuentes",
       "faq_1_q": "¿Cuándo tengo que pagar?",
       "faq_1_a": "El pago se realiza una vez revisada tu documentación y confirmado que podemos ayudarte. No cobramos por adelantado sin verificación.",
@@ -956,7 +948,6 @@
       "cta_start": "Crear cuenta",
       "cta_consult": "Solicitar consulta"
     },
-
     "consultation_thanks": {
       "title": "¡Gracias! Tu consulta está reservada",
       "subtitle": "Hemos recibido tu pago. Nuestro experto se pondrá en contacto contigo en las próximas 24 horas para programar la consulta en un horario conveniente.",
