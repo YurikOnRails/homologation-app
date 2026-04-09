@@ -838,6 +838,9 @@
       "hero_stat_clients": "clientes satisfechos",
       "hero_stat_success": "tasa de éxito",
       "hero_stat_years": "años de experiencia",
+      "hero_photo_alt": "Equipo de Space for Edu",
+
+      "trust_bar_title": "Nuestros alumnos estudian en las mejores universidades de España",
 
       "stats_1_value": "500+",
       "stats_1_label": "Clientes satisfechos",
@@ -878,6 +881,18 @@
       "plan_premium_feature_7": "Asesoramiento de visado (si aplica)",
       "plan_premium_feature_8": "Garantía de resultado",
       "choose_plan": "Elegir plan",
+
+      "testimonials_title": "Lo que dicen los padres sobre nosotros",
+      "testimonials_subtitle": "Historias reales de familias a las que hemos ayudado",
+      "testimonial_1_quote": "Space for Edu se encargó de todo, desde la preparación de documentos hasta la matriculación universitaria. Mi hijo ahora estudia en la Universidad de Barcelona. No habría podido hacerlo sola.",
+      "testimonial_1_name": "Maria K.",
+      "testimonial_1_role": "Madre de estudiante, Rusia",
+      "testimonial_2_quote": "Nos preocupaba la complejidad de la homologación, pero el equipo lo hizo sencillo. Nos mantuvieron informados en cada paso. Un servicio profesional de principio a fin.",
+      "testimonial_2_name": "Elena T.",
+      "testimonial_2_role": "Madre de estudiante, Ucrania",
+      "testimonial_3_quote": "El servicio VIP valió cada euro. Curador personal, clases de español, incluso asesoramiento de visado. Mi hija se sintió acompañada desde el primer día en España.",
+      "testimonial_3_name": "Dinara S.",
+      "testimonial_3_role": "Madre de estudiante, Kazajistán",
 
       "included_title": "Incluido en todos los planes",
       "included_1_title": "Panel personal",

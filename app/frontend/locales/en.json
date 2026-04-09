@@ -838,6 +838,9 @@
       "hero_stat_clients": "satisfied clients",
       "hero_stat_success": "success rate",
       "hero_stat_years": "years of experience",
+      "hero_photo_alt": "Space for Edu team",
+
+      "trust_bar_title": "Our students study at top Spanish universities",
 
       "stats_1_value": "500+",
       "stats_1_label": "Satisfied clients",
@@ -878,6 +881,18 @@
       "plan_premium_feature_7": "Visa guidance (if applicable)",
       "plan_premium_feature_8": "Results guarantee",
       "choose_plan": "Choose plan",
+
+      "testimonials_title": "What parents say about us",
+      "testimonials_subtitle": "Real stories from families we've helped",
+      "testimonial_1_quote": "Space for Edu handled everything from document preparation to university enrollment. My son is now studying at the University of Barcelona. I couldn't have navigated this process alone.",
+      "testimonial_1_name": "Maria K.",
+      "testimonial_1_role": "Mother of a student, Russia",
+      "testimonial_2_quote": "We were worried about the complexity of homologation, but the team made it simple. They kept us informed at every step. Professional service from start to finish.",
+      "testimonial_2_name": "Elena T.",
+      "testimonial_2_role": "Mother of a student, Ukraine",
+      "testimonial_3_quote": "The VIP service was worth every euro. Personal curator, Spanish classes, even visa guidance. My daughter felt supported from day one in Spain.",
+      "testimonial_3_name": "Dinara S.",
+      "testimonial_3_role": "Mother of a student, Kazakhstan",
 
       "included_title": "Included in every plan",
       "included_1_title": "Personal dashboard",

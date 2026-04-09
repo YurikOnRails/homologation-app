@@ -3,12 +3,12 @@ import { Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
   CheckCircle2,
+  Star,
   Monitor,
   MessageCircle,
   BarChart3,
   ShieldCheck,
   FileText,
-  FileCheck,
   Search,
   CreditCard,
   Rocket,
@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, ShimmerBorder, AnimatedCounter } from "@/components/public/animations"
 import {
+  Container,
   GradientButton,
   PublicHero,
   PublicCta,
@@ -35,8 +36,9 @@ import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
-const includedIcons = [Monitor, MessageCircle, BarChart3, ShieldCheck]
+/* ─── Static data ──────────────────────────────────────────────────────────────── */
 
+const includedIcons = [Monitor, MessageCircle, BarChart3, ShieldCheck]
 const stepIcons = [FileText, Search, CreditCard, Rocket]
 
 const plans = [
@@ -67,6 +69,24 @@ const heroStats = [
   { value: 5, suffix: "+", key: "years" },
 ]
 
+// OPTIONAL: Replace with real university logo images
+const universities = [
+  "Universidad Complutense de Madrid",
+  "Universitat de Barcelona",
+  "Universidad de Salamanca",
+  "Universidad de Granada",
+  "Universitat Politècnica de València",
+  "Universidad Autónoma de Madrid",
+]
+
+const testimonialAvatarColors = [
+  "bg-[#2D7FF9]",
+  "bg-[#E8453C]",
+  "bg-gradient-to-br from-[#E8453C] to-[#2D7FF9]",
+]
+
+/* ─── Page ─────────────────────────────────────────────────────────────────────── */
+
 export default function Precios() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
@@ -80,7 +100,7 @@ export default function Precios() {
     <PublicLayout>
       <SeoHead {...seo} />
 
-      {/* Hero */}
+      {/* ── 1. Hero — team photo + CTA + stats ─────────────────────────────────── */}
       <PublicHero
         title1={t("public.precios.hero_title_1")}
         titleAccent={t("public.precios.hero_title_accent")}
@@ -119,62 +139,100 @@ export default function Precios() {
           </div>
         }
         illustration={
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-full max-w-md aspect-square">
-              {/* Main card */}
-              <div className="absolute inset-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/80 border border-white/80 shadow-2xl shadow-[#2D7FF9]/10 flex items-center justify-center backdrop-blur-sm">
-                <ShieldCheck className="h-32 w-32 text-[#2D7FF9]/20" />
-              </div>
-              {/* Floating card: secure payment */}
-              <div
-                className="absolute -top-2 -right-2 w-20 h-20 rounded-xl bg-white shadow-lg shadow-[#E8453C]/10 border border-[#E8453C]/10 flex items-center justify-center"
-                style={{ animation: "float 6s ease-in-out infinite" }}
-              >
-                <CreditCard className="h-8 w-8 text-[#E8453C]/60" />
-              </div>
-              {/* Floating card: document verification */}
-              <div
-                className="absolute -bottom-2 -left-2 w-20 h-20 rounded-xl bg-white shadow-lg shadow-[#2D7FF9]/10 border border-[#2D7FF9]/10 flex items-center justify-center"
-                style={{ animation: "float 7s ease-in-out infinite", animationDelay: "1s" }}
-              >
-                <FileCheck className="h-8 w-8 text-[#2D7FF9]/60" />
-              </div>
-              {/* Decorative ring */}
-              <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-[#2D7FF9]/10 animate-[spin_40s_linear_infinite]" />
-            </div>
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 blur-2xl" />
+            <img
+              src="/images/hero_team.webp"
+              alt={t("public.precios.hero_photo_alt")}
+              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full object-cover"
+            />
           </div>
         }
       />
 
-      {/* Pricing cards */}
+      {/* ── 2. University trust bar ── OPTIONAL: replace text with real logos ──── */}
+      <section className="border-y border-slate-100 py-8 sm:py-10 bg-white/80">
+        <Container>
+          <p className="text-center text-xs uppercase tracking-wider text-muted-foreground mb-6">
+            {t("public.precios.trust_bar_title")} <OptionalBadge />
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-x-8 sm:gap-x-12 gap-y-3">
+            {universities.map((name) => (
+              <span
+                key={name}
+                className="text-xs sm:text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── 3. Pricing cards ───────────────────────────────────────────────────── */}
       <PublicSection id="plans" className="bg-white">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map(({ key, features, highlighted }, i) => (
             <Reveal key={key} direction="up" delay={i * 120} className="h-full">
               {highlighted ? (
                 <ShimmerBorder>
-                  <PricingCard
-                    planKey={key}
-                    features={features}
-                    highlighted
-                    t={t}
-                  />
+                  <PricingCard planKey={key} features={features} highlighted t={t} />
                 </ShimmerBorder>
               ) : (
-                <PricingCard
-                  planKey={key}
-                  features={features}
-                  highlighted={false}
-                  t={t}
-                />
+                <PricingCard planKey={key} features={features} highlighted={false} t={t} />
               )}
             </Reveal>
           ))}
         </div>
       </PublicSection>
 
-      {/* Included in all plans */}
+      {/* ── 4. Testimonials ── OPTIONAL: replace with real reviews ─────────────── */}
       <PublicSection className="bg-slate-50" dots>
+        <SectionHeading
+          title={
+            <>
+              {t("public.precios.testimonials_title")} <OptionalBadge />
+            </>
+          }
+          subtitle={t("public.precios.testimonials_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
+          {[1, 2, 3].map((i) => (
+            <Reveal key={i} direction="up" delay={i * 100}>
+              <Card className="border hover:shadow-lg transition-shadow duration-300 h-full">
+                <CardContent className="pt-6 flex flex-col h-full">
+                  <div className="flex gap-0.5 mb-4">
+                    {Array.from({ length: 5 }, (_, j) => (
+                      <Star key={j} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground italic flex-1 mb-6">
+                    &ldquo;{t(`public.precios.testimonial_${i}_quote`)}&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-10 h-10 rounded-full ${testimonialAvatarColors[i - 1]} flex items-center justify-center text-white font-semibold text-sm shrink-0`}
+                    >
+                      {t(`public.precios.testimonial_${i}_name`).charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">
+                        {t(`public.precios.testimonial_${i}_name`)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {t(`public.precios.testimonial_${i}_role`)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* ── 5. Included in all plans ───────────────────────────────────────────── */}
+      <PublicSection className="bg-white">
         <SectionHeading title={t("public.precios.included_title")} />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto">
           {includedIcons.map((Icon, i) => (
@@ -195,8 +253,8 @@ export default function Precios() {
         </div>
       </PublicSection>
 
-      {/* Comparison table */}
-      <PublicSection className="bg-white">
+      {/* ── 6. Comparison table ────────────────────────────────────────────────── */}
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.precios.compare_title")} />
         <Reveal direction="up" delay={100}>
           <div className="max-w-4xl mx-auto overflow-x-auto -mx-4 px-4">
@@ -241,8 +299,8 @@ export default function Precios() {
         </Reveal>
       </PublicSection>
 
-      {/* How it works */}
-      <PublicSection className="bg-slate-50" dots>
+      {/* ── 7. How it works ────────────────────────────────────────────────────── */}
+      <PublicSection className="bg-white">
         <SectionHeading
           title={t("public.precios.steps_title")}
           subtitle={t("public.precios.steps_subtitle")}
@@ -269,8 +327,8 @@ export default function Precios() {
         </div>
       </PublicSection>
 
-      {/* Risk reversal */}
-      <PublicSection className="bg-white">
+      {/* ── 8. Risk reversal / guarantee ───────────────────────────────────────── */}
+      <PublicSection className="bg-slate-50" dots>
         <Reveal direction="up">
           <div className="max-w-3xl mx-auto text-center">
             <div className="mx-auto w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-6">
@@ -286,13 +344,13 @@ export default function Precios() {
         </Reveal>
       </PublicSection>
 
-      {/* FAQ */}
-      <PublicSection className="bg-slate-50" dots>
+      {/* ── 9. FAQ ─────────────────────────────────────────────────────────────── */}
+      <PublicSection className="bg-white">
         <SectionHeading title={t("public.precios.faq_title")} />
         <FaqSection translationPrefix="public.precios" count={7} />
       </PublicSection>
 
-      {/* CTA */}
+      {/* ── 10. CTA ────────────────────────────────────────────────────────────── */}
       <PublicCta
         title={t("public.precios.cta_title")}
         subtitle={t("public.precios.cta_subtitle")}
@@ -305,6 +363,16 @@ export default function Precios() {
         </OutlineCtaButton>
       </PublicCta>
     </PublicLayout>
+  )
+}
+
+/* ─── Sub-components ───────────────────────────────────────────────────────────── */
+
+function OptionalBadge() {
+  return (
+    <span className="inline-flex items-center ml-1 text-[10px] font-mono font-medium bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 align-middle">
+      OPTIONAL
+    </span>
   )
 }
 
@@ -322,7 +390,9 @@ function PricingCard({
   return (
     <Card
       className={`border relative transition-all duration-300 hover:shadow-xl group flex flex-col h-full ${
-        highlighted ? "overflow-visible border-[#2D7FF9]/30 shadow-lg scale-[1.02]" : "hover:-translate-y-1"
+        highlighted
+          ? "overflow-visible border-[#2D7FF9]/30 shadow-lg scale-[1.02]"
+          : "hover:-translate-y-1"
       }`}
     >
       {highlighted && (
@@ -333,9 +403,13 @@ function PricingCard({
         </div>
       )}
       <CardHeader className="text-center pb-2">
-        <CardTitle className="text-base">{t(`public.precios.plan_${planKey}_title`)}</CardTitle>
+        <CardTitle className="text-base">
+          {t(`public.precios.plan_${planKey}_title`)}
+        </CardTitle>
         <div className="mt-4">
-          <span className="text-4xl font-bold">{t(`public.precios.plan_${planKey}_price`)}</span>
+          <span className="text-4xl font-bold">
+            {t(`public.precios.plan_${planKey}_price`)}
+          </span>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
           {t(`public.precios.plan_${planKey}_desc`)}
@@ -346,7 +420,9 @@ function PricingCard({
           {Array.from({ length: features }, (_, i) => (
             <div key={i} className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-[#2D7FF9] mt-0.5 shrink-0" />
-              <span className="text-sm">{t(`public.precios.plan_${planKey}_feature_${i + 1}`)}</span>
+              <span className="text-sm">
+                {t(`public.precios.plan_${planKey}_feature_${i + 1}`)}
+              </span>
             </div>
           ))}
         </div>
