@@ -20,10 +20,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SeoHead } from "@/components/public/SeoHead"
-import { Reveal, ShimmerBorder, AnimatedCounter } from "@/components/public/animations"
+import { Reveal, ShimmerBorder } from "@/components/public/animations"
 import {
+  Container,
   GradientButton,
-  PublicHero,
   PublicCta,
   PublicSection,
   SectionHeading,
@@ -88,62 +88,95 @@ export default function Precios() {
     <PublicLayout>
       <SeoHead {...seo} />
 
-      {/* ── 1. Hero — team photo + CTA + stats ─────────────────────────────────── */}
-      <PublicHero
-        title1={t("public.precios.hero_title_1")}
-        titleAccent={t("public.precios.hero_title_accent")}
-        subtitle={t("public.precios.hero_subtitle")}
-        actions={
-          <>
-            <GradientButton className="w-full sm:w-auto" onClick={scrollToPlans}>
-              {t("public.precios.hero_action_plans")}
-            </GradientButton>
-            <ConsultationDialog>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto min-h-[44px] text-base hover:bg-slate-50 transition-all duration-300"
-              >
-                {t("public.precios.hero_action_consult")}
-              </Button>
-            </ConsultationDialog>
-          </>
-        }
-        footer={
-          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
-            {heroStats.map(({ value, suffix, key }, i) => (
-              <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
-                {i > 0 && <span className="text-border">·</span>}
-                <span>
-                  <AnimatedCounter
-                    value={value}
-                    suffix={suffix}
-                    className="font-semibold text-foreground"
-                  />{" "}
-                  {t(`public.precios.hero_stat_${key}`)}
-                </span>
+      {/* ── 1. Hero — minimal premium: badge + huge H1 + 1 line + 1 CTA ─────── */}
+      <section className="relative bg-slate-50 py-24 sm:py-32 lg:py-40">
+        <Container className="relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <Reveal direction="up">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#2D7FF9]/25 bg-white shadow-sm px-4 py-1.5 text-sm font-semibold text-[#2D7FF9] mb-8">
+                <ShieldCheck className="h-4 w-4 shrink-0" />
+                <span>{t("public.precios.hero_guarantee_badge")}</span>
               </div>
-            ))}
+            </Reveal>
+            <Reveal direction="up">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.05]">
+                {t("public.precios.hero_title_1")}{" "}
+                <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                  {t("public.precios.hero_title_accent")}
+                </span>
+              </h1>
+            </Reveal>
+            <Reveal direction="up" delay={100}>
+              <p className="mt-8 text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                {t("public.precios.hero_subtitle")}
+              </p>
+            </Reveal>
+            <Reveal direction="up" delay={200}>
+              <div className="mt-12 flex flex-col items-center gap-5">
+                <ConsultationDialog>
+                  <GradientButton>
+                    {t("public.precios.hero_action_verify")}
+                  </GradientButton>
+                </ConsultationDialog>
+                <button
+                  type="button"
+                  onClick={scrollToPlans}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors min-h-[44px] inline-flex items-center"
+                >
+                  {t("public.precios.hero_secondary_link")}
+                  <span className="ml-1.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </Reveal>
           </div>
-        }
-        illustration={
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 blur-2xl" />
-            <img
-              src="/images/hero_team.webp"
-              alt={t("public.precios.hero_photo_alt")}
-              width={457}
-              height={418}
-              fetchPriority="high"
-              decoding="async"
-              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full h-auto object-cover"
-            />
-          </div>
-        }
-      />
+        </Container>
+      </section>
 
       {/* ── 2. University trust bar ─────────────────────────────────────────── */}
       <UniversityLogoBar />
+
+      {/* ── 2b. Cómo funciona — 3 pasos, room to breathe ────────────────────── */}
+      <PublicSection className="bg-white">
+        <SectionHeading
+          title={t("public.precios.how_works_title")}
+          subtitle={t("public.precios.how_works_subtitle")}
+        />
+        <div className="grid gap-10 sm:gap-8 sm:grid-cols-3 max-w-5xl mx-auto">
+          {[1, 2, 3].map((n) => (
+            <Reveal key={n} direction="up" delay={(n - 1) * 150}>
+              <div className="text-center">
+                <div className="mx-auto mb-6 flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] text-white text-xl font-bold shadow-lg shadow-[#2D7FF9]/25">
+                  {n}
+                </div>
+                <h3 className="text-xl font-bold mb-3 tracking-tight">
+                  {t(`public.precios.hero_step_${n}_title`)}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                  {t(`public.precios.hero_step_${n}_desc`)}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* ── 2c. Trust strip — stats inline, no visual weight ────────────────── */}
+      <section className="py-6 bg-slate-50 border-y border-slate-200">
+        <Container>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
+            {heroStats.map(({ value, suffix, key }, i) => (
+              <div key={key} className="flex items-baseline gap-2">
+                {i > 0 && <span className="text-border hidden sm:inline">·</span>}
+                <span className="font-bold text-foreground text-base">
+                  {value}
+                  {suffix}
+                </span>
+                <span>{t(`public.precios.hero_stat_${key}`)}</span>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
 
       {/* ── 3. Pricing cards ───────────────────────────────────────────────────── */}
       <PublicSection id="plans" className="bg-white">
