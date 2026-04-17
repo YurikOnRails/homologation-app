@@ -21,6 +21,14 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#E8453C">
 
+    <%# Site-wide Schema.org JSON-LD (server-rendered, no JS required) %>
+    <script type="application/ld+json">
+      <%= raw JSON.generate(organization_schema(request, I18n.locale.to_s)) %>
+    </script>
+    <script type="application/ld+json">
+      <%= raw JSON.generate(website_schema(request, I18n.locale.to_s)) %>
+    </script>
+
     <%= vite_stylesheet_tag "application" %>
     <%= vite_react_refresh_tag %>
     <%= vite_client_tag %>

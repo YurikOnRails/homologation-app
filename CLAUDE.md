@@ -48,7 +48,7 @@ See `docs/07_IMPLEMENTATION_PLAN.md` for the full step-by-step checklist (Steps 
 7. **Select options** — `config/select_options/*.yml` (one file per dropdown) → `inertia_share` → `selectOptions` in every page. Never hardcode — always `opt[label_${locale}] || opt.label`.
 8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs. Soft delete (`discarded_at`) on `users` and `homologation_requests` — use `.kept` scope, never hard delete without GDPR request.
 9. **Mobile-first** — Every page works at 360px+. See `docs/15_MOBILE_PATTERNS.md`.
-10. **Keep it simple** — `<textarea>` not rich text, light mode only, no command menu/audit log/dark mode.
+10. **Keep it simple** — `<textarea>` not rich text, no command menu, no audit log. Dark mode is allowed (toggle in header, CSS vars in `application.css`).
 
 ## Coding Patterns (Rails + Inertia.js + React)
 
@@ -197,4 +197,4 @@ Reference: `shadcn-admin` by satnaing. Read existing pages before building new o
 
 ## Banned Patterns
 
-`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests · custom card-like `<div>` instead of `<Card>` · buttons without `min-h-[44px]` · pages without breadcrumbs · pages without `<Main>` wrapper · `Faker::Internet.unique.email` (use sequence) · `Faker::Commerce.price` (use rand().round(2)) · `X.minutes.from_now` in assertions without `freeze_time` · `create(:lesson)` without pre-existing `teacher_student` · `create(:homologation_request)` without explicit status trait · fixtures (`test/fixtures/`)
+`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests · custom card-like `<div>` instead of `<Card>` · buttons without `min-h-[44px]` · pages without breadcrumbs · pages without `<Main>` wrapper · `Faker::Internet.unique.email` (use sequence) · `Faker::Commerce.price` (use rand().round(2)) · `X.minutes.from_now` in assertions without `freeze_time` · `create(:lesson)` without pre-existing `teacher_student` · `create(:homologation_request)` without explicit status trait · fixtures (`test/fixtures/`)

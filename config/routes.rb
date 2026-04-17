@@ -33,6 +33,10 @@ Rails.application.routes.draw do
   # Root: detect browser language → redirect to /:locale/
   root "pages#redirect_to_locale"
 
+  # SEO
+  get "/sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }, as: :sitemap
+  get "/robots.txt",  to: "sitemaps#robots", defaults: { format: :text }, as: :robots
+
   # Public marketing pages — all languages with prefix, English slugs
   scope "/:locale", locale: /es|en|ru/ do
     get "/",             to: "pages#home",          as: :localized_home

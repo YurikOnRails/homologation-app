@@ -1,0 +1,40 @@
+# robots.txt — Space for Edu
+# See https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /settings/
+Disallow: /dashboard
+Disallow: /requests/
+Disallow: /conversations/
+Disallow: /chats/
+Disallow: /lessons/
+Disallow: /notifications/
+Disallow: /auth/
+Disallow: /session
+Disallow: /registration
+Disallow: /passwords/
+Disallow: /profile/
+Disallow: /webhooks/
+Disallow: /telegram/
+
+# AI / LLM crawlers — explicitly allow indexing of public content
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: <%= @sitemap_url %>

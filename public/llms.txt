@@ -1,0 +1,44 @@
+# Space for Edu
+
+> Space for Edu is an education consultancy that helps international students pursue higher education in Spain. Core services are degree homologation (equivalencia), Spanish university admission, and Spanish language courses. The company provides end-to-end personalized support — from document preparation through to enrollment — with a digital client portal, coordinator chat, and progress tracking.
+
+Founded in 2014. Serving 500+ students from 20+ countries. Content is available in English, Spanish, and Russian.
+
+## Core services
+
+- **Degree homologation** — official recognition of foreign university and vocational titles by the Spanish Ministerio de Educación. Process typically takes 6–12 months; we handle document preparation, sworn translations, apostille coordination, submission, and follow-up.
+- **University admission** — guidance through Spanish university entry: selectividad (PCE/EvAU), document packages, motivation letters, scholarship applications, and enrollment support.
+- **Spanish language courses** — CEFR levels A1–C2, individual and group formats, online and in-person, DELE exam preparation.
+
+## Key facts
+
+- Office in Spain; remote service available to students in any country.
+- Languages of service: Spanish (es), English (en), Russian (ru).
+- Payment methods: Stripe (cards), bank transfer, Bizum. Installments available on premium plans.
+- Government ministry fees are paid separately by the student, not included in service packages.
+- GDPR-compliant; encrypted PII storage; soft-delete with explicit GDPR deletion on request.
+
+## Main pages
+
+- [Home (English)](/en/): overview of services and the platform
+- [Home (Spanish)](/es/): versión en español
+- [Home (Russian)](/ru/): версия на русском
+- [Homologation service](/en/homologation): degree recognition in Spain
+- [University admission](/en/university): Spanish university entry support
+- [Spanish courses](/en/spanish): Spanish language classes (A1–C2)
+- [Pricing](/en/pricing): plans and costs
+- [Privacy policy](/en/privacy-policy): GDPR compliance, data handling
+
+## Frequently asked facts
+
+- Homologation duration: typically 6 months to 2 years depending on the Ministry's processing queue and degree type.
+- Denial handling: if homologation is denied, the team analyzes the reason and advises on appeal, supplementary exams, or alternative pathways at no extra charge.
+- Document translation: all non-Spanish documents must be translated by a sworn translator ("traductor jurado"); the company coordinates verified translators.
+- Work during homologation: in many cases students can work with a conditional registration certificate, subject to residency permit status.
+- Spanish university fees (2024–2025): public bachelor's range €700–€2,500/year; master's €1,500–€5,000/year.
+- Online language classes: ~40% of students study remotely; classes delivered via Zoom.
+- Trial Spanish lesson: free, includes CEFR level assessment, no commitment.
+
+## Contact
+
+Consultations are booked through the website. The consultation is free and non-binding; response time is within 24 hours.

@@ -115,6 +115,10 @@ es:
         other: "Tienes %{count} mensajes sin leer en la conversación «%{title}»."
       cta: "Abre la aplicación para responder."
   seo:
+    breadcrumbs:
+      home: "Inicio"
+    organization:
+      description: "Space for Edu acompaña a estudiantes de más de 20 países en su camino a la educación europea en España: homologación de títulos, admisión universitaria y clases de español con atención personalizada de principio a fin."
     home:
       title: "Space for Edu — Educación Europea en España"
       description: "Homologación de títulos, admisión universitaria y cursos de español. Acompañamiento completo desde los documentos hasta la matriculación. 10+ años, 500+ estudiantes."

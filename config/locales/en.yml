@@ -115,6 +115,10 @@ en:
         other: "You have %{count} unread messages in the conversation \"%{title}\"."
       cta: "Open the app to reply."
   seo:
+    breadcrumbs:
+      home: "Home"
+    organization:
+      description: "Space for Edu helps students from 20+ countries pursue European education in Spain — degree homologation, university admission, and Spanish language courses with end-to-end personalized support."
     home:
       title: "Space for Edu — European Education in Spain"
       description: "Degree homologation, university admission, and Spanish courses. Full support from documents to enrollment. 10+ years, 500+ students."

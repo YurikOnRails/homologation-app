@@ -1,4 +1,6 @@
 class PagesController < ApplicationController
+  include StructuredDataHelper
+
   allow_unauthenticated_access
   before_action :resume_session
 
@@ -49,8 +51,10 @@ class PagesController < ApplicationController
     {
       locale: locale,
       alternates: SUPPORTED_LOCALES.map { |l| { locale: l, url: localized_page_url(l) } },
+      canonicalUrl: localized_page_url(locale),
       title: t("seo.#{action_name}.title"),
-      description: t("seo.#{action_name}.description")
+      description: t("seo.#{action_name}.description"),
+      structuredData: structured_data_for(action_name, request, locale)
     }
   end
 
