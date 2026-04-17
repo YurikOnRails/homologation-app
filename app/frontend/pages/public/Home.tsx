@@ -1,41 +1,39 @@
-import { usePage } from "@inertiajs/react"
-import { Link } from "@inertiajs/react"
+import { usePage, Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
   FileCheck,
   GraduationCap,
   Languages,
-  MessageCircle,
-  Shield,
-  BarChart3,
-  Bell,
-  CheckCircle2,
+  Stamp,
+  Scale,
+  Users,
+  BookOpen,
+  Briefcase,
+  Building2,
+  UserCheck,
+  Award,
+  Monitor,
+  Handshake,
+  ArrowRight,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
-import {
-  Reveal,
-  TiltCard,
-} from "@/components/public/animations"
+import { Reveal } from "@/components/public/animations"
 import {
   Container,
-  FloatingBadge,
   GradientButton,
-  PublicHero,
   PublicCta,
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
-import { TestimonialsSection } from "@/components/public/TestimonialsSection"
 import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
-import { TimelineSection } from "@/components/public/TimelineSection"
-import { FaqSection } from "@/components/public/FaqSection"
-import { publicRoute, publicPages, routes } from "@/lib/routes"
+import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
+
+const APPROACH_ICONS = [UserCheck, Award, Monitor, Handshake] as const
 
 export default function Home() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
@@ -48,114 +46,72 @@ export default function Home() {
       <HeroSection t={t} />
       <UniversityLogoBar titleKey="public.home.logo_bar_title" noBorderTop />
       <ServicesSection t={t} locale={locale} />
-      <HowItWorksSection t={t} />
-      <TestimonialsBlock t={t} />
-      <MidPageCta t={t} />
-      <AppPlatformSection t={t} />
-      <FaqBlock t={t} />
-      <CtaSection t={t} />
+      <ApproachSection t={t} />
+      <NumbersStrip t={t} />
+      <FinalCtaSection t={t} />
     </PublicLayout>
   )
 }
 
-/* ── Hero — specific headline + process checklist illustration ──────────────── */
+/* ── 1. Hero — editorial typography, no illustration ──────────────────────── */
 
 function HeroSection({ t }: { t: (key: string) => string }) {
-  const checklistDone = [
-    t("public.home.hero_check_1"),
-    t("public.home.hero_check_2"),
-    t("public.home.hero_check_3"),
-  ]
-
-  const illustration = (
-    <div className="hidden lg:flex items-center justify-center">
-      <div className="relative w-full max-w-sm">
-        <div className="bg-white rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 border border-slate-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] px-5 py-3">
-            <span className="text-white font-semibold text-sm">
-              {t("public.home.hero_check_title")}
-            </span>
-          </div>
-          <div className="p-5 space-y-3">
-            {checklistDone.map((label, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-                <span className="text-sm text-slate-500 line-through">
-                  {label}
-                </span>
-              </div>
-            ))}
-            <div className="flex items-center gap-3">
-              <div className="h-5 w-5 rounded-full border-2 border-[#2D7FF9] shrink-0 flex items-center justify-center">
-                <div className="h-2 w-2 rounded-full bg-[#2D7FF9] animate-pulse" />
-              </div>
-              <span className="text-sm text-slate-800 font-medium">
-                {t("public.home.hero_check_active")}
-              </span>
-            </div>
-          </div>
-        </div>
-        <FloatingBadge className="-bottom-4 -right-4 shadow-lg px-3 py-2 font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-          <span className="text-slate-700">
-            98% {t("public.home.stat_success")}
-          </span>
-        </FloatingBadge>
-      </div>
-    </div>
-  )
-
   const stats = [
-    { value: "500+", label: t("public.home.stat_students") },
-    { value: "98%", label: t("public.home.stat_success") },
-    { value: "15+", label: t("public.home.stat_years") },
+    { value: "1700+", label: t("public.home.stat_students") },
     { value: "20+", label: t("public.home.stat_countries") },
+    { value: "15+", label: t("public.home.stat_years") },
   ]
 
   return (
-    <PublicHero
-      title1={t("public.home.hero_title_1")}
-      titleAccent={t("public.home.hero_title_accent")}
-      subtitle={t("public.home.hero_subtitle")}
-      illustration={illustration}
-      actions={
-        <>
-          <ConsultationDialog>
-            <GradientButton className="w-full sm:w-auto">
-              {t("public.home.cta_start")}
-            </GradientButton>
-          </ConsultationDialog>
-          <Link href={routes.register}>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto min-h-[44px] text-base hover:bg-slate-50 transition-all duration-300"
-            >
-              {t("public.home.cta_register")}
-            </Button>
-          </Link>
-        </>
-      }
-      footer={
-        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-          {stats.map(({ value, label }) => (
-            <div key={value} className="flex items-baseline gap-1.5">
-              <span className="text-lg font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
-                {value}
+    <section className="relative bg-slate-50 py-20 sm:py-32 lg:py-40">
+      <Container className="relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <Reveal direction="up">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-[#2D7FF9] mb-6">
+              {t("public.home.hero_eyebrow")}
+            </p>
+          </Reveal>
+          <Reveal direction="up" delay={50}>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.05]">
+              {t("public.home.hero_title_1")}{" "}
+              <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                {t("public.home.hero_title_accent")}
               </span>
-              <span className="text-sm text-muted-foreground">{label}</span>
+            </h1>
+          </Reveal>
+          <Reveal direction="up" delay={150}>
+            <p className="mt-8 text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              {t("public.home.hero_subtitle")}
+            </p>
+          </Reveal>
+          <Reveal direction="up" delay={250}>
+            <div className="mt-12">
+              <ConsultationDialog>
+                <GradientButton>{t("public.home.cta_start")}</GradientButton>
+              </ConsultationDialog>
             </div>
-          ))}
+          </Reveal>
+          <Reveal direction="up" delay={350}>
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
+              {stats.map(({ value, label }, i) => (
+                <div key={value} className="flex items-baseline gap-2">
+                  {i > 0 && <span className="text-border hidden sm:inline">·</span>}
+                  <span className="font-bold text-foreground text-base">{value}</span>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
-      }
-    />
+      </Container>
+    </section>
   )
 }
 
-/* ── Services — 3 cards with prominent links ────────────────────────────────── */
+/* ── 3. Services — 3 lead cards (dedicated pages) + 6 tiles (paid consultation) */
 
 function ServicesSection({ t, locale }: { t: (key: string) => string; locale: string }) {
-  const services = [
+  const leadServices = [
     {
       icon: FileCheck,
       title: t("public.home.service_homologacion_title"),
@@ -176,32 +132,104 @@ function ServicesSection({ t, locale }: { t: (key: string) => string; locale: st
     },
   ]
 
+  const additionalServices = [
+    { icon: Stamp, labelKey: "service_visas_title" },
+    { icon: Scale, labelKey: "service_legal_title" },
+    { icon: Users, labelKey: "service_relocation_title" },
+    { icon: BookOpen, labelKey: "service_postgrad_title" },
+    { icon: Briefcase, labelKey: "service_internship_title" },
+    { icon: Building2, labelKey: "service_b2b_title" },
+  ]
+
   return (
-    <PublicSection className="bg-slate-50" dots>
+    <PublicSection className="bg-white">
       <SectionHeading
         title={t("public.home.services_title")}
         subtitle={t("public.home.services_subtitle")}
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map(({ icon: Icon, title, desc, href }, i) => (
+
+      {/* Lead services — 3 big cards linking to dedicated pages */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
+        {leadServices.map(({ icon: Icon, title, desc, href }, i) => (
           <Reveal key={title} direction="up" delay={i * 120}>
-            <TiltCard>
-              <Card className="group cursor-pointer border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5">
-                <CardContent className="p-8">
-                  <div className="mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
+            <Link href={href} className="block h-full group">
+              <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 hover:-translate-y-1">
+                <CardContent className="p-8 flex flex-col h-full">
+                  <div className="mb-4 inline-flex self-start rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
                     <Icon className="h-6 w-6 text-[#2D7FF9]" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{desc}</p>
-                  <Link
-                    href={href}
-                    className="inline-flex items-center text-sm font-medium text-[#2D7FF9] bg-[#2D7FF9]/5 px-3 py-1.5 rounded-lg hover:bg-[#2D7FF9]/10 transition-colors"
-                  >
-                    {t("public.home.learn_more")} &rarr;
-                  </Link>
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">{desc}</p>
+                  <span className="mt-5 inline-flex items-center text-sm font-medium text-[#2D7FF9]">
+                    {t("public.home.learn_more")}
+                    <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </CardContent>
               </Card>
-            </TiltCard>
+            </Link>
+          </Reveal>
+        ))}
+      </div>
+
+      {/* Additional services — eyebrow + 6 tiles, each opens paid consultation dialog */}
+      <div className="mt-20 max-w-5xl mx-auto">
+        <Reveal direction="up">
+          <p className="text-center text-xs sm:text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-8">
+            {t("public.home.additional_label")}
+          </p>
+        </Reveal>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {additionalServices.map(({ icon: Icon, labelKey }, i) => (
+            <Reveal key={labelKey} direction="up" delay={i * 60}>
+              <ConsultationDialog>
+                <button
+                  type="button"
+                  className="group flex items-center gap-3 w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-[#2D7FF9]/40 hover:shadow-md transition-all duration-300 min-h-[44px]"
+                >
+                  <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2">
+                    <Icon className="h-5 w-5 text-[#2D7FF9]" />
+                  </div>
+                  <span className="flex-1 text-sm font-medium">
+                    {t(`public.home.${labelKey}`)}
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#2D7FF9] group-hover:translate-x-0.5 transition-all" />
+                </button>
+              </ConsultationDialog>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </PublicSection>
+  )
+}
+
+/* ── 4. Approach — 4 brand principles (replaces step-by-step process) ─────── */
+
+function ApproachSection({ t }: { t: (key: string) => string }) {
+  return (
+    <PublicSection className="bg-slate-50" dots>
+      <SectionHeading
+        title={t("public.home.approach_title")}
+        subtitle={t("public.home.approach_subtitle")}
+      />
+      <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto">
+        {APPROACH_ICONS.map((Icon, i) => (
+          <Reveal key={i} direction="up" delay={i * 100}>
+            <Card className="border bg-white h-full transition-all duration-300 hover:shadow-lg">
+              <CardContent className="p-6 flex gap-4">
+                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 self-start">
+                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-base mb-1.5">
+                    {t(`public.home.approach_${i + 1}_title`)}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {t(`public.home.approach_${i + 1}_desc`)}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </Reveal>
         ))}
       </div>
@@ -209,227 +237,60 @@ function ServicesSection({ t, locale }: { t: (key: string) => string; locale: st
   )
 }
 
-/* ── How it works — numbered timeline instead of card grid ──────────────────── */
+/* ── 5. Numbers strip — 4 big gradient numerals ───────────────────────────── */
 
-function HowItWorksSection({ t }: { t: (key: string) => string }) {
+function NumbersStrip({ t }: { t: (key: string) => string }) {
+  const numbers = [
+    { value: "1700+", labelKey: "stat_students" },
+    { value: "20+", labelKey: "stat_countries" },
+    { value: "15+", labelKey: "stat_years" },
+    { value: "98%", labelKey: "stat_success" },
+  ] as const
+
   return (
-    <PublicSection className="bg-white">
-      <SectionHeading
-        title={t("public.home.how_title")}
-        subtitle={t("public.home.how_subtitle")}
-      />
-      <TimelineSection translationPrefix="public.home" count={5} />
-    </PublicSection>
-  )
-}
-
-/* ── Testimonials — social proof ────────────────────────────────────────────── */
-
-function TestimonialsBlock({ t }: { t: (key: string) => string }) {
-  return (
-    <PublicSection className="bg-slate-50" dots>
-      <SectionHeading title={t("public.home.testimonials_title")} />
-      <TestimonialsSection translationPrefix="public.home" />
-    </PublicSection>
-  )
-}
-
-/* ── Mid-page CTA — lightweight bridge between proof and platform demo ──────── */
-
-function MidPageCta({ t }: { t: (key: string) => string }) {
-  return (
-    <section className="py-12 sm:py-16 bg-gradient-to-r from-[#E8453C]/5 via-[#2D7FF9]/5 to-[#E8453C]/5">
-      <Container className="text-center">
-        <Reveal direction="up">
-          <h3 className="text-xl sm:text-2xl font-bold mb-6">
-            {t("public.home.midpage_cta")}
-          </h3>
-          <ConsultationDialog>
-            <GradientButton>
-              {t("public.home.midpage_cta_btn")}
-            </GradientButton>
-          </ConsultationDialog>
-        </Reveal>
+    <section className="py-16 sm:py-20 bg-white">
+      <Container>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          {numbers.map(({ value, labelKey }, i) => (
+            <Reveal key={value} direction="up" delay={i * 100}>
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                  {value}
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {t(`public.home.${labelKey}`)}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </section>
   )
 }
 
-/* ── Platform demo — 2-col split with mock dashboard (unchanged) ────────────── */
+/* ── 6. Final CTA + institutional trust markers ───────────────────────────── */
 
-function AppPlatformSection({ t }: { t: (key: string) => string }) {
-  const features = [
-    { icon: BarChart3,     titleKey: "public.home.platform_feat_status_title", descKey: "public.home.platform_feat_status_desc" },
-    { icon: MessageCircle, titleKey: "public.home.platform_feat_chat_title",   descKey: "public.home.platform_feat_chat_desc"   },
-    { icon: FileCheck,     titleKey: "public.home.platform_feat_docs_title",   descKey: "public.home.platform_feat_docs_desc"   },
-    { icon: Bell,          titleKey: "public.home.platform_feat_notify_title", descKey: "public.home.platform_feat_notify_desc" },
-  ]
-
-  const steps = ["platform_mock_step1", "platform_mock_step2", "platform_mock_step3", "platform_mock_step4"] as const
-
-  const mockDashboard = (
-    <div className="relative w-full max-w-sm mx-auto lg:mx-0">
-      <FloatingBadge
-        className="-top-5 -right-2 sm:-right-6 shadow-lg px-3 py-2 font-medium"
-        duration={5}
+function FinalCtaSection({ t }: { t: (key: string) => string }) {
+  return (
+    <>
+      <PublicCta
+        title={t("public.home.cta_title")}
+        subtitle={t("public.home.cta_subtitle")}
       >
-        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-        <span className="text-slate-700">{t("public.home.platform_mock_updated")}</span>
-      </FloatingBadge>
-
-      <FloatingBadge
-        className="-bottom-5 -left-2 sm:-left-6 shadow-lg px-3 py-2 font-medium"
-        duration={7}
-        delay={1.5}
-      >
-        <Shield className="h-3.5 w-3.5 text-[#2D7FF9] shrink-0" />
-        <span className="text-slate-700">{t("public.home.platform_mock_secure")}</span>
-      </FloatingBadge>
-
-      {/* Main card */}
-      <div className="bg-white rounded-2xl shadow-xl shadow-[#2D7FF9]/10 border border-slate-100 overflow-hidden">
-        {/* Fake browser chrome */}
-        <div className="bg-slate-50 border-b border-slate-100 px-4 py-2.5 flex items-center gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#E8453C]/40" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-300/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-300/60" />
-          <span className="ml-3 text-[11px] text-slate-400 font-mono truncate">
-            app.space-for-edu.com/dashboard
-          </span>
-        </div>
-
-        <div className="p-5 space-y-4">
-          {/* Request header */}
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-slate-800 truncate">
-              {t("public.home.platform_mock_request")}
-            </span>
-            <span className="shrink-0 text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium">
-              {t("public.home.platform_mock_status")}
-            </span>
-          </div>
-
-          {/* Progress bar */}
-          <div>
-            <div className="flex justify-between text-[10px] text-slate-400 mb-1.5">
-              {steps.map(k => (
-                <span key={k}>{t(`public.home.${k}`)}</span>
-              ))}
-            </div>
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full w-[42%] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] rounded-full" />
-            </div>
-          </div>
-
-          {/* Chat bubble */}
-          <div className="bg-slate-50 rounded-xl p-3">
-            <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-[#2D7FF9]/15 flex items-center justify-center shrink-0 text-[11px] font-bold text-[#2D7FF9]">
-                M
-              </div>
-              <div className="bg-white rounded-xl px-3 py-2 text-xs text-slate-600 shadow-sm leading-relaxed">
-                {t("public.home.platform_mock_chat_msg")}
-              </div>
-            </div>
-          </div>
-
-          {/* Documents */}
-          <div className="space-y-1.5">
-            {(["diploma.pdf", "apostille.pdf"] as const).map(name => (
-              <div key={name} className="flex items-center gap-2.5 bg-slate-50 rounded-lg px-3 py-2">
-                <FileCheck className="h-3.5 w-3.5 text-[#2D7FF9] shrink-0" />
-                <span className="text-xs text-slate-600 flex-1">{name}</span>
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-              </div>
-            ))}
-          </div>
-        </div>
+        <ConsultationDialog>
+          <GradientButton className="w-full sm:w-auto">
+            {t("public.home.cta_final_start")}
+          </GradientButton>
+        </ConsultationDialog>
+      </PublicCta>
+      <div className="bg-zinc-900 border-t border-zinc-800 py-6">
+        <Container className="text-center">
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+            {t("public.home.trust_line")}
+          </p>
+        </Container>
       </div>
-    </div>
-  )
-
-  return (
-    <PublicSection className="bg-white">
-      <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-        {/* Text */}
-        <div>
-          <Reveal direction="up">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-              {t("public.home.platform_title")}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-lg leading-relaxed">
-              {t("public.home.platform_subtitle")}
-            </p>
-          </Reveal>
-
-          <div className="space-y-6">
-            {features.map(({ icon: Icon, titleKey, descKey }, i) => (
-              <Reveal key={titleKey} direction="up" delay={i * 100}>
-                <div className="flex gap-4">
-                  <div className="shrink-0 mt-0.5 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5">
-                    <Icon className="h-5 w-5 text-[#2D7FF9]" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm mb-0.5">{t(titleKey)}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{t(descKey)}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal direction="up" delay={450}>
-            <div className="mt-10 flex items-center gap-2.5 text-xs text-muted-foreground border border-slate-200 rounded-xl px-4 py-3 bg-slate-50 w-fit">
-              <Shield className="h-4 w-4 text-[#2D7FF9] shrink-0" />
-              <span>{t("public.home.platform_security")}</span>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Mock dashboard illustration */}
-        <Reveal direction="right" delay={150}>
-          <div className="flex justify-center lg:justify-end py-8 px-4">
-            {mockDashboard}
-          </div>
-        </Reveal>
-      </div>
-    </PublicSection>
-  )
-}
-
-/* ── FAQ — top-of-funnel objections ─────────────────────────────────────────── */
-
-function FaqBlock({ t }: { t: (key: string) => string }) {
-  return (
-    <PublicSection className="bg-slate-50" dots>
-      <SectionHeading title={t("public.home.faq_title")} />
-      <FaqSection translationPrefix="public.home" count={5} />
-    </PublicSection>
-  )
-}
-
-/* ── Bottom CTA — consultation-first with urgency ───────────────────────────── */
-
-function CtaSection({ t }: { t: (key: string) => string }) {
-  return (
-    <PublicCta
-      title={t("public.home.cta_title")}
-      subtitle={t("public.home.cta_subtitle")}
-    >
-      <ConsultationDialog>
-        <GradientButton className="w-full sm:w-auto">
-          {t("public.home.cta_final_start")}
-        </GradientButton>
-      </ConsultationDialog>
-      <Link href={routes.register}>
-        <Button
-          variant="outline"
-          size="lg"
-          className="w-full sm:w-auto min-h-[44px] text-base border-zinc-600 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-300"
-        >
-          {t("public.home.cta_final_register")}
-        </Button>
-      </Link>
-    </PublicCta>
+    </>
   )
 }

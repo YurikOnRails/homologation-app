@@ -240,7 +240,7 @@ export default function Homologacion() {
         />
         <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-3xl mx-auto text-center">
           {[
-            { value: 500, suffix: "+", key: "clients" },
+            { value: 1700, suffix: "+", key: "clients" },
             { value: 20, suffix: "+", key: "countries" },
             { value: 15, suffix: "+", key: "years" },
           ].map(({ value, suffix, key }, i) => (

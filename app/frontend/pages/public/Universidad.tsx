@@ -78,7 +78,7 @@ export default function Universidad() {
             {[
               { value: "80+", key: "universities" },
               { value: "1 000+", key: "programs" },
-              { value: "500+", key: "success" },
+              { value: "1700+", key: "success" },
             ].map(({ value, key }, i) => (
               <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
                 {i > 0 && <span className="text-border">·</span>}
