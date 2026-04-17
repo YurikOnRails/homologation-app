@@ -470,6 +470,13 @@
     "data_collected_body": "We collect your name, email, phone number, WhatsApp, date of birth, and country to manage your homologation request. This information is stored securely and encrypted.",
     "amocrm_title": "Transfer to AmoCRM",
     "amocrm_body": "Once payment is confirmed, your request data (name, contact, service type, documents) is synced with our CRM system (AmoCRM) to manage the homologation process. We do not sell or share your data with third parties.",
+    "cookies_title": "Cookies and Similar Technologies",
+    "cookies_body": "We use first-party cookies for authentication, session, and saving your preferences. With your consent, we also set analytics and marketing cookies. You can choose your preferences when you first visit the site and change them at any time.",
+    "analytics_tools_title": "Analytics and Marketing Tools",
+    "analytics_tools_body": "When you give consent, we may use: Google Analytics 4 (Google Ireland Ltd — traffic analysis, retained 14 months), Yandex.Metrica (Yandex LLC — traffic analysis and session recordings with masked input, retained 25 months), Microsoft Clarity (Microsoft Corp — heatmaps and session recordings, retained 12 months), Meta Pixel (Meta Platforms Ireland — advertising and conversion measurement, retained up to 90 days). All tools receive pseudonymized data; we do not share your name, email, or documents with them. You can opt out individually using the cookie preferences below.",
+    "manage_consent_title": "Manage Your Consent",
+    "manage_consent_body": "You can review or change your cookie choices at any time.",
+    "manage_consent_button": "Cookie settings",
     "deletion_title": "Request Data Deletion",
     "deletion_body": "To request the deletion of your data, contact us. We will process your request within 30 days in accordance with GDPR."
   },

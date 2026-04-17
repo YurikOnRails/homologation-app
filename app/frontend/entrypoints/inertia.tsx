@@ -1,8 +1,12 @@
+import { initSentry } from "@/lib/sentry"
 import "@/lib/i18n" // Must be imported BEFORE any components
 import { createInertiaApp, type ResolvedComponent } from "@inertiajs/react"
+import { router } from "@inertiajs/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { AuthLayout } from "@/components/layout/AuthLayout"
+import { initCookieConsent, setCookieConsentLanguage } from "@/lib/cookieConsent"
+import { detectLocale } from "@/lib/consent"
 
 void createInertiaApp({
   resolve: async (name) => {
@@ -32,6 +36,11 @@ void createInertiaApp({
   },
 
   setup({ el, App, props }) {
+    initSentry()
+    initCookieConsent()
+    router.on("navigate", () => {
+      setCookieConsentLanguage(detectLocale())
+    })
     createRoot(el).render(
       <StrictMode>
         <App {...props} />

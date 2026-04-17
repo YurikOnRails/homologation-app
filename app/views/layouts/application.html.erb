@@ -9,6 +9,28 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# Webmaster verification (env-gated) %>
+    <% webmaster_verifications.each do |name, content| %>
+      <meta name="<%= name %>" content="<%= content %>">
+    <% end %>
+
+    <%# Sentry frontend config (env-gated) — read by app/frontend/lib/sentry.ts %>
+    <% sentry_frontend_meta.each do |name, content| %>
+      <meta name="<%= name %>" content="<%= content %>">
+    <% end %>
+
+    <%# Consent Mode v2 defaults — MUST fire before GTM and any tracking tag. %>
+    <script>
+      <%= consent_mode_default_script %>
+    </script>
+
+    <%# Google Tag Manager (env-gated on GTM_ID) %>
+    <% if gtm_enabled? %>
+      <script>
+        <%= gtm_head_script %>
+      </script>
+    <% end %>
+
     <%= yield :head %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
@@ -38,6 +60,9 @@
   </head>
 
   <body>
+    <% if gtm_enabled? %>
+      <noscript><iframe src="<%= gtm_noscript_iframe_src %>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <% end %>
     <%= yield %>
   </body>
 </html>

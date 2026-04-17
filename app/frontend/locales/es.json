@@ -470,6 +470,13 @@
     "data_collected_body": "Recopilamos su nombre, correo electrónico, número de teléfono, WhatsApp, fecha de nacimiento y país para gestionar su solicitud de homologación. Esta información se almacena de forma segura y encriptada.",
     "amocrm_title": "Transferencia a AmoCRM",
     "amocrm_body": "Una vez confirmado el pago, sus datos de solicitud (nombre, contacto, tipo de servicio, documentos) se sincronizan con nuestro sistema CRM (AmoCRM) para gestionar el proceso de homologación. No vendemos ni compartimos sus datos con terceros.",
+    "cookies_title": "Cookies y tecnologías similares",
+    "cookies_body": "Usamos cookies propias para la autenticación, la sesión y guardar tus preferencias. Con tu consentimiento, también establecemos cookies de analítica y marketing. Puedes elegir tus preferencias al visitar el sitio por primera vez y cambiarlas en cualquier momento.",
+    "analytics_tools_title": "Herramientas de analítica y marketing",
+    "analytics_tools_body": "Cuando nos das tu consentimiento, podemos usar: Google Analytics 4 (Google Ireland Ltd — análisis de tráfico, conservación 14 meses), Yandex.Metrica (Yandex LLC — análisis de tráfico y grabaciones de sesión con campos enmascarados, conservación 25 meses), Microsoft Clarity (Microsoft Corp — mapas de calor y grabaciones, conservación 12 meses), Meta Pixel (Meta Platforms Ireland — publicidad y medición de conversiones, hasta 90 días). Todas las herramientas reciben datos seudonimizados; no compartimos con ellas tu nombre, correo ni documentos. Puedes desactivar cada herramienta en las preferencias de cookies.",
+    "manage_consent_title": "Gestionar tu consentimiento",
+    "manage_consent_body": "Puedes revisar o modificar tus elecciones de cookies en cualquier momento.",
+    "manage_consent_button": "Configuración de cookies",
     "deletion_title": "Solicitar eliminación de datos",
     "deletion_body": "Para solicitar la eliminación de sus datos, contacte con nosotros. Procesaremos su solicitud en un plazo de 30 días conforme al RGPD."
   },
