@@ -44,10 +44,12 @@ function useIsOnline(): boolean {
 
 // Sticky bottom CTA + WhatsApp. Split behavior by viewport:
 //   • Mobile (<lg): full-width bar with consultation button + WhatsApp quick-tap
-//   • Desktop (≥lg): floating premium WhatsApp FAB bottom-right
+//   • Desktop (≥lg): floating WhatsApp FAB bottom-right
 //
-// Desktop FAB is dark zinc-900 (not vendor-green) with a small online-status dot.
-// Appears 3 s after mount so it never competes with LCP.
+// FAB uses the WhatsApp brand green (#25D366) with a white ring for separation
+// over any page background — pages end in a dark CTA + dark footer where a
+// tonal FAB would disappear. Appears 3 s after mount so it never competes
+// with LCP.
 //
 // Cookie banner (vanilla-cookieconsent) owns a higher z-index slot, so these
 // sit below it during first-visit consent flow. No tracking pixel on the
@@ -95,7 +97,7 @@ export function StickyCtaBar() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={t("public.sticky_cta.whatsapp_aria")}
-          className={`hidden lg:flex fixed bottom-6 right-6 z-40 items-center justify-center h-12 w-12 rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/25 hover:scale-105 hover:shadow-xl transition-all duration-300 ${
+          className={`hidden lg:flex fixed bottom-6 right-6 z-40 items-center justify-center h-12 w-12 rounded-full bg-[#25D366] text-white ring-2 ring-white/90 shadow-lg shadow-[#25D366]/30 hover:scale-105 hover:shadow-xl transition-all duration-300 ${
             visible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-2 pointer-events-none"
@@ -104,7 +106,7 @@ export function StickyCtaBar() {
           <WhatsAppIcon className="h-5 w-5" />
           {isOnline && (
             <span
-              className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-900"
+              className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-white"
               aria-hidden="true"
             />
           )}
