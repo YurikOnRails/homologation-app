@@ -21,6 +21,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, TiltCard, AnimatedCounter } from "@/components/public/animations"
 import {
+  FloatingBadge,
   GradientButton,
   PublicHero,
   PublicCta,
@@ -116,22 +117,18 @@ export default function Homologacion() {
               <Building2 className="h-3 w-3 shrink-0" />
               <span>{t("public.homologacion.hero_caption_place")}</span>
             </div>
-            <div
-              className="absolute -top-4 -right-3 sm:-right-6 z-20 bg-white border border-slate-100 shadow-xl rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs font-semibold"
-              style={{ animation: "float 6s ease-in-out infinite" }}
-              aria-hidden="true"
-            >
+            <FloatingBadge className="-top-4 -right-3 sm:-right-6 shadow-xl px-3.5 py-2.5 font-semibold">
               <div className="shrink-0 h-5 w-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
               </div>
               <span className="text-slate-800">
                 {t("public.homologacion.hero_badge_result")}
               </span>
-            </div>
-            <div
-              className="absolute -bottom-4 -left-3 sm:-left-6 z-20 bg-white border border-slate-100 shadow-xl rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs font-semibold"
-              style={{ animation: "float 7s ease-in-out infinite", animationDelay: "1.5s" }}
-              aria-hidden="true"
+            </FloatingBadge>
+            <FloatingBadge
+              className="-bottom-4 -left-3 sm:-left-6 shadow-xl px-3.5 py-2.5 font-semibold"
+              duration={7}
+              delay={1.5}
             >
               <div className="shrink-0 h-5 w-5 rounded-full bg-[#2D7FF9]/15 flex items-center justify-center">
                 <Award className="h-3.5 w-3.5 text-[#2D7FF9]" />
@@ -139,7 +136,7 @@ export default function Homologacion() {
               <span className="text-slate-800">
                 {t("public.homologacion.hero_badge_experience")}
               </span>
-            </div>
+            </FloatingBadge>
           </div>
         }
       />

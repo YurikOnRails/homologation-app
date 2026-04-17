@@ -165,6 +165,37 @@ export function PublicCta({
   )
 }
 
+// ─── FloatingBadge — absolute-positioned floating pill with `float` CSS animation ──
+// Position, padding, shadow, and font-weight come from `className` so each
+// consumer controls visual weight. Duration/delay are numeric for readability.
+export function FloatingBadge({
+  className,
+  duration = 6,
+  delay = 0,
+  children,
+}: {
+  className?: string
+  duration?: number
+  delay?: number
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "absolute z-20 bg-white border border-slate-100 rounded-xl flex items-center gap-2 text-xs",
+        className,
+      )}
+      style={{
+        animation: `float ${duration}s ease-in-out infinite`,
+        ...(delay ? { animationDelay: `${delay}s` } : {}),
+      }}
+      aria-hidden="true"
+    >
+      {children}
+    </div>
+  )
+}
+
 // ─── OutlineCtaButton — secondary CTA button for dark sections ───────────────────
 export function OutlineCtaButton({
   children,

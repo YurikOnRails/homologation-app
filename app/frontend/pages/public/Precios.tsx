@@ -8,10 +8,6 @@ import {
   MessageCircle,
   BarChart3,
   ShieldCheck,
-  FileText,
-  Search,
-  CreditCard,
-  Rocket,
   Check,
   Minus,
 } from "lucide-react"
@@ -38,7 +34,6 @@ import type { PublicPageProps } from "@/types/pages"
 /* ─── Static data ──────────────────────────────────────────────────────────────── */
 
 const includedIcons = [Monitor, MessageCircle, BarChart3, ShieldCheck]
-const stepIcons = [FileText, Search, CreditCard, Rocket]
 
 const plans = [
   { key: "basico", features: 4, highlighted: false },
@@ -89,12 +84,12 @@ export default function Precios() {
       <SeoHead {...seo} />
 
       {/* ── 1. Hero — minimal premium: badge + huge H1 + 1 line + 1 CTA ─────── */}
-      <section className="relative bg-slate-50 py-24 sm:py-32 lg:py-40">
+      <section className="relative bg-slate-50 py-16 sm:py-28 lg:py-40">
         <Container className="relative">
           <div className="max-w-4xl mx-auto text-center">
             <Reveal direction="up">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#2D7FF9]/25 bg-white shadow-sm px-4 py-1.5 text-sm font-semibold text-[#2D7FF9] mb-8">
-                <ShieldCheck className="h-4 w-4 shrink-0" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#2D7FF9]/25 bg-white shadow-sm px-3 py-1.5 sm:px-4 text-xs sm:text-sm font-semibold text-[#2D7FF9] mb-6 sm:mb-8">
+                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                 <span>{t("public.precios.hero_guarantee_badge")}</span>
               </div>
             </Reveal>
@@ -121,10 +116,14 @@ export default function Precios() {
                 <button
                   type="button"
                   onClick={scrollToPlans}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors min-h-[44px] inline-flex items-center"
+                  className="group text-sm font-medium text-muted-foreground hover:text-foreground transition-colors min-h-[44px] inline-flex items-center"
                 >
-                  {t("public.precios.hero_secondary_link")}
-                  <span className="ml-1.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+                  <span className="border-b border-transparent group-hover:border-foreground transition-colors">
+                    {t("public.precios.hero_secondary_link")}
+                  </span>
+                  <span className="ml-1.5 inline-block transition-transform group-hover:translate-x-0.5" aria-hidden="true">
+                    →
+                  </span>
                 </button>
               </div>
             </Reveal>
@@ -141,14 +140,18 @@ export default function Precios() {
           title={t("public.precios.how_works_title")}
           subtitle={t("public.precios.how_works_subtitle")}
         />
-        <div className="grid gap-10 sm:gap-8 sm:grid-cols-3 max-w-5xl mx-auto">
+        <div className="grid gap-12 sm:gap-10 sm:grid-cols-3 max-w-5xl mx-auto">
           {[1, 2, 3].map((n) => (
             <Reveal key={n} direction="up" delay={(n - 1) * 150}>
               <div className="text-center">
-                <div className="mx-auto mb-6 flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] text-white text-xl font-bold shadow-lg shadow-[#2D7FF9]/25">
-                  {n}
+                <div
+                  className="text-6xl sm:text-7xl font-bold tracking-tighter text-slate-200 leading-none select-none"
+                  aria-hidden="true"
+                >
+                  {String(n).padStart(2, "0")}
                 </div>
-                <h3 className="text-xl font-bold mb-3 tracking-tight">
+                <div className="mx-auto my-5 h-px w-10 bg-gradient-to-r from-[#E8453C] to-[#2D7FF9]" />
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
                   {t(`public.precios.hero_step_${n}_title`)}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
@@ -266,8 +269,43 @@ export default function Precios() {
       <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.precios.compare_title")} />
         <Reveal direction="up" delay={100}>
-          <div className="max-w-4xl mx-auto overflow-x-auto -mx-4 px-4">
-            <table className="w-full min-w-[540px]">
+          <div className="max-w-4xl mx-auto">
+            {/* Mobile: stacked feature cards with plan pills */}
+            <div className="sm:hidden space-y-3">
+              {comparisonMatrix.map((row, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-slate-200 bg-white p-4"
+                >
+                  <div className="text-sm font-medium leading-snug mb-3">
+                    {t(`public.precios.compare_feature_${i + 1}`)}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(["basico", "completo", "premium"] as const).map((planKey, j) => (
+                      <div
+                        key={planKey}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border ${
+                          row[j]
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                            : "bg-slate-50 text-slate-400 border-slate-100"
+                        }`}
+                      >
+                        {row[j] ? (
+                          <Check className="h-3 w-3" />
+                        ) : (
+                          <Minus className="h-3 w-3" />
+                        )}
+                        <span className="font-medium">
+                          {t(`public.precios.plan_${planKey}_title`)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop: classic comparison table */}
+            <table className="hidden sm:table w-full">
               <thead>
                 <tr className="border-b-2 border-slate-200">
                   <th className="text-left py-3 pr-4 text-sm font-semibold text-muted-foreground">
@@ -308,35 +346,7 @@ export default function Precios() {
         </Reveal>
       </PublicSection>
 
-      {/* ── 7. How it works ────────────────────────────────────────────────────── */}
-      <PublicSection className="bg-white">
-        <SectionHeading
-          title={t("public.precios.steps_title")}
-          subtitle={t("public.precios.steps_subtitle")}
-        />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
-          {stepIcons.map((Icon, i) => (
-            <Reveal key={i} direction="up" delay={i * 100}>
-              <div className="text-center space-y-3">
-                <div className="mx-auto w-14 h-14 rounded-full bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 flex items-center justify-center">
-                  <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                </div>
-                <div className="text-xs font-bold text-[#2D7FF9] uppercase tracking-wider">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="font-semibold text-sm sm:text-base">
-                  {t(`public.precios.step_${i + 1}_title`)}
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {t(`public.precios.step_${i + 1}_desc`)}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </PublicSection>
-
-      {/* ── 8. Risk reversal / guarantee ───────────────────────────────────────── */}
+      {/* ── 7. Risk reversal / guarantee ───────────────────────────────────────── */}
       <PublicSection className="bg-slate-50" dots>
         <Reveal direction="up">
           <div className="max-w-3xl mx-auto text-center">
@@ -353,13 +363,13 @@ export default function Precios() {
         </Reveal>
       </PublicSection>
 
-      {/* ── 9. FAQ ─────────────────────────────────────────────────────────────── */}
+      {/* ── 8. FAQ ─────────────────────────────────────────────────────────────── */}
       <PublicSection className="bg-white">
         <SectionHeading title={t("public.precios.faq_title")} />
         <FaqSection translationPrefix="public.precios" count={7} />
       </PublicSection>
 
-      {/* ── 10. CTA ────────────────────────────────────────────────────────────── */}
+      {/* ── 9. CTA ─────────────────────────────────────────────────────────────── */}
       <PublicCta
         title={t("public.precios.cta_title")}
         subtitle={t("public.precios.cta_subtitle")}

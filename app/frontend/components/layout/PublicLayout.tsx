@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import {
   Rocket, Menu, X,
   GraduationCap, Building2, BookOpen, CreditCard,
-  LogIn,
+  LogIn, Phone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
@@ -97,6 +97,15 @@ function Navbar({
 
         {/* Desktop right */}
         <div className="hidden lg:flex items-center gap-3">
+          {CONTACT_WHATSAPP && (
+            <a
+              href={`tel:+${CONTACT_WHATSAPP}`}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px] px-2"
+            >
+              <Phone className="h-4 w-4 shrink-0" />
+              <span className="font-medium hidden xl:inline">{formatPhone(CONTACT_WHATSAPP)}</span>
+            </a>
+          )}
           <LanguageSwitcher mode="public" />
           <Link href={routes.login}>
             <Button variant="outline" className="min-h-[44px]">
@@ -166,6 +175,16 @@ function Navbar({
 
               {/* Bottom: language + actions */}
               <div className="mt-auto px-4 pb-6 pt-4 border-t space-y-3">
+                {CONTACT_WHATSAPP && (
+                  <a
+                    href={`tel:+${CONTACT_WHATSAPP}`}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2.5 text-base font-medium text-foreground min-h-[44px] px-1"
+                  >
+                    <Phone className="h-5 w-5 text-[#2D7FF9] shrink-0" />
+                    <span>{formatPhone(CONTACT_WHATSAPP)}</span>
+                  </a>
+                )}
                 <div className="flex justify-start">
                   <LanguageSwitcher mode="public" />
                 </div>

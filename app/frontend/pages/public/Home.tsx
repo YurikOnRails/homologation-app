@@ -21,6 +21,7 @@ import {
 } from "@/components/public/animations"
 import {
   Container,
+  FloatingBadge,
   GradientButton,
   PublicHero,
   PublicCta,
@@ -94,15 +95,12 @@ function HeroSection({ t }: { t: (key: string) => string }) {
             </div>
           </div>
         </div>
-        <div
-          className="absolute -bottom-4 -right-4 bg-white border border-slate-100 shadow-lg rounded-xl px-3 py-2 flex items-center gap-2 text-xs font-medium"
-          style={{ animation: "float 6s ease-in-out infinite" }}
-        >
+        <FloatingBadge className="-bottom-4 -right-4 shadow-lg px-3 py-2 font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
           <span className="text-slate-700">
             98% {t("public.home.stat_success")}
           </span>
-        </div>
+        </FloatingBadge>
       </div>
     </div>
   )
@@ -271,23 +269,22 @@ function AppPlatformSection({ t }: { t: (key: string) => string }) {
 
   const mockDashboard = (
     <div className="relative w-full max-w-sm mx-auto lg:mx-0">
-      {/* Floating notification badge */}
-      <div
-        className="absolute -top-5 -right-2 sm:-right-6 z-20 bg-white border border-slate-100 shadow-lg rounded-xl px-3 py-2 flex items-center gap-2 text-xs font-medium"
-        style={{ animation: "float 5s ease-in-out infinite" }}
+      <FloatingBadge
+        className="-top-5 -right-2 sm:-right-6 shadow-lg px-3 py-2 font-medium"
+        duration={5}
       >
         <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
         <span className="text-slate-700">{t("public.home.platform_mock_updated")}</span>
-      </div>
+      </FloatingBadge>
 
-      {/* Floating security badge */}
-      <div
-        className="absolute -bottom-5 -left-2 sm:-left-6 z-20 bg-white border border-slate-100 shadow-lg rounded-xl px-3 py-2 flex items-center gap-2 text-xs font-medium"
-        style={{ animation: "float 7s ease-in-out infinite", animationDelay: "1.5s" }}
+      <FloatingBadge
+        className="-bottom-5 -left-2 sm:-left-6 shadow-lg px-3 py-2 font-medium"
+        duration={7}
+        delay={1.5}
       >
         <Shield className="h-3.5 w-3.5 text-[#2D7FF9] shrink-0" />
         <span className="text-slate-700">{t("public.home.platform_mock_secure")}</span>
-      </div>
+      </FloatingBadge>
 
       {/* Main card */}
       <div className="bg-white rounded-2xl shadow-xl shadow-[#2D7FF9]/10 border border-slate-100 overflow-hidden">
