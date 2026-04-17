@@ -1,34 +1,46 @@
 # SEO & Analytics — Sprint 1 deployment guide
 
-This file is the handover for all SEO + tracking infrastructure added in Sprint 1. Code is in place — what remains is **configuration in third-party tools** and **setting env vars**.
+This file is the handover for all SEO + tracking + error-monitoring infrastructure added in Sprint 1. Code is in place — what remains is **configuration in third-party tools** and **setting env vars**.
 
-## Environment variables
+## Single source of truth: `.env.example`
 
-Set these in `.kamal/secrets` (production) or `.env` (local). All are optional: when absent, the feature stays inert.
+Every env var the app reads is listed and grouped in [`.env.example`](../.env.example). Copy it to `.env` for local dev. For production Kamal deploys:
 
-| Variable | Purpose | Where to get it |
-|---|---|---|
-| `APP_HOST_URL` | Absolute canonical host (e.g. `https://spaceforedu.com`). Used in sitemap + canonical URLs. | Your domain |
-| `GTM_ID` | Google Tag Manager container ID (e.g. `GTM-XXXXXXX`). Loads GTM site-wide. | tagmanager.google.com |
-| `GOOGLE_SITE_VERIFICATION` | Content value for `google-site-verification` meta tag | Search Console → Settings → Ownership verification → HTML tag |
-| `YANDEX_VERIFICATION` | Content value for `yandex-verification` meta tag | webmaster.yandex.com → Add site → Meta tag |
-| `BING_SITE_VERIFICATION` | Content value for `msvalidate.01` meta tag | bing.com/webmasters → Add site → Meta tag |
-| `FACEBOOK_DOMAIN_VERIFICATION` | Meta Business domain verification | business.facebook.com → Business settings → Brand safety → Domains |
+- Non-sensitive values → `config/deploy.yml` under `env.clear`
+- Sensitive values (backend Sentry DSN, etc.) → `.kamal/secrets`, then listed under `env.secret`
 
-All verification values render only when env var is present.
+## Env var reference
+
+| Variable | Purpose | Where to get it | Sensitive? |
+|---|---|---|---|
+| `APP_HOST_URL` | Absolute canonical host (e.g. `https://spaceforedu.com`) — used in sitemap, canonical URLs, Schema.org `@id` | Your domain | No |
+| `GTM_ID` | Google Tag Manager container ID (`GTM-XXXXXXX`). The ONE env var for tracking — all tools (GA4, Metrica, Clarity, Meta Pixel) are configured inside GTM. | tagmanager.google.com | No |
+| `GOOGLE_SITE_VERIFICATION` | `google-site-verification` meta tag content | Search Console → Settings → Ownership verification → HTML tag | No |
+| `YANDEX_VERIFICATION` | `yandex-verification` meta tag content | webmaster.yandex.com → Add site → Meta tag | No |
+| `BING_SITE_VERIFICATION` | `msvalidate.01` meta tag content | bing.com/webmasters → Add site → Meta tag | No |
+| `FACEBOOK_DOMAIN_VERIFICATION` | Meta Business domain verification | business.facebook.com → Business settings → Brand safety → Domains | No |
+| `SENTRY_DSN_BACKEND` | Sentry Rails project DSN — server-side errors | sentry.io → Create Rails project | **Yes** |
+| `SENTRY_DSN_FRONTEND` | Sentry React project DSN — client-side errors (rendered in HTML meta tag) | sentry.io → Create React project | No (public by design) |
+| `SENTRY_ENVIRONMENT` | Tag for Sentry events (e.g. `production`, `staging`) | — | No |
+| `SENTRY_RELEASE` | Release identifier for Sentry. Common: git SHA set at build time via `KAMAL_VERSION`. | — | No |
+| `SENTRY_TRACES_SAMPLE_RATE` | Performance tracing sample rate (0.0–1.0, default `0.1`) | — | No |
+| `SENTRY_PROFILES_SAMPLE_RATE` | Profiling sample rate (0.0–1.0, default `0.0`) | — | No |
+
+All values render / activate only when present. Missing vars leave the feature inert — no broken behavior.
 
 ## What's wired up (code side)
 
 1. **Google Tag Manager** — loaded in `<head>` with Consent Mode v2 defaults firing **before** `gtm.js`. All tracking tools are configured inside the GTM UI, not in code.
 2. **Consent Mode v2** — defaults to `denied` for every category except `security_storage`. Updates the moment the user makes a choice in the CMP.
 3. **Cookie consent (CMP)** — `vanilla-cookieconsent` v3, 3 categories (necessary / analytics / marketing), localized es/en/ru. Banner auto-shows on first visit; users can reopen preferences from the Privacy Policy page ("Cookie settings" button).
-4. **CSP** — when `GTM_ID` is set, the Content Security Policy auto-expands to allow GTM, GA, Yandex.Metrica, Clarity, and Meta Pixel domains. When `GTM_ID` is absent, strict CSP is preserved.
-5. **Webmaster verification meta tags** — rendered in `<head>` based on env vars.
-6. **Sitemap.xml** — dynamic at `/sitemap.xml`, multilingual with `xhtml:link hreflang`.
-7. **robots.txt** — dynamic, references the absolute Sitemap URL, explicitly allows AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended).
-8. **Schema.org JSON-LD** — `EducationalOrganization` + `WebSite` site-wide; per-page `BreadcrumbList` + `Service` on public pages.
-9. **llms.txt** — `/llms.txt` factual summary for LLM crawlers.
-10. **Privacy Policy** — expanded with cookie/analytics disclosure in es/en/ru.
+4. **Sentry** — error tracking + performance monitoring. Backend via `sentry-rails` gem, frontend via `@sentry/react`. Frontend DSN read from a `<meta>` tag rendered by Rails (no Vite build-time env var needed). PII scrubbed: cookies, auth headers, IP, query strings removed before events ship. Processed under legitimate interest (GDPR art. 6(1)(f)) — no consent gate. Skipped entirely when DSN env var is absent.
+5. **CSP** — when `GTM_ID` is set, CSP auto-expands to allow GTM, GA, Yandex.Metrica, Clarity, and Meta Pixel domains. When `SENTRY_DSN_FRONTEND` is set, CSP allows `*.sentry.io` and `*.ingest.*.sentry.io`. Strict CSP preserved when env vars are absent.
+6. **Webmaster verification meta tags** — rendered in `<head>` based on env vars.
+7. **Sitemap.xml** — dynamic at `/sitemap.xml`, multilingual with `xhtml:link hreflang`.
+8. **robots.txt** — dynamic, references the absolute Sitemap URL, explicitly allows AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended).
+9. **Schema.org JSON-LD** — `EducationalOrganization` + `WebSite` site-wide; per-page `BreadcrumbList` + `Service` on public pages.
+10. **llms.txt** — `/llms.txt` factual summary for LLM crawlers.
+11. **Privacy Policy** — expanded with cookie/analytics/error-monitoring disclosure in es/en/ru.
 
 ## One-time setup tasks (your side)
 
@@ -69,6 +81,14 @@ All verification values render only when env var is present.
 
 ### 6. Google Business Profile
 Create a profile at `business.google.com` — even for online-only businesses. Boosts brand recognition and appears in AI answers.
+
+### 7. Sentry
+1. `sentry.io` → create **two** projects: one Rails (backend), one React (frontend). Each project gets its own DSN.
+2. Copy the backend DSN → `SENTRY_DSN_BACKEND` (put in `.kamal/secrets`, reference under `env.secret`).
+3. Copy the frontend DSN → `SENTRY_DSN_FRONTEND` (`env.clear` is fine — this DSN is shipped to the browser by design).
+4. Set `SENTRY_ENVIRONMENT=production` and optionally `SENTRY_RELEASE` (git SHA) for release tracking.
+5. In the Sentry UI → Project Settings → Data Scrubbing: enable default scrubbing AND add custom rules to strip `email_address`, `phone`, `whatsapp`, `birthday`, `guardian_*`. Defense in depth on top of the server-side scrubber.
+6. Performance: `SENTRY_TRACES_SAMPLE_RATE=0.1` captures 10 % of requests. Raise for staging, lower for production under high load.
 
 ## Verification checklist after deploy
 

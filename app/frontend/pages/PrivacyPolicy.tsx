@@ -36,6 +36,11 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="space-y-3">
+        <h2 className="text-lg font-semibold">{t("privacy.error_monitoring_title")}</h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">{t("privacy.error_monitoring_body")}</p>
+      </section>
+
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold">{t("privacy.manage_consent_title")}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">{t("privacy.manage_consent_body")}</p>
         <Button variant="outline" onClick={showCookiePreferences} className="min-h-[44px]">

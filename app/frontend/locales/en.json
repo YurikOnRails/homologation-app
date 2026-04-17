@@ -474,6 +474,8 @@
     "cookies_body": "We use first-party cookies for authentication, session, and saving your preferences. With your consent, we also set analytics and marketing cookies. You can choose your preferences when you first visit the site and change them at any time.",
     "analytics_tools_title": "Analytics and Marketing Tools",
     "analytics_tools_body": "When you give consent, we may use: Google Analytics 4 (Google Ireland Ltd — traffic analysis, retained 14 months), Yandex.Metrica (Yandex LLC — traffic analysis and session recordings with masked input, retained 25 months), Microsoft Clarity (Microsoft Corp — heatmaps and session recordings, retained 12 months), Meta Pixel (Meta Platforms Ireland — advertising and conversion measurement, retained up to 90 days). All tools receive pseudonymized data; we do not share your name, email, or documents with them. You can opt out individually using the cookie preferences below.",
+    "error_monitoring_title": "Error Monitoring",
+    "error_monitoring_body": "To keep the service reliable we use Sentry (Functional Software Inc. d/b/a Sentry) to record technical errors and performance issues. Personal data is not collected: IP addresses, cookies, and form input are stripped before events are sent. Legal basis: legitimate interest (service reliability, GDPR art. 6(1)(f)). Events are retained for 90 days.",
     "manage_consent_title": "Manage Your Consent",
     "manage_consent_body": "You can review or change your cookie choices at any time.",
     "manage_consent_button": "Cookie settings",

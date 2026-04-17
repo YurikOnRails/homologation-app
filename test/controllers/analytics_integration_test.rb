@@ -51,6 +51,19 @@ class AnalyticsIntegrationTest < ActionDispatch::IntegrationTest
     refute_match %r{msvalidate\.01}, response.body
   end
 
+  test "Sentry frontend meta tags absent in test env even with DSN set" do
+    with_env("SENTRY_DSN_FRONTEND" => "https://key@oXYZ.ingest.sentry.io/123") do
+      get localized_home_path(locale: "en")
+      refute_match %r{<meta name="sentry-dsn"}, response.body
+    end
+  end
+
+  test "Sentry frontend meta tags absent when DSN not set" do
+    get localized_home_path(locale: "en")
+    refute_match %r{<meta name="sentry-dsn"}, response.body
+    refute_match %r{<meta name="sentry-environment"}, response.body
+  end
+
   private
 
   def with_env(vars)
