@@ -78,7 +78,7 @@ export default function Precios() {
       <SeoHead {...seo} />
 
       {/* ── 1. Hero — minimal premium: badge + huge H1 + 1 line + 1 CTA ─────── */}
-      <section className="relative bg-slate-50 py-16 sm:py-28 lg:py-40">
+      <section className="relative bg-slate-50 pt-32 pb-16 sm:pt-44 sm:pb-28 lg:pt-52 lg:pb-40">
         <Container className="relative">
           <div className="max-w-4xl mx-auto text-center">
             <Reveal direction="up">
