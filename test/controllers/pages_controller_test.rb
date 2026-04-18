@@ -77,12 +77,6 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "public/Espanol", inertia.component
   end
 
-  test "consultation page renders" do
-    get localized_consultation_path(locale: "es")
-    assert_response :ok
-    assert_equal "public/Consulta", inertia.component
-  end
-
   test "pricing page renders" do
     get localized_pricing_path(locale: "en")
     assert_response :ok
@@ -98,10 +92,10 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert seo[:alternates].any? { |a| a[:locale] == "ru" }
   end
 
-  test "consultation form POST redirects with flash" do
-    post localized_consultation_path(locale: "es"), params: { name: "Test", email: "test@example.com", topic: "Homologation" }
-    assert_redirected_to localized_consultation_path(locale: "es")
-    assert_equal I18n.t("flash.consultation_sent", locale: :es), flash[:notice]
+  test "consultation thank you page renders" do
+    get localized_consultation_thank_you_path(locale: "es")
+    assert_response :ok
+    assert_equal "public/ConsultationThankYou", inertia.component
   end
 
   test "SEO alternate URLs include locale prefix" do
@@ -111,5 +105,43 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_match %r{/en/homologation}, en_alt[:url]
     es_alt = seo[:alternates].find { |a| a[:locale] == "es" }
     assert_match %r{/es/homologation}, es_alt[:url]
+  end
+
+  test "home page includes canonical URL for current locale" do
+    get localized_home_path(locale: "es")
+    seo = inertia.props[:seo]
+    assert_match %r{/es/?\z}, seo[:canonicalUrl]
+  end
+
+  test "subpage canonical URL points to same locale" do
+    get localized_homologation_path(locale: "ru")
+    seo = inertia.props[:seo]
+    assert_match %r{/ru/homologation\z}, seo[:canonicalUrl]
+  end
+
+  test "home page includes structured data with breadcrumb and services" do
+    get localized_home_path(locale: "en")
+    data = inertia.props[:seo][:structuredData]
+    assert_kind_of Array, data
+    types = data.map { |d| d["@type"] }
+    assert_includes types, "BreadcrumbList"
+    assert_includes types, "Service"
+    services = data.select { |d| d["@type"] == "Service" }
+    assert_equal 3, services.length
+  end
+
+  test "homologation subpage structured data includes Service + Breadcrumb" do
+    get localized_homologation_path(locale: "en")
+    data = inertia.props[:seo][:structuredData]
+    types = data.map { |d| d["@type"] }
+    assert_includes types, "BreadcrumbList"
+    assert_includes types, "Service"
+  end
+
+  test "home page HTML contains Organization JSON-LD server-rendered" do
+    get localized_home_path(locale: "en")
+    assert_match(/application\/ld\+json/, response.body)
+    assert_match(/EducationalOrganization/, response.body)
+    assert_match(/WebSite/, response.body)
   end
 end

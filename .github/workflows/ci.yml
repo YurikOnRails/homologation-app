@@ -85,7 +85,12 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          SECRET_KEY_BASE: dummy_ci_secret_key_base_for_tests_only_do_not_use_anywhere_else_0123456789
+          STRIPE_SECRET_KEY: sk_test_placeholder
+          GOOGLE_CLIENT_ID: placeholder
+          GOOGLE_CLIENT_SECRET: placeholder
+          FACEBOOK_APP_ID: placeholder
+          FACEBOOK_APP_SECRET: placeholder
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test
 
@@ -124,7 +129,12 @@ jobs:
       - name: Run System Tests
         env:
           RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          SECRET_KEY_BASE: dummy_ci_secret_key_base_for_tests_only_do_not_use_anywhere_else_0123456789
+          STRIPE_SECRET_KEY: sk_test_placeholder
+          GOOGLE_CLIENT_ID: placeholder
+          GOOGLE_CLIENT_SECRET: placeholder
+          FACEBOOK_APP_ID: placeholder
+          FACEBOOK_APP_SECRET: placeholder
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test:system
 

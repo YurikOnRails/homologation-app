@@ -22,6 +22,8 @@ en:
         guardian_phone: "Guardian phone"
         guardian_whatsapp: "Guardian WhatsApp"
     errors:
+      messages:
+        record_invalid: "Validation failed: %{errors}"
       models:
         homologation_request:
           attributes:
@@ -89,10 +91,12 @@ en:
     settings_saved: "Settings saved"
     deletion_requested: "Account deletion request submitted. We will contact you within 30 days."
     user_gdpr_deleted: "Account deleted per GDPR request"
+    gdpr_delete_not_requested: "Cannot GDPR delete: user has not submitted a deletion request"
+    user_purge_scheduled: "User scheduled for permanent deletion within 5 minutes"
+    user_purge_cancelled: "Scheduled deletion cancelled"
     pipeline_advanced: "Request advanced to next stage"
     pipeline_retreated: "Request moved back to previous stage"
     pipeline_updated: "Pipeline updated"
-    consultation_sent: "Your consultation request has been sent. We will contact you soon."
   mailers:
     request_mailer:
       new_request:
@@ -111,9 +115,13 @@ en:
         other: "You have %{count} unread messages in the conversation \"%{title}\"."
       cta: "Open the app to reply."
   seo:
+    breadcrumbs:
+      home: "Home"
+    organization:
+      description: "Space for Edu helps students from 20+ countries pursue European education in Spain — degree homologation, university admission, and Spanish language courses with end-to-end personalized support."
     home:
       title: "Space for Edu — European Education in Spain"
-      description: "Degree homologation, university admission, and Spanish courses. Full support from documents to enrollment. 10+ years, 500+ students."
+      description: "Degree homologation, university admission, and Spanish courses. Full support from documents to enrollment. 15+ years, 1700+ students."
     homologation:
       title: "Degree Homologation — Space for Edu"
       description: "Professional degree homologation service for university titles in Spain."
@@ -123,12 +131,12 @@ en:
     spanish:
       title: "Spanish Classes — Space for Edu"
       description: "Spanish classes for foreigners: levels A1-C2, individual and group."
-    consultation:
-      title: "Expert Consultation — Space for Edu"
-      description: "Book a professional consultation about homologation, university admission, or Spanish courses."
     pricing:
       title: "Pricing — Space for Edu"
       description: "Check our prices for homologation, university access, and Spanish classes."
+    consultation_thank_you:
+      title: "Thank You — Space for Edu"
+      description: "Your consultation has been booked successfully. We will contact you within 24 hours."
   notifications:
     new_request: "New request from %{name}"
     new_message: "New message from %{name}"

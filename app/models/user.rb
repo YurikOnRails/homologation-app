@@ -1,10 +1,11 @@
 class User < ApplicationRecord
   include Discardable
 
-  ALLOWED_LOCALES   = I18n.available_locales.map(&:to_s).freeze
-  ALLOWED_COUNTRIES = Rails.application.config.select_options["countries"].map { |c| c["key"] }.freeze
-  PHONE_REGEX       = /\A\+?[\d\s\-().]{6,30}\z/
-  EMAIL_REGEX       = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+  ALLOWED_LOCALES     = I18n.available_locales.map(&:to_s).freeze
+  ALLOWED_COUNTRIES   = Rails.application.config.select_options["countries"].map { |c| c["key"] }.freeze
+  PHONE_REGEX         = /\A\+?[\d\s\-().]{6,30}\z/
+  EMAIL_REGEX         = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+  PURGEABLE_STATUSES  = %w[draft resolved closed].freeze
 
   has_secure_password validations: false
 
@@ -75,6 +76,76 @@ class User < ApplicationRecord
 
   def assign_student_role!
     user_roles.create!(role: Role.find_by!(name: "student"))
+  end
+
+  def purgeable?
+    !homologation_requests.where.not(status: PURGEABLE_STATUSES).exists?
+  end
+
+  def purge_stats
+    req_ids = homologation_requests.pluck(:id)
+    file_count = req_ids.any? ?
+      ActiveStorage::Attachment.where(record_type: "HomologationRequest", record_id: req_ids).count : 0
+    { requests: req_ids.size, files: file_count }
+  end
+
+  def schedule_purge!
+    update!(purge_scheduled_at: Time.current)
+    PurgeUserJob.set(wait: 5.minutes).perform_later(id)
+  end
+
+  def cancel_purge!
+    update!(purge_scheduled_at: nil)
+  end
+
+  def purge_everything!
+    transaction do
+      # Null out coordinator/admin references on other users' records
+      HomologationRequest.where(coordinator_id: id).update_all(coordinator_id: nil)
+      HomologationRequest.where(payment_confirmed_by: id).update_all(payment_confirmed_by: nil)
+      HomologationRequest.where(status_changed_by: id).update_all(status_changed_by: nil)
+      TeacherStudent.where(assigned_by: id).update_all(assigned_by: nil)
+
+      # Destroy own requests (cascade: conversation → participants + messages + file purge)
+      homologation_requests.each(&:destroy!)
+
+      # Destroy remaining messages by this user in other conversations (with blob purge)
+      Message.where(user_id: id).destroy_all
+
+      # Remove remaining conversation participation (other users' chats)
+      ConversationParticipant.where(user_id: id).delete_all
+
+      # Destroy user (cascades: sessions, user_roles, teacher_profile, lessons,
+      # notifications, teacher_student_links → conversation, student_teacher_links → conversation)
+      destroy!
+    end
+  end
+
+  def gdpr_anonymize!
+    transaction do
+      update_columns(
+        name:                "Deleted User ##{id}",
+        email_address:       "deleted_#{id}@gdpr.invalid",
+        phone:               nil,
+        whatsapp:            nil,
+        guardian_name:       nil,
+        guardian_email:      nil,
+        guardian_phone:      nil,
+        guardian_whatsapp:   nil,
+        birthday:            nil,
+        country:             nil,
+        password_digest:     SecureRandom.hex(32),
+        provider:            nil,
+        uid:                 nil,
+        avatar_url:          nil,
+        telegram_chat_id:    nil,
+        telegram_link_token: nil,
+        amo_crm_contact_id:  nil,
+        stripe_customer_id:  nil,
+        discarded_at:        Time.current
+      )
+      sessions.destroy_all
+    end
   end
 
   def profile_complete?

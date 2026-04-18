@@ -32,11 +32,11 @@ export function UniversityIllustration() {
       {/* Background glow orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute top-1/4 left-1/3 w-3/5 h-3/5 rounded-full bg-[#2D7FF9]/8 blur-[80px] animate-pulse"
+          className="absolute top-1/4 left-1/3 w-3/5 h-3/5 rounded-full bg-brand-secondary/8 blur-[80px] animate-pulse"
           style={{ animationDuration: "4s" }}
         />
         <div
-          className="absolute bottom-1/3 right-1/4 w-2/5 h-2/5 rounded-full bg-[#E8453C]/6 blur-[60px] animate-pulse"
+          className="absolute bottom-1/3 right-1/4 w-2/5 h-2/5 rounded-full bg-brand-primary/6 blur-[60px] animate-pulse"
           style={{ animationDuration: "5s", animationDelay: "1.5s" }}
         />
       </div>
@@ -62,7 +62,7 @@ export function UniversityIllustration() {
             animation: `bubbleFloat 7s ease-in-out ${delay}s infinite, bubbleFadeIn 1s ease-out ${delay}s both`,
           }}
         >
-          <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
             {t(`public.universidad.map_${key}_value`)}
           </span>{" "}
           <span className="text-slate-500 font-normal">

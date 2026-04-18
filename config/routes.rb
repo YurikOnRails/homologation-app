@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get "settings/notifications",      to: "settings#notifications",  as: :settings_notifications
   patch "settings/notifications",     to: "settings#update_notifications"
   post "settings/request_deletion",   to: "settings#request_deletion",   as: :settings_request_deletion
+  get  "settings/data-export",        to: "settings#data_export",         as: :settings_data_export
   post "settings/connect_telegram",   to: "settings#connect_telegram",   as: :settings_connect_telegram
   delete "settings/disconnect_telegram", to: "settings#disconnect_telegram", as: :settings_disconnect_telegram
 
@@ -32,14 +33,16 @@ Rails.application.routes.draw do
   # Root: detect browser language → redirect to /:locale/
   root "pages#redirect_to_locale"
 
+  # SEO
+  get "/sitemap.xml", to: "sitemaps#index", defaults: { format: :xml }, as: :sitemap
+  get "/robots.txt",  to: "sitemaps#robots", defaults: { format: :text }, as: :robots
+
   # Public marketing pages — all languages with prefix, English slugs
   scope "/:locale", locale: /es|en|ru/ do
     get "/",             to: "pages#home",          as: :localized_home
     get "homologation",  to: "pages#homologation",  as: :localized_homologation
     get "university",    to: "pages#university",    as: :localized_university
     get "spanish",       to: "pages#spanish",       as: :localized_spanish
-    get  "consultation",  to: "pages#consultation",  as: :localized_consultation
-    post "consultation",  to: "pages#create_consultation"
     get "pricing",       to: "pages#pricing",       as: :localized_pricing
     get "consultation-thank-you", to: "pages#consultation_thank_you", as: :localized_consultation_thank_you
   end
@@ -70,6 +73,8 @@ Rails.application.routes.draw do
         post :assign_role
         delete :remove_role
         delete :gdpr_delete
+        post :schedule_purge
+        delete :cancel_purge
       end
     end
     resources :lessons, only: [ :index ]

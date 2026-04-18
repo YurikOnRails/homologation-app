@@ -5,7 +5,7 @@ class TeacherStudent < ApplicationRecord
 
   belongs_to :teacher, class_name: "User"
   belongs_to :student, class_name: "User"
-  belongs_to :assigner, class_name: "User", foreign_key: :assigned_by
+  belongs_to :assigner, class_name: "User", foreign_key: :assigned_by, optional: true
 
   has_one :conversation, dependent: :destroy
 

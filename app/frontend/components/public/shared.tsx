@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ChevronDown, type LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Reveal,
@@ -42,7 +42,7 @@ export function GradientButton({
     <Button
       size="lg"
       className={cn(
-        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
+        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0 shadow-lg shadow-brand-secondary/20 hover:shadow-xl hover:shadow-brand-secondary/30 transition-all duration-300",
         className,
       )}
       {...rest}
@@ -53,7 +53,7 @@ export function GradientButton({
       />
       <span className="relative flex items-center">
         {children}
-        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
       </span>
     </Button>
   )
@@ -61,6 +61,9 @@ export function GradientButton({
 }
 
 // ─── PublicHero — shared hero section ────────────────────────────────────────────
+// fullBleed: expand to full viewport height and render an animated scroll hint
+// at the bottom. Use for service pages that should feel immersive (universidad,
+// espanol) — not for pricing/transactional pages where fast scroll matters.
 export function PublicHero({
   title1,
   titleAccent,
@@ -68,6 +71,7 @@ export function PublicHero({
   actions,
   footer,
   illustration,
+  fullBleed = false,
 }: {
   title1: string
   titleAccent: string
@@ -75,11 +79,22 @@ export function PublicHero({
   actions?: React.ReactNode
   footer?: React.ReactNode
   illustration?: React.ReactNode
+  fullBleed?: boolean
 }) {
   const hasIllustration = !!illustration
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden min-h-[60vh] sm:min-h-[80vh] flex items-center">
+    <section
+      className={cn(
+        "relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden flex items-center",
+        // fullBleed: subtract sticky header (h-16 = 4rem) so hero exactly fills
+        // the visible viewport — content centers correctly and bottom-anchored
+        // ScrollHint stays visible. dvh (not vh) handles mobile URL bar.
+        fullBleed
+          ? "min-h-[calc(100dvh-4rem)]"
+          : "min-h-[60vh] sm:min-h-[80vh]",
+      )}
+    >
       <Spotlight />
       <FloatingElements />
       <DotGrid className="opacity-[0.25]" />
@@ -95,7 +110,7 @@ export function PublicHero({
             <Reveal direction="up">
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
                 {title1}{" "}
-                <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                   {titleAccent}
                 </span>
               </h1>
@@ -125,7 +140,24 @@ export function PublicHero({
           )}
         </div>
       </Container>
+      {fullBleed && <ScrollHint />}
     </section>
+  )
+}
+
+// Subtle "more below" indicator for full-viewport heroes. Glassmorphic chip
+// (white/60 + backdrop-blur + border) with a brand-gradient chevron. Uses a
+// slow 2s bounce — the default Tailwind animate-bounce (1s) is too nervous.
+function ScrollHint() {
+  return (
+    <div
+      className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 pointer-events-none animate-[bounce_2s_ease-in-out_infinite]"
+      aria-hidden="true"
+    >
+      <div className="rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/70 p-1.5 shadow-sm">
+        <ChevronDown className="h-4 w-4 text-brand-secondary" strokeWidth={2.5} />
+      </div>
+    </div>
   )
 }
 
@@ -143,7 +175,7 @@ export function PublicCta({
     <section className="relative py-20 sm:py-32 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 text-white overflow-hidden">
       <GradientOrbs />
       <DotGrid className="opacity-[0.08]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2D7FF9]/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-secondary/30 to-transparent" />
       <Container className="relative text-center">
         <Reveal direction="up">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -162,6 +194,37 @@ export function PublicCta({
         </Reveal>
       </Container>
     </section>
+  )
+}
+
+// ─── FloatingBadge — absolute-positioned floating pill with `float` CSS animation ──
+// Position, padding, shadow, and font-weight come from `className` so each
+// consumer controls visual weight. Duration/delay are numeric for readability.
+export function FloatingBadge({
+  className,
+  duration = 6,
+  delay = 0,
+  children,
+}: {
+  className?: string
+  duration?: number
+  delay?: number
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "absolute z-20 bg-white border border-slate-100 rounded-xl flex items-center gap-2 text-xs",
+        className,
+      )}
+      style={{
+        animation: `float ${duration}s ease-in-out infinite`,
+        ...(delay ? { animationDelay: `${delay}s` } : {}),
+      }}
+      aria-hidden="true"
+    >
+      {children}
+    </div>
   )
 }
 
@@ -191,13 +254,15 @@ export function PublicSection({
   children,
   className,
   dots = false,
+  id,
 }: {
   children: React.ReactNode
   className?: string
   dots?: boolean
+  id?: string
 }) {
   return (
-    <section className={cn("py-20 sm:py-32 relative", className)}>
+    <section id={id} className={cn("py-20 sm:py-32 relative", className)}>
       {dots && <DotGrid className="opacity-[0.2]" />}
       <Container className="relative">{children}</Container>
     </section>
@@ -209,7 +274,7 @@ export function SectionHeading({
   title,
   subtitle,
 }: {
-  title: string
+  title: React.ReactNode
   subtitle?: string
 }) {
   return (
@@ -225,5 +290,42 @@ export function SectionHeading({
         )}
       </div>
     </Reveal>
+  )
+}
+
+// ─── FeatureIcon — brand-gradient icon badge ─────────────────────────────────────
+// Centralizes the repeated icon treatment (gradient bg + brand-colored glyph).
+// `size` controls padding and glyph size. `hoverScale` adds the group-hover lift
+// seen in FeatureCardGrid-style cards; set false for badges inside links/buttons.
+const sizeClasses = {
+  sm: { wrap: "p-2", glyph: "h-5 w-5" },
+  md: { wrap: "p-2.5", glyph: "h-5 w-5" },
+  lg: { wrap: "p-3", glyph: "h-6 w-6" },
+} as const
+
+export function FeatureIcon({
+  icon: Icon,
+  size = "lg",
+  hoverScale = true,
+  className,
+}: {
+  icon: LucideIcon
+  size?: keyof typeof sizeClasses
+  hoverScale?: boolean
+  className?: string
+}) {
+  const { wrap, glyph } = sizeClasses[size]
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "inline-flex shrink-0 rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10",
+        wrap,
+        hoverScale && "transition-transform duration-300 group-hover:scale-110",
+        className,
+      )}
+    >
+      <Icon className={cn(glyph, "text-brand-secondary")} />
+    </div>
   )
 }

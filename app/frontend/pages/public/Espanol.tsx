@@ -26,6 +26,7 @@ import {
   AnimatedCounter,
 } from "@/components/public/animations"
 import {
+  FeatureIcon,
   GradientButton,
   OutlineCtaButton,
   PublicHero,
@@ -49,8 +50,8 @@ const FORMATS = [
 
 const LEVELS = [
   { level: "A1–A2", icon: BookOpen, key: "beginner", color: "from-emerald-500 to-emerald-600" },
-  { level: "B1–B2", icon: Briefcase, key: "intermediate", color: "from-[#2D7FF9] to-blue-600" },
-  { level: "C1–C2", icon: Award, key: "advanced", color: "from-[#E8453C] to-red-600" },
+  { level: "B1–B2", icon: Briefcase, key: "intermediate", color: "from-brand-secondary to-blue-600" },
+  { level: "C1–C2", icon: Award, key: "advanced", color: "from-brand-primary to-red-600" },
 ] as const
 
 const ADVANTAGES = [
@@ -73,6 +74,7 @@ export default function Espanol() {
 
       {/* Hero */}
       <PublicHero
+        fullBleed
         title1={t("public.espanol.hero_title_1")}
         titleAccent={t("public.espanol.hero_title_accent")}
         subtitle={
@@ -126,21 +128,19 @@ export default function Espanol() {
           subtitle={t("public.espanol.formats_subtitle")}
         />
         <div className="grid gap-6 sm:grid-cols-3">
-          {FORMATS.map(({ icon: Icon, key }, i) => (
+          {FORMATS.map(({ icon, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 120}>
               <TiltCard className="h-full">
-                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-brand-secondary/5 group">
                   <CardContent className="p-8 text-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                    </div>
+                    <FeatureIcon icon={icon} className="mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
                       {t(`public.espanol.format_${key}_title`)}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {t(`public.espanol.format_${key}_desc`)}
                     </p>
-                    <p className="text-xs text-[#2D7FF9] font-medium mt-3">
+                    <p className="text-xs text-brand-secondary font-medium mt-3">
                       {t(`public.espanol.format_${key}_note`)}
                     </p>
                   </CardContent>
@@ -161,12 +161,12 @@ export default function Espanol() {
           {LEVELS.map(({ level, icon: Icon, key, color }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
               <TiltCard className="h-full">
-                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group overflow-hidden">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-brand-secondary/5 group overflow-hidden">
                   <CardContent className="p-0">
                     <div className={`bg-gradient-to-r ${color} px-6 py-4 text-white`}>
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold">{level}</span>
-                        <Icon className="h-6 w-6 opacity-80" />
+                        <Icon aria-hidden="true" className="h-6 w-6 opacity-80" />
                       </div>
                       <p className="text-sm opacity-90 font-medium mt-1">
                         {t(`public.espanol.journey_${key}_label`)}
@@ -175,7 +175,7 @@ export default function Espanol() {
                     <div className="p-6 space-y-3">
                       {[1, 2, 3].map((j) => (
                         <div key={j} className="flex items-start gap-2.5">
-                          <Target className="h-4 w-4 text-[#2D7FF9] mt-0.5 shrink-0" />
+                          <Target aria-hidden="true" className="h-4 w-4 text-brand-secondary mt-0.5 shrink-0" />
                           <span className="text-sm text-muted-foreground">
                             {t(`public.espanol.journey_${key}_${j}`)}
                           </span>
@@ -222,11 +222,11 @@ export default function Espanol() {
             { value: 100, suffix: "+", key: "students" },
             { value: 85, suffix: "%", key: "dele" },
             { value: 4, suffix: "", key: "months" },
-            { value: 10, suffix: "+", key: "years" },
+            { value: 15, suffix: "+", key: "years" },
           ].map(({ value, suffix, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
               <div className="p-4 sm:p-6">
-                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                   <AnimatedCounter value={value} suffix={suffix} />
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground font-medium">
@@ -245,9 +245,7 @@ export default function Espanol() {
             <CardContent className="p-0">
               <div className="grid sm:grid-cols-[1fr,auto] items-center">
                 <div className="p-8 sm:p-10">
-                  <div className="inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 mb-4">
-                    <Rocket className="h-5 w-5 text-[#2D7FF9]" />
-                  </div>
+                  <FeatureIcon icon={Rocket} size="md" hoverScale={false} className="mb-4" />
                   <h3 className="text-xl font-bold mb-2">
                     {t("public.espanol.crosssell_title")}
                   </h3>
@@ -257,21 +255,21 @@ export default function Espanol() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
                       href={publicRoute(publicPages.homologacion, locale)}
-                      className="text-sm font-medium text-[#2D7FF9] hover:underline"
+                      className="text-sm font-medium text-brand-secondary hover:underline"
                     >
                       {t("public.espanol.crosssell_homologacion")} &rarr;
                     </Link>
                     <Link
                       href={publicRoute(publicPages.universidad, locale)}
-                      className="text-sm font-medium text-[#2D7FF9] hover:underline"
+                      className="text-sm font-medium text-brand-secondary hover:underline"
                     >
                       {t("public.espanol.crosssell_universidad")} &rarr;
                     </Link>
                   </div>
                 </div>
-                <div className="hidden sm:flex bg-gradient-to-br from-[#E8453C]/5 to-[#2D7FF9]/5 items-center justify-center p-10 self-stretch">
+                <div className="hidden sm:flex bg-gradient-to-br from-brand-primary/5 to-brand-secondary/5 items-center justify-center p-10 self-stretch">
                   <div className="text-center space-y-2">
-                    <Home className="h-10 w-10 text-[#2D7FF9]/40 mx-auto" />
+                    <Home aria-hidden="true" className="h-10 w-10 text-brand-secondary/40 mx-auto" />
                     <p className="text-xs text-muted-foreground font-medium max-w-[140px]">
                       {t("public.espanol.crosssell_badge")}
                     </p>

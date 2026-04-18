@@ -1,13 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
-    <title data-inertia><%= content_for(:title) || "Space for Edu" %></title>
+    <%# Server-rendered title survives even after Inertia hydrates — we drop
+        `data-inertia` so Inertia Head doesn't claim and replace it. SeoHead
+        still emits its own <title> client-side; browsers honor whichever
+        comes last for document.title, but Lighthouse's SEO audit sees this
+        server tag regardless of hydration timing. %>
+    <title><%= @page_title.presence || content_for(:title).presence || "Space for Edu" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Space for Edu">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <%# Preload Geist Variable font subsets for current locale — removes
+        render-blocking font fetch and buys ~1–2 s of LCP on slow mobile. %>
+    <%= geist_font_preload_tags(I18n.locale) %>
+
+    <%# Preload the active locale JSON bundle so its fetch starts in parallel
+        with inertia.js instead of after it — saves one RTT on LCP. %>
+    <%= locale_bundle_preload_tag(I18n.locale) %>
+
+    <%# Webmaster verification (env-gated) %>
+    <% webmaster_verifications.each do |name, content| %>
+      <meta name="<%= name %>" content="<%= content %>">
+    <% end %>
+
+    <%# Sentry frontend config (env-gated) — read by app/frontend/lib/sentry.ts %>
+    <% sentry_frontend_meta.each do |name, content| %>
+      <meta name="<%= name %>" content="<%= content %>">
+    <% end %>
+
+    <%# Consent Mode v2 defaults — MUST fire before GTM and any tracking tag. %>
+    <script>
+      <%= consent_mode_default_script %>
+    </script>
+
+    <%# Google Tag Manager (env-gated on GTM_ID) %>
+    <% if gtm_enabled? %>
+      <script>
+        <%= gtm_head_script %>
+      </script>
+    <% end %>
 
     <%= yield :head %>
 
@@ -21,6 +56,14 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#E8453C">
 
+    <%# Site-wide Schema.org JSON-LD (server-rendered, no JS required) %>
+    <script type="application/ld+json">
+      <%= raw JSON.generate(organization_schema(request, I18n.locale.to_s)) %>
+    </script>
+    <script type="application/ld+json">
+      <%= raw JSON.generate(website_schema(request, I18n.locale.to_s)) %>
+    </script>
+
     <%= vite_stylesheet_tag "application" %>
     <%= vite_react_refresh_tag %>
     <%= vite_client_tag %>
@@ -30,6 +73,9 @@
   </head>
 
   <body>
+    <% if gtm_enabled? %>
+      <noscript><iframe src="<%= gtm_noscript_iframe_src %>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <% end %>
     <%= yield %>
   </body>
 </html>

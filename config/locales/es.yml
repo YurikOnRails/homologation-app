@@ -1,8 +1,5 @@
 es:
   activerecord:
-    errors:
-      messages:
-        record_invalid: "La validación falló: %{errors}"
     models:
       homologation_request: "Solicitud de homologación"
       user: "Usuario"
@@ -25,6 +22,8 @@ es:
         guardian_phone: "Teléfono del tutor"
         guardian_whatsapp: "WhatsApp del tutor"
     errors:
+      messages:
+        record_invalid: "La validación falló: %{errors}"
       models:
         homologation_request:
           attributes:
@@ -92,10 +91,12 @@ es:
     settings_saved: "Configuración guardada"
     deletion_requested: "Solicitud de eliminación de cuenta enviada. Te contactaremos en un plazo de 30 días."
     user_gdpr_deleted: "Cuenta eliminada según solicitud GDPR"
+    gdpr_delete_not_requested: "No se puede eliminar por GDPR: el usuario no ha solicitado la eliminación"
+    user_purge_scheduled: "Usuario programado para eliminación permanente en 5 minutos"
+    user_purge_cancelled: "Eliminación programada cancelada"
     pipeline_advanced: "Solicitud avanzada a la siguiente etapa"
     pipeline_retreated: "Solicitud devuelta a la etapa anterior"
     pipeline_updated: "Datos del pipeline actualizados"
-    consultation_sent: "Tu solicitud de consulta ha sido enviada. Te contactaremos pronto."
   mailers:
     request_mailer:
       new_request:
@@ -114,9 +115,13 @@ es:
         other: "Tienes %{count} mensajes sin leer en la conversación «%{title}»."
       cta: "Abre la aplicación para responder."
   seo:
+    breadcrumbs:
+      home: "Inicio"
+    organization:
+      description: "Space for Edu acompaña a estudiantes de más de 20 países en su camino a la educación europea en España: homologación de títulos, admisión universitaria y clases de español con atención personalizada de principio a fin."
     home:
       title: "Space for Edu — Educación Europea en España"
-      description: "Homologación de títulos, admisión universitaria y cursos de español. Acompañamiento completo desde los documentos hasta la matriculación. 10+ años, 500+ estudiantes."
+      description: "Homologación de títulos, admisión universitaria y cursos de español. Acompañamiento completo desde los documentos hasta la matriculación. 15+ años, 1700+ estudiantes."
     homologation:
       title: "Homologación de títulos — Space for Edu"
       description: "Servicio profesional de homologación de títulos universitarios en España."
@@ -126,12 +131,12 @@ es:
     spanish:
       title: "Clases de español — Space for Edu"
       description: "Clases de español para extranjeros: niveles A1-C2, individual y en grupo."
-    consultation:
-      title: "Consulta profesional — Space for Edu"
-      description: "Reserva una consulta profesional sobre homologación, acceso universitario o cursos de español."
     pricing:
       title: "Tarifas y precios — Space for Edu"
       description: "Consulta nuestros precios para homologación, acceso a universidades y clases de español."
+    consultation_thank_you:
+      title: "Gracias — Space for Edu"
+      description: "Tu consulta ha sido reservada con éxito. Nos pondremos en contacto contigo en las próximas 24 horas."
   notifications:
     new_request: "Nueva solicitud de %{name}"
     new_message: "Nuevo mensaje de %{name}"

@@ -63,6 +63,111 @@ module Admin
       assert @other_student.reload.discarded?
     end
 
+    # --- gdpr_delete ---
+
+    test "super admin can GDPR delete user who requested deletion" do
+      @student.update!(deletion_requested_at: Time.current)
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+
+      @student.reload
+      assert @student.discarded?
+      assert_equal "Deleted User ##{@student.id}", @student.name
+      assert_equal "deleted_#{@student.id}@gdpr.invalid", @student.email_address
+      assert_nil @student.phone
+      assert_nil @student.whatsapp
+      assert_nil @student.birthday
+    end
+
+    test "super admin GDPR delete redirects to users list with notice" do
+      @student.update!(deletion_requested_at: Time.current)
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert_redirected_to admin_users_path
+      assert_equal I18n.t("flash.user_gdpr_deleted"), flash[:notice]
+    end
+
+    test "coordinator cannot GDPR delete user" do
+      sign_in @coordinator
+      delete gdpr_delete_admin_user_path(@student)
+      assert_response :forbidden
+    end
+
+    test "GDPR delete destroys user sessions when deletion was requested" do
+      @student.update!(deletion_requested_at: Time.current)
+      @student.sessions.create!
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert_equal 0, @student.reload.sessions.count
+    end
+
+    test "gdpr_delete without deletion_requested_at redirects with alert" do
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert_redirected_to admin_users_path
+      assert_not_nil flash[:alert]
+      # User must NOT be anonymized
+      assert_equal @student.name, @student.reload.name
+    end
+
+    test "gdpr_delete with deletion_requested_at anonymizes user" do
+      @student.update!(deletion_requested_at: Time.current)
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert @student.reload.discarded?
+    end
+
+    # --- schedule_purge ---
+
+    test "super admin can schedule purge" do
+      sign_in @admin
+      assert_enqueued_with(job: PurgeUserJob) do
+        post schedule_purge_admin_user_path(@student)
+      end
+      assert_not_nil @student.reload.purge_scheduled_at
+    end
+
+    test "schedule_purge redirects with notice" do
+      sign_in @admin
+      post schedule_purge_admin_user_path(@student)
+      assert_redirected_to admin_users_path
+      assert_not_nil flash[:notice]
+    end
+
+    test "coordinator cannot schedule purge" do
+      sign_in @coordinator
+      post schedule_purge_admin_user_path(@student)
+      assert_response :forbidden
+    end
+
+    # --- cancel_purge ---
+
+    test "super admin can cancel purge" do
+      @student.update!(purge_scheduled_at: Time.current)
+      sign_in @admin
+      delete cancel_purge_admin_user_path(@student)
+      assert_nil @student.reload.purge_scheduled_at
+    end
+
+    test "cancel_purge redirects with notice" do
+      @student.update!(purge_scheduled_at: Time.current)
+      sign_in @admin
+      delete cancel_purge_admin_user_path(@student)
+      assert_redirected_to admin_users_path
+      assert_not_nil flash[:notice]
+    end
+
+    # --- users list includes purge data ---
+
+    test "users list includes purgeScheduledAt and purgeable in props" do
+      sign_in @admin
+      get admin_users_path
+      user_data = inertia.props[:users].find { |u| u[:id] == @student.id }
+      assert user_data.key?(:purgeScheduledAt)
+      assert user_data.key?(:purgeable)
+      assert user_data.key?(:purgeStats)
+    end
+
     test "users list props include users array" do
       sign_in @admin
       get admin_users_path

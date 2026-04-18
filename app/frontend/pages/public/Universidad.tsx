@@ -10,9 +10,9 @@ import {
   Link2,
 } from "lucide-react"
 import { UniversityIllustration } from "@/components/public/UniversityIllustration"
+import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
 import {
   GradientButton,
@@ -22,7 +22,6 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
-import { Reveal, TiltCard } from "@/components/public/animations"
 import { FaqSection } from "@/components/public/FaqSection"
 import { TimelineSection } from "@/components/public/TimelineSection"
 import { TestimonialsSection } from "@/components/public/TestimonialsSection"
@@ -38,6 +37,12 @@ const ADVANTAGES = [
   { icon: Link2, titleKey: "public.universidad.adv_combo_title", descKey: "public.universidad.adv_combo_desc" },
 ] as const
 
+const ADMISSION_TYPES = [
+  { icon: BookOpen, titleKey: "public.universidad.type_grado_title", descKey: "public.universidad.type_grado_desc" },
+  { icon: Award, titleKey: "public.universidad.type_master_title", descKey: "public.universidad.type_master_desc" },
+  { icon: GraduationCap, titleKey: "public.universidad.type_fp_title", descKey: "public.universidad.type_fp_desc" },
+] as const
+
 export default function Universidad() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
@@ -51,6 +56,7 @@ export default function Universidad() {
 
       {/* Hero */}
       <PublicHero
+        fullBleed
         title1={t("public.universidad.hero_title_1")}
         titleAccent={t("public.universidad.hero_title_accent")}
         subtitle={t("public.universidad.hero_subtitle")}
@@ -77,7 +83,7 @@ export default function Universidad() {
             {[
               { value: "80+", key: "universities" },
               { value: "1 000+", key: "programs" },
-              { value: "500+", key: "success" },
+              { value: "1700+", key: "success" },
             ].map(({ value, key }, i) => (
               <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
                 {i > 0 && <span className="text-border">·</span>}
@@ -104,27 +110,7 @@ export default function Universidad() {
       {/* Types of admission */}
       <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.universidad.types_title")} />
-        <div className="grid gap-6 sm:grid-cols-3">
-          {[
-            { icon: BookOpen, key: "grado" },
-            { icon: Award, key: "master" },
-            { icon: GraduationCap, key: "fp" },
-          ].map(({ icon: Icon, key }, i) => (
-            <Reveal key={key} direction="up" delay={i * 120} className="h-full">
-              <TiltCard className="h-full">
-                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
-                  <CardContent className="h-full p-8 text-center flex flex-col items-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{t(`public.universidad.type_${key}_title`)}</h3>
-                    <p className="text-sm text-muted-foreground">{t(`public.universidad.type_${key}_desc`)}</p>
-                  </CardContent>
-                </Card>
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
+        <FeatureCardGrid items={ADMISSION_TYPES} columns={3} />
       </PublicSection>
 
       {/* Process timeline */}
@@ -134,26 +120,7 @@ export default function Universidad() {
       </PublicSection>
 
       {/* Universities — social proof */}
-      <PublicSection className="bg-slate-50" dots>
-        <SectionHeading
-          title={t("public.universidad.universities_title")}
-          subtitle={t("public.universidad.universities_subtitle")}
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Reveal key={i} direction="up" delay={i * 80}>
-              <Card className="border transition-all duration-300 hover:shadow-md hover:border-[#2D7FF9]/20 group">
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-[#2D7FF9]/50" />
-                  </div>
-                  <span className="text-sm font-medium">{t(`public.universidad.uni_${i + 1}`)}</span>
-                </CardContent>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </PublicSection>
+      <UniversityLogoBar />
 
       {/* Testimonials */}
       <PublicSection className="bg-white">

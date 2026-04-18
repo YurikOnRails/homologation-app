@@ -16,4 +16,14 @@ export default defineConfig({
       '~': path.resolve(__dirname, 'app/frontend'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-inertia': ['@inertiajs/react'],
+          'vendor-i18n': ['i18next', 'react-i18next'],
+        },
+      },
+    },
+  },
 })

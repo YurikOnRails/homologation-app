@@ -16,24 +16,38 @@ export function TimelineSection({
   const { t } = useTranslation()
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      {Array.from({ length: count }, (_, i) => (
-        <Reveal key={i} direction="left" delay={i * 150}>
-          <div className="flex gap-6 items-start group">
-            <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] text-white flex items-center justify-center font-bold text-sm shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2D7FF9]/20">
-              {i + 1}
+    <div className="max-w-2xl mx-auto">
+      {Array.from({ length: count }, (_, i) => {
+        const isLast = i === count - 1
+        return (
+          <Reveal key={i} direction="left" delay={i * 120}>
+            <div className="flex gap-5 sm:gap-8 items-stretch">
+              <div className="flex flex-col items-center shrink-0 w-12 sm:w-14">
+                <div
+                  aria-hidden="true"
+                  className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-brand-primary to-brand-secondary bg-clip-text text-transparent select-none"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                {!isLast && (
+                  <div
+                    className="mt-3 w-px flex-1 bg-gradient-to-b from-slate-200 via-slate-200/60 to-transparent"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+              <div className={`flex-1 ${isLast ? "" : "pb-10 sm:pb-12"}`}>
+                <h3 className="text-base sm:text-lg font-semibold tracking-tight">
+                  {t(`${translationPrefix}.${keyPattern}_${i + 1}_title`)}
+                </h3>
+                <p className="text-sm sm:text-[15px] text-muted-foreground leading-relaxed mt-1.5">
+                  {t(`${translationPrefix}.${keyPattern}_${i + 1}_desc`)}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">
-                {t(`${translationPrefix}.${keyPattern}_${i + 1}_title`)}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t(`${translationPrefix}.${keyPattern}_${i + 1}_desc`)}
-              </p>
-            </div>
-          </div>
-        </Reveal>
-      ))}
+          </Reveal>
+        )
+      })}
     </div>
   )
 }
