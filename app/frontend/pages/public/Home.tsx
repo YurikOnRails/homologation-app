@@ -212,7 +212,7 @@ function ApproachSection({ t }: { t: (key: string) => string }) {
             <Card className="border bg-white h-full transition-all duration-300 hover:shadow-lg">
               <CardContent className="p-6 flex gap-5">
                 <div
-                  className="shrink-0 text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent select-none w-12 sm:w-14"
+                  className="shrink-0 text-4xl sm:text-5xl font-bold tracking-tighter leading-none text-slate-300 select-none w-12 sm:w-14"
                   aria-hidden="true"
                 >
                   {String(n).padStart(2, "0")}

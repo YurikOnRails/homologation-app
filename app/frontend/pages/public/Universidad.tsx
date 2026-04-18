@@ -52,6 +52,7 @@ export default function Universidad() {
 
       {/* Hero */}
       <PublicHero
+        fullBleed
         title1={t("public.universidad.hero_title_1")}
         titleAccent={t("public.universidad.hero_title_accent")}
         subtitle={t("public.universidad.hero_subtitle")}

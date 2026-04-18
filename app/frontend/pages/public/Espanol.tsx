@@ -73,6 +73,7 @@ export default function Espanol() {
 
       {/* Hero */}
       <PublicHero
+        fullBleed
         title1={t("public.espanol.hero_title_1")}
         titleAccent={t("public.espanol.hero_title_accent")}
         subtitle={

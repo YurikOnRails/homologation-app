@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Reveal,
@@ -61,6 +61,9 @@ export function GradientButton({
 }
 
 // ─── PublicHero — shared hero section ────────────────────────────────────────────
+// fullBleed: expand to full viewport height and render an animated scroll hint
+// at the bottom. Use for service pages that should feel immersive (universidad,
+// espanol) — not for pricing/transactional pages where fast scroll matters.
 export function PublicHero({
   title1,
   titleAccent,
@@ -68,6 +71,7 @@ export function PublicHero({
   actions,
   footer,
   illustration,
+  fullBleed = false,
 }: {
   title1: string
   titleAccent: string
@@ -75,11 +79,17 @@ export function PublicHero({
   actions?: React.ReactNode
   footer?: React.ReactNode
   illustration?: React.ReactNode
+  fullBleed?: boolean
 }) {
   const hasIllustration = !!illustration
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden min-h-[60vh] sm:min-h-[80vh] flex items-center">
+    <section
+      className={cn(
+        "relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden flex items-center",
+        fullBleed ? "min-h-screen" : "min-h-[60vh] sm:min-h-[80vh]",
+      )}
+    >
       <Spotlight />
       <FloatingElements />
       <DotGrid className="opacity-[0.25]" />
@@ -125,7 +135,24 @@ export function PublicHero({
           )}
         </div>
       </Container>
+      {fullBleed && <ScrollHint />}
     </section>
+  )
+}
+
+// Subtle "more below" indicator for full-viewport heroes. Glassmorphic chip
+// (white/60 + backdrop-blur + border) with a brand-gradient chevron. Uses a
+// slow 2s bounce — the default Tailwind animate-bounce (1s) is too nervous.
+function ScrollHint() {
+  return (
+    <div
+      className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 pointer-events-none animate-[bounce_2s_ease-in-out_infinite]"
+      aria-hidden="true"
+    >
+      <div className="rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/70 p-1.5 shadow-sm">
+        <ChevronDown className="h-4 w-4 text-[#2D7FF9]" strokeWidth={2.5} />
+      </div>
+    </div>
   )
 }
 
