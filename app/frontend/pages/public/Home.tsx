@@ -18,6 +18,7 @@ import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, AnimatedCounter } from "@/components/public/animations"
 import {
   Container,
+  FeatureIcon,
   GradientButton,
   PublicCta,
   PublicSection,
@@ -61,14 +62,14 @@ function HeroSection({ t }: { t: (key: string) => string }) {
       <Container className="relative">
         <div className="max-w-4xl mx-auto text-center">
           <Reveal direction="up">
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-[#2D7FF9] mb-6">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-brand-secondary mb-6">
               {t("public.home.hero_eyebrow")}
             </p>
           </Reveal>
           <Reveal direction="up" delay={50}>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.05]">
               {t("public.home.hero_title_1")}{" "}
-              <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                 {t("public.home.hero_title_accent")}
               </span>
             </h1>
@@ -144,19 +145,17 @@ function ServicesSection({ t, locale }: { t: (key: string) => string; locale: st
 
       {/* Lead services — 3 big cards linking to dedicated pages */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-        {leadServices.map(({ icon: Icon, title, desc, href }, i) => (
+        {leadServices.map(({ icon, title, desc, href }, i) => (
           <Reveal key={title} direction="up" delay={i * 120}>
             <Link href={href} className="block h-full group">
-              <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 hover:-translate-y-1">
+              <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-brand-secondary/5 hover:-translate-y-1">
                 <CardContent className="p-8 flex flex-col h-full">
-                  <div className="mb-4 inline-flex self-start rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                  </div>
+                  <FeatureIcon icon={icon} className="mb-4 self-start" />
                   <h3 className="text-lg font-semibold mb-2">{title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed flex-1">{desc}</p>
-                  <span className="mt-5 inline-flex items-center text-sm font-medium text-[#2D7FF9]">
+                  <span className="mt-5 inline-flex items-center text-sm font-medium text-brand-secondary">
                     {t("public.home.learn_more")}
-                    <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight aria-hidden="true" className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
                 </CardContent>
               </Card>
@@ -173,20 +172,18 @@ function ServicesSection({ t, locale }: { t: (key: string) => string; locale: st
           </p>
         </Reveal>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {additionalServices.map(({ icon: Icon, labelKey }, i) => (
+          {additionalServices.map(({ icon, labelKey }, i) => (
             <Reveal key={labelKey} direction="up" delay={i * 60}>
               <ConsultationDialog>
                 <button
                   type="button"
-                  className="group flex items-center gap-3 w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-[#2D7FF9]/40 hover:shadow-md transition-all duration-300 min-h-[44px]"
+                  className="group flex items-center gap-3 w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-brand-secondary/40 hover:shadow-md transition-all duration-300 min-h-[44px]"
                 >
-                  <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2">
-                    <Icon className="h-5 w-5 text-[#2D7FF9]" />
-                  </div>
+                  <FeatureIcon icon={icon} size="sm" hoverScale={false} />
                   <span className="flex-1 text-sm font-medium">
                     {t(`public.home.${labelKey}`)}
                   </span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-[#2D7FF9] group-hover:translate-x-0.5 transition-all" />
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 text-muted-foreground group-hover:text-brand-secondary group-hover:translate-x-0.5 transition-all" />
                 </button>
               </ConsultationDialog>
             </Reveal>
@@ -245,13 +242,16 @@ function NumbersStrip({ t }: { t: (key: string) => string }) {
   ] as const
 
   return (
-    <section className="py-16 sm:py-20 bg-white">
+    <section aria-labelledby="home-numbers-heading" className="py-16 sm:py-20 bg-white">
       <Container>
+        <h2 id="home-numbers-heading" className="sr-only">
+          {t("public.home.numbers_heading")}
+        </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-4xl mx-auto">
           {numbers.map(({ value, suffix, labelKey }, i) => (
             <Reveal key={labelKey} direction="up" delay={i * 100}>
               <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                <div className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                   <AnimatedCounter value={value} suffix={suffix} />
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">

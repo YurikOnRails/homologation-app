@@ -13,7 +13,6 @@ import { UniversityIllustration } from "@/components/public/UniversityIllustrati
 import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
 import {
   GradientButton,
@@ -23,7 +22,6 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
-import { Reveal, TiltCard } from "@/components/public/animations"
 import { FaqSection } from "@/components/public/FaqSection"
 import { TimelineSection } from "@/components/public/TimelineSection"
 import { TestimonialsSection } from "@/components/public/TestimonialsSection"
@@ -37,6 +35,12 @@ const ADVANTAGES = [
   { icon: FileText, titleKey: "public.universidad.adv_support_title", descKey: "public.universidad.adv_support_desc" },
   { icon: Building2, titleKey: "public.universidad.adv_local_title", descKey: "public.universidad.adv_local_desc" },
   { icon: Link2, titleKey: "public.universidad.adv_combo_title", descKey: "public.universidad.adv_combo_desc" },
+] as const
+
+const ADMISSION_TYPES = [
+  { icon: BookOpen, titleKey: "public.universidad.type_grado_title", descKey: "public.universidad.type_grado_desc" },
+  { icon: Award, titleKey: "public.universidad.type_master_title", descKey: "public.universidad.type_master_desc" },
+  { icon: GraduationCap, titleKey: "public.universidad.type_fp_title", descKey: "public.universidad.type_fp_desc" },
 ] as const
 
 export default function Universidad() {
@@ -106,27 +110,7 @@ export default function Universidad() {
       {/* Types of admission */}
       <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.universidad.types_title")} />
-        <div className="grid gap-6 sm:grid-cols-3">
-          {[
-            { icon: BookOpen, key: "grado" },
-            { icon: Award, key: "master" },
-            { icon: GraduationCap, key: "fp" },
-          ].map(({ icon: Icon, key }, i) => (
-            <Reveal key={key} direction="up" delay={i * 120} className="h-full">
-              <TiltCard className="h-full">
-                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
-                  <CardContent className="h-full p-8 text-center flex flex-col items-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{t(`public.universidad.type_${key}_title`)}</h3>
-                    <p className="text-sm text-muted-foreground">{t(`public.universidad.type_${key}_desc`)}</p>
-                  </CardContent>
-                </Card>
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
+        <FeatureCardGrid items={ADMISSION_TYPES} columns={3} />
       </PublicSection>
 
       {/* Process timeline */}

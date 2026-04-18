@@ -75,9 +75,9 @@ function Navbar({
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href={publicRoute(publicPages.home, locale)} className="flex items-center gap-2">
-          <Rocket className="h-7 w-7 text-[#E8453C]" />
+          <Rocket className="h-7 w-7 text-brand-primary" />
           <span className="text-xl font-bold tracking-tight">
-            Space for <span className="text-[#2D7FF9]">Edu</span>
+            Space for <span className="text-brand-secondary">Edu</span>
           </span>
         </Link>
 
@@ -120,7 +120,7 @@ function Navbar({
             </Button>
           </Link>
           <Link href={routes.register} aria-label={t("public.nav.start_aria")}>
-            <Button className="min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
+            <Button className="min-h-[44px] bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0">
               {t("public.nav.start")}
             </Button>
           </Link>
@@ -144,9 +144,9 @@ function Navbar({
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2"
                 >
-                  <Rocket className="h-6 w-6 text-[#E8453C]" />
+                  <Rocket className="h-6 w-6 text-brand-primary" />
                   <span className="text-lg font-bold tracking-tight">
-                    Space for <span className="text-[#2D7FF9]">Edu</span>
+                    Space for <span className="text-brand-secondary">Edu</span>
                   </span>
                 </Link>
                 <SheetClose asChild>
@@ -173,7 +173,7 @@ function Navbar({
                           : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                       ].join(" ")}
                     >
-                      <Icon className={["h-5 w-5 shrink-0", isActive ? "text-[#E8453C]" : ""].join(" ")} />
+                      <Icon className={["h-5 w-5 shrink-0", isActive ? "text-brand-primary" : ""].join(" ")} />
                       {t(`public.nav.${key}`)}
                     </Link>
                   )
@@ -188,7 +188,7 @@ function Navbar({
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2.5 text-base font-medium text-foreground min-h-[44px] px-1"
                   >
-                    <Phone className="h-5 w-5 text-[#2D7FF9] shrink-0" />
+                    <Phone className="h-5 w-5 text-brand-secondary shrink-0" />
                     <span>{formatPhone(CONTACT_WHATSAPP)}</span>
                   </a>
                 )}
@@ -202,7 +202,7 @@ function Navbar({
                   </Button>
                 </Link>
                 <Link href={routes.register} onClick={() => setOpen(false)} className="block" aria-label={t("public.nav.start_aria")}>
-                  <Button className="w-full min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
+                  <Button className="w-full min-h-[44px] bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0">
                     {t("public.nav.start")}
                   </Button>
                 </Link>
@@ -224,9 +224,9 @@ function Footer({ t, locale }: { t: (key: string) => string; locale: string }) {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Rocket className="h-6 w-6 text-[#E8453C]" />
+              <Rocket className="h-6 w-6 text-brand-primary" />
               <span className="text-lg font-bold text-white">
-                Space for <span className="text-[#2D7FF9]">Edu</span>
+                Space for <span className="text-brand-secondary">Edu</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed">
@@ -369,7 +369,7 @@ function FooterTrustStrip({ t }: { t: (key: string) => string }) {
 
   return (
     <div className="relative border-b border-zinc-800 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#E8453C]/[0.06] via-transparent to-[#2D7FF9]/[0.06] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/[0.06] via-transparent to-brand-secondary/[0.06] pointer-events-none" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 max-w-5xl mx-auto">
           {items.map(({ visual, label }, i) => (
@@ -389,8 +389,8 @@ function FooterTrustStrip({ t }: { t: (key: string) => string }) {
 function FooterGlowTile({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative shrink-0 h-11 w-11">
-      <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-[#E8453C]/40 to-[#2D7FF9]/40 blur-md opacity-80" />
-      <div className="relative h-11 w-11 rounded-xl bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] flex items-center justify-center shadow-lg shadow-[#2D7FF9]/25">
+      <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-brand-primary/40 to-brand-secondary/40 blur-md opacity-80" />
+      <div className="relative h-11 w-11 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center shadow-lg shadow-brand-secondary/25">
         {children}
       </div>
     </div>

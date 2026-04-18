@@ -280,9 +280,9 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="group-data-[collapsible=icon]:justify-center">
               <Link href={routes.dashboard}>
-                <Rocket className="!size-5 text-[#E8453C]" />
+                <Rocket className="!size-5 text-brand-primary" />
                 <span className="text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">
-                  Space for <span className="text-[#2D7FF9]">Edu</span>
+                  Space for <span className="text-brand-secondary">Edu</span>
                 </span>
               </Link>
             </SidebarMenuButton>

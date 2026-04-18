@@ -30,11 +30,11 @@ export function SpainIllustration() {
       {/* Background glow orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute top-1/3 left-1/4 w-3/5 h-3/5 rounded-full bg-[#2D7FF9]/8 blur-[80px] animate-pulse"
+          className="absolute top-1/3 left-1/4 w-3/5 h-3/5 rounded-full bg-brand-secondary/8 blur-[80px] animate-pulse"
           style={{ animationDuration: "4s" }}
         />
         <div
-          className="absolute bottom-1/4 right-1/5 w-2/5 h-2/5 rounded-full bg-[#E8453C]/6 blur-[60px] animate-pulse"
+          className="absolute bottom-1/4 right-1/5 w-2/5 h-2/5 rounded-full bg-brand-primary/6 blur-[60px] animate-pulse"
           style={{ animationDuration: "5s", animationDelay: "1.5s" }}
         />
       </div>
@@ -55,14 +55,14 @@ export function SpainIllustration() {
         style={{ left: "48%", top: "30%", width: 0, height: 0 }}
       >
         <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full border-2 border-[#E8453C]/40"
+          className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full border-2 border-brand-primary/40"
           style={{ animation: "pingRing 2.5s ease-out infinite" }}
         />
         <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-[#E8453C]/20"
+          className="absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-brand-primary/20"
           style={{ animation: "pingRing 2.5s ease-out 0.6s infinite" }}
         />
-        <div className="absolute -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#E8453C] shadow-md shadow-[#E8453C]/40" />
+        <div className="absolute -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-brand-primary shadow-md shadow-brand-primary/40" />
       </div>
 
       {/* Floating glass stat bubbles */}
@@ -76,7 +76,7 @@ export function SpainIllustration() {
             animation: `bubbleFloat 7s ease-in-out ${delay}s infinite, bubbleFadeIn 1s ease-out ${delay}s both`,
           }}
         >
-          <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
             {t(`public.espanol.map_${key}_value`)}
           </span>{" "}
           <span className="text-slate-500 font-normal">

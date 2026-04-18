@@ -57,8 +57,8 @@ export default function ConsultationThankYou() {
               {steps.map(({ icon: Icon, title, desc }, i) => (
                 <Card key={i} className="border bg-white">
                   <CardContent className="p-6">
-                    <div className="mb-3 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5">
-                      <Icon className="h-5 w-5 text-[#2D7FF9]" />
+                    <div className="mb-3 inline-flex rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 p-2.5">
+                      <Icon className="h-5 w-5 text-brand-secondary" />
                     </div>
                     <h3 className="text-sm font-semibold mb-1">{title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
@@ -86,7 +86,7 @@ export default function ConsultationThankYou() {
                   <span className="hidden sm:inline text-muted-foreground">·</span>
                   <a
                     href={`mailto:${CONTACT_EMAIL}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-[#2D7FF9] hover:underline"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand-secondary hover:underline"
                   >
                     <Mail className="h-4 w-4" />
                     {CONTACT_EMAIL}
@@ -99,7 +99,7 @@ export default function ConsultationThankYou() {
             <Link href={routes.register}>
               <Button
                 size="lg"
-                className="min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0"
+                className="min-h-[44px] text-base bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0"
               >
                 {t("public.consultation_thanks.cta")}
                 <ArrowRight className="ml-2 h-4 w-4" />

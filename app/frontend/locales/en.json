@@ -483,6 +483,7 @@
     "deletion_body": "To request the deletion of your data, contact us. We will process your request within 30 days in accordance with GDPR."
   },
   "public": {
+    "testimonial_rating_label": "Rating: 5 out of 5 stars",
     "nav": {
       "homologacion": "Homologation",
       "universidad": "University",
@@ -519,6 +520,7 @@
       "stat_success": "success rate",
       "stat_years": "years in Spain",
       "stat_countries": "countries of origin",
+      "numbers_heading": "Our results in numbers",
       "logo_bar_title": "Our students study at Spain's top universities",
       "services_title": "Our services",
       "services_subtitle": "Three core areas and a team that supports you in everything else",

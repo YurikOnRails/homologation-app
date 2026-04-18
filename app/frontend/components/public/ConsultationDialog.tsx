@@ -60,7 +60,7 @@ export function ConsultationDialog({
 
         {/* Price & duration */}
         <div className="flex items-center gap-3">
-          <span className="text-3xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+          <span className="text-3xl font-bold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
             {t("public.homologacion.consultation_dialog_price")}
           </span>
           <Badge variant="secondary" className="gap-1">
@@ -73,7 +73,7 @@ export function ConsultationDialog({
         <div className="space-y-3">
           {CONSULTATION_ITEMS.map((key) => (
             <div key={key} className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-[#2D7FF9] mt-0.5 shrink-0" />
+              <CheckCircle2 className="h-4 w-4 text-brand-secondary mt-0.5 shrink-0" />
               <span className="text-sm">{t(`public.homologacion.${key}`)}</span>
             </div>
           ))}
@@ -96,7 +96,7 @@ export function ConsultationDialog({
           >
             <Button
               size="lg"
-              className="w-full min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 transition-all duration-300"
+              className="w-full min-h-[44px] text-base bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0 shadow-lg shadow-brand-secondary/20 transition-all duration-300"
             >
               <CreditCard className="mr-2 h-4 w-4" />
               {t("public.homologacion.consultation_dialog_pay")}

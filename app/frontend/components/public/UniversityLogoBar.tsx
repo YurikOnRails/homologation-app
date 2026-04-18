@@ -40,7 +40,7 @@ export function UniversityLogoBar({ titleKey, noBorderTop = false }: { titleKey?
         {/* Scrolling track — duplicated for seamless infinite loop */}
         <div
           className="flex w-max animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused]"
-          aria-hidden="false"
+          aria-hidden="true"
         >
           {[...UNIVERSITY_LOGOS, ...UNIVERSITY_LOGOS].map(({ key, src, name, maxW, opacity, heightClass }, i) => (
             <div

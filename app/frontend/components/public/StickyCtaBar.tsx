@@ -83,7 +83,7 @@ export function StickyCtaBar() {
             </a>
           )}
           <ConsultationDialog>
-            <Button className="flex-1 min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 text-base">
+            <Button className="flex-1 min-h-[44px] bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0 text-base">
               {t("public.sticky_cta.consultation")}
             </Button>
           </ConsultationDialog>

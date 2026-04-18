@@ -20,8 +20,9 @@ import {
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
-import { Reveal, TiltCard, AnimatedCounter } from "@/components/public/animations"
+import { Reveal, AnimatedCounter } from "@/components/public/animations"
 import {
+  FeatureIcon,
   FloatingBadge,
   GradientButton,
   PublicHero,
@@ -53,6 +54,18 @@ const DASHBOARD_FEATURES = [
   { icon: Bell, key: "notifications" },
 ] as const
 
+const WHAT_ITEMS = [
+  { icon: Scale, titleKey: "public.homologacion.what_legal_title", descKey: "public.homologacion.what_legal_desc" },
+  { icon: Building2, titleKey: "public.homologacion.what_work_title", descKey: "public.homologacion.what_work_desc" },
+  { icon: FileCheck, titleKey: "public.homologacion.what_study_title", descKey: "public.homologacion.what_study_desc" },
+] as const
+
+const HERO_FACTS = [
+  { icon: Clock, valueKey: "hero_fact_time_value", labelKey: "hero_fact_time_label" },
+  { icon: FileCheck, valueKey: "hero_fact_docs_value", labelKey: "hero_fact_docs_label" },
+  { icon: Award, valueKey: "hero_fact_success_value", labelKey: "hero_fact_success_label" },
+] as const
+
 export default function Homologacion() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
@@ -82,18 +95,12 @@ export default function Homologacion() {
         }
         footer={
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl">
-            {[
-              { icon: Clock, valueKey: "hero_fact_time_value", labelKey: "hero_fact_time_label" },
-              { icon: FileCheck, valueKey: "hero_fact_docs_value", labelKey: "hero_fact_docs_label" },
-              { icon: Award, valueKey: "hero_fact_success_value", labelKey: "hero_fact_success_label" },
-            ].map(({ icon: Icon, valueKey, labelKey }) => (
+            {HERO_FACTS.map(({ icon, valueKey, labelKey }) => (
               <div
                 key={valueKey}
                 className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 backdrop-blur-sm px-4 py-3 shadow-sm"
               >
-                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2">
-                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
-                </div>
+                <FeatureIcon icon={icon} size="sm" hoverScale={false} />
                 <div className="min-w-0">
                   <div className="text-sm font-bold text-foreground leading-tight">
                     {t(`public.homologacion.${valueKey}`)}
@@ -108,7 +115,7 @@ export default function Homologacion() {
         }
         illustration={
           <div className="relative w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#E8453C]/25 to-[#2D7FF9]/25 blur-3xl" />
+            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand-primary/25 to-brand-secondary/25 blur-3xl" />
             <img
               src="/images/hero_homologacion.webp"
               alt={t("public.homologacion.hero_photo_alt")}
@@ -116,7 +123,7 @@ export default function Homologacion() {
               height={836}
               fetchPriority="high"
               decoding="async"
-              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/20 w-full h-auto object-cover"
+              className="relative rounded-2xl shadow-2xl shadow-brand-secondary/20 w-full h-auto object-cover"
             />
             <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full bg-black/55 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-white/95 pointer-events-none">
               <Building2 className="h-3 w-3 shrink-0" />
@@ -135,8 +142,8 @@ export default function Homologacion() {
               duration={7}
               delay={1.5}
             >
-              <div className="shrink-0 h-5 w-5 rounded-full bg-[#2D7FF9]/15 flex items-center justify-center">
-                <Award className="h-3.5 w-3.5 text-[#2D7FF9]" />
+              <div className="shrink-0 h-5 w-5 rounded-full bg-brand-secondary/15 flex items-center justify-center">
+                <Award className="h-3.5 w-3.5 text-brand-secondary" />
               </div>
               <span className="text-slate-800">
                 {t("public.homologacion.hero_badge_experience")}
@@ -170,27 +177,7 @@ export default function Homologacion() {
           title={t("public.homologacion.what_title")}
           subtitle={t("public.homologacion.what_desc")}
         />
-        <div className="grid gap-6 sm:grid-cols-3">
-          {[
-            { icon: Scale, key: "legal" },
-            { icon: Building2, key: "work" },
-            { icon: FileCheck, key: "study" },
-          ].map(({ icon: Icon, key }, i) => (
-            <Reveal key={key} direction="up" delay={i * 120}>
-              <TiltCard>
-                <Card className="border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                    </div>
-                    <h3 className="font-semibold mb-2">{t(`public.homologacion.what_${key}_title`)}</h3>
-                    <p className="text-sm text-muted-foreground">{t(`public.homologacion.what_${key}_desc`)}</p>
-                  </CardContent>
-                </Card>
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
+        <FeatureCardGrid items={WHAT_ITEMS} columns={3} />
       </PublicSection>
 
       {/* Personal Dashboard */}
@@ -200,12 +187,10 @@ export default function Homologacion() {
           subtitle={t("public.homologacion.dashboard_subtitle")}
         />
         <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
-          {DASHBOARD_FEATURES.map(({ icon: Icon, key }, i) => (
+          {DASHBOARD_FEATURES.map(({ icon, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 100}>
               <div className="flex items-start gap-4 p-4 rounded-xl border bg-slate-50/50 transition-all duration-300 hover:bg-white hover:shadow-md group">
-                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
-                </div>
+                <FeatureIcon icon={icon} size="md" />
                 <div>
                   <h3 className="font-semibold text-sm mb-1">{t(`public.homologacion.dash_${key}_title`)}</h3>
                   <p className="text-sm text-muted-foreground">{t(`public.homologacion.dash_${key}_desc`)}</p>
@@ -245,7 +230,7 @@ export default function Homologacion() {
           ].map(({ value, suffix, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
               <div className="p-4 sm:p-6">
-                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                   <AnimatedCounter value={value} suffix={suffix} />
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground font-medium">{t(`public.homologacion.proof_${key}`)}</p>
@@ -260,23 +245,26 @@ export default function Homologacion() {
         <SectionHeading title={t("public.homologacion.costs_title")} />
         <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           {[
-            { icon: Clock, iconClass: "text-[#2D7FF9]", titleKey: "timeline_title", descKey: "timeline_desc", href: null as string | null },
-            { icon: FileText, iconClass: "text-[#E8453C]", titleKey: "cost_title", descKey: "cost_desc", href: preciosHref },
+            { icon: Clock, iconClass: "text-brand-secondary", titleKey: "timeline_title", descKey: "timeline_desc", href: null as string | null },
+            { icon: FileText, iconClass: "text-brand-primary", titleKey: "cost_title", descKey: "cost_desc", href: preciosHref },
           ].map(({ icon: Icon, iconClass, titleKey, descKey, href }, i) => {
             const card = (
               <Card
-                className={`h-full border transition-all duration-300 hover:shadow-lg hover:shadow-[#2D7FF9]/5 group ${
+                className={`h-full border transition-all duration-300 hover:shadow-lg hover:shadow-brand-secondary/5 group ${
                   href ? "hover:-translate-y-1" : ""
                 }`}
               >
                 <CardContent className="p-6 text-center flex flex-col h-full">
-                  <Icon className={`h-8 w-8 ${iconClass} mx-auto mb-3 transition-transform duration-300 group-hover:scale-110`} />
+                  <Icon
+                    aria-hidden="true"
+                    className={`h-8 w-8 ${iconClass} mx-auto mb-3 transition-transform duration-300 group-hover:scale-110`}
+                  />
                   <h3 className="font-semibold mb-1">{t(`public.homologacion.${titleKey}`)}</h3>
                   <p className="text-sm text-muted-foreground flex-1">{t(`public.homologacion.${descKey}`)}</p>
                   {href && (
-                    <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-[#2D7FF9]">
+                    <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-brand-secondary">
                       {t("public.homologacion.see_pricing")}
-                      <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight aria-hidden="true" className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </span>
                   )}
                 </CardContent>

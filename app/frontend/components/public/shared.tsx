@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react"
-import { ArrowRight, ChevronDown } from "lucide-react"
+import { ArrowRight, ChevronDown, type LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Reveal,
@@ -42,7 +42,7 @@ export function GradientButton({
     <Button
       size="lg"
       className={cn(
-        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
+        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-brand-primary to-brand-secondary hover:opacity-90 border-0 shadow-lg shadow-brand-secondary/20 hover:shadow-xl hover:shadow-brand-secondary/30 transition-all duration-300",
         className,
       )}
       {...rest}
@@ -53,7 +53,7 @@ export function GradientButton({
       />
       <span className="relative flex items-center">
         {children}
-        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        <ArrowRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
       </span>
     </Button>
   )
@@ -110,7 +110,7 @@ export function PublicHero({
             <Reveal direction="up">
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
                 {title1}{" "}
-                <span className="bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                   {titleAccent}
                 </span>
               </h1>
@@ -155,7 +155,7 @@ function ScrollHint() {
       aria-hidden="true"
     >
       <div className="rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/70 p-1.5 shadow-sm">
-        <ChevronDown className="h-4 w-4 text-[#2D7FF9]" strokeWidth={2.5} />
+        <ChevronDown className="h-4 w-4 text-brand-secondary" strokeWidth={2.5} />
       </div>
     </div>
   )
@@ -175,7 +175,7 @@ export function PublicCta({
     <section className="relative py-20 sm:py-32 bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 text-white overflow-hidden">
       <GradientOrbs />
       <DotGrid className="opacity-[0.08]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2D7FF9]/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-secondary/30 to-transparent" />
       <Container className="relative text-center">
         <Reveal direction="up">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -290,5 +290,42 @@ export function SectionHeading({
         )}
       </div>
     </Reveal>
+  )
+}
+
+// ─── FeatureIcon — brand-gradient icon badge ─────────────────────────────────────
+// Centralizes the repeated icon treatment (gradient bg + brand-colored glyph).
+// `size` controls padding and glyph size. `hoverScale` adds the group-hover lift
+// seen in FeatureCardGrid-style cards; set false for badges inside links/buttons.
+const sizeClasses = {
+  sm: { wrap: "p-2", glyph: "h-5 w-5" },
+  md: { wrap: "p-2.5", glyph: "h-5 w-5" },
+  lg: { wrap: "p-3", glyph: "h-6 w-6" },
+} as const
+
+export function FeatureIcon({
+  icon: Icon,
+  size = "lg",
+  hoverScale = true,
+  className,
+}: {
+  icon: LucideIcon
+  size?: keyof typeof sizeClasses
+  hoverScale?: boolean
+  className?: string
+}) {
+  const { wrap, glyph } = sizeClasses[size]
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "inline-flex shrink-0 rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10",
+        wrap,
+        hoverScale && "transition-transform duration-300 group-hover:scale-110",
+        className,
+      )}
+    >
+      <Icon className={cn(glyph, "text-brand-secondary")} />
+    </div>
   )
 }

@@ -483,6 +483,7 @@
     "deletion_body": "Para solicitar la eliminación de sus datos, contacte con nosotros. Procesaremos su solicitud en un plazo de 30 días conforme al RGPD."
   },
   "public": {
+    "testimonial_rating_label": "Valoración: 5 de 5 estrellas",
     "nav": {
       "homologacion": "Homologación",
       "universidad": "Universidad",
@@ -519,6 +520,7 @@
       "stat_success": "tasa de éxito",
       "stat_years": "años en España",
       "stat_countries": "países de origen",
+      "numbers_heading": "Nuestros resultados en cifras",
       "logo_bar_title": "Nuestros estudiantes estudian en las mejores universidades de España",
       "services_title": "Nuestros servicios",
       "services_subtitle": "Tres áreas principales y un equipo que te acompaña en todo lo demás",

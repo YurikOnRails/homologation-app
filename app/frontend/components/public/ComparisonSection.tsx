@@ -45,7 +45,7 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
       className={cn(
         "relative h-full border transition-all duration-300",
         isWith
-          ? "border-transparent bg-white shadow-xl shadow-[#2D7FF9]/10 lg:-translate-y-2"
+          ? "border-transparent bg-white shadow-xl shadow-brand-secondary/10 lg:-translate-y-2"
           : "border-slate-200 bg-slate-50/60",
       )}
     >
@@ -53,7 +53,7 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
       {isWith && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] opacity-90"
+          className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary opacity-90"
           style={{
             WebkitMask:
               "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
@@ -67,10 +67,11 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
           <div
+            aria-hidden="true"
             className={cn(
               "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
               isWith
-                ? "bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] text-white"
+                ? "bg-gradient-to-br from-brand-primary to-brand-secondary text-white"
                 : "bg-slate-200 text-slate-500",
             )}
           >
@@ -92,7 +93,7 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
             <p
               className={cn(
                 "text-xs mt-0.5",
-                isWith ? "text-[#2D7FF9] font-medium" : "text-slate-500",
+                isWith ? "text-brand-secondary font-medium" : "text-slate-500",
               )}
             >
               {t(`${translationPrefix}.${subtitleKey}`)}
@@ -105,10 +106,11 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
           {ROWS.map(({ key, icon: Icon }) => (
             <li key={key} className="flex items-start gap-3">
               <div
+                aria-hidden="true"
                 className={cn(
                   "shrink-0 mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg",
                   isWith
-                    ? "bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 text-[#2D7FF9]"
+                    ? "bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 text-brand-secondary"
                     : "bg-slate-200/70 text-slate-500",
                 )}
               >
@@ -118,7 +120,7 @@ function ComparisonColumn({ variant, translationPrefix }: ComparisonColumnProps)
                 <div
                   className={cn(
                     "text-xs font-medium uppercase tracking-wide mb-0.5",
-                    isWith ? "text-[#2D7FF9]" : "text-slate-500",
+                    isWith ? "text-brand-secondary" : "text-slate-500",
                   )}
                 >
                   {t(`${translationPrefix}.compare_row_${key}_label`)}

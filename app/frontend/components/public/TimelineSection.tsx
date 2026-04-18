@@ -23,7 +23,10 @@ export function TimelineSection({
           <Reveal key={i} direction="left" delay={i * 120}>
             <div className="flex gap-5 sm:gap-8 items-stretch">
               <div className="flex flex-col items-center shrink-0 w-12 sm:w-14">
-                <div className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent select-none">
+                <div
+                  aria-hidden="true"
+                  className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-brand-primary to-brand-secondary bg-clip-text text-transparent select-none"
+                >
                   {String(i + 1).padStart(2, "0")}
                 </div>
                 {!isLast && (

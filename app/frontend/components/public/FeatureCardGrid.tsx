@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import type { LucideIcon } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Reveal, TiltCard } from "@/components/public/animations"
+import { FeatureIcon } from "@/components/public/shared"
 
 interface FeatureCardItem {
   icon: LucideIcon
@@ -25,14 +26,12 @@ export function FeatureCardGrid({ items, columns = 4 }: FeatureCardGridProps) {
 
   return (
     <div className={columnClasses[columns]}>
-      {items.map(({ icon: Icon, titleKey, descKey }, i) => (
+      {items.map(({ icon, titleKey, descKey }, i) => (
         <Reveal key={titleKey} direction="up" delay={i * 120} className="h-full">
           <TiltCard className="h-full">
-            <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
+            <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-brand-secondary/5 group">
               <CardContent className="h-full p-6 text-center flex flex-col items-center">
-                <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="h-6 w-6 text-[#2D7FF9]" />
-                </div>
+                <FeatureIcon icon={icon} className="mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">{t(titleKey)}</h3>
                 <p className="text-sm text-muted-foreground">{t(descKey)}</p>
               </CardContent>
