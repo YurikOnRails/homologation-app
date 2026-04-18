@@ -34,6 +34,7 @@ import { FaqSection } from "@/components/public/FaqSection"
 import { TimelineSection } from "@/components/public/TimelineSection"
 import { TestimonialsSection } from "@/components/public/TestimonialsSection"
 import { FeatureCardGrid } from "@/components/public/FeatureCardGrid"
+import { ComparisonSection } from "@/components/public/ComparisonSection"
 import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
@@ -144,6 +145,15 @@ export default function Homologacion() {
           </div>
         }
       />
+
+      {/* Honest comparison: on your own vs. with us */}
+      <PublicSection className="bg-slate-50" dots>
+        <SectionHeading
+          title={t("public.homologacion.compare_title")}
+          subtitle={t("public.homologacion.compare_subtitle")}
+        />
+        <ComparisonSection translationPrefix="public.homologacion" />
+      </PublicSection>
 
       {/* Advantages */}
       <PublicSection className="bg-white">
