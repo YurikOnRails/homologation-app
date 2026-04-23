@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
       flash: { notice: flash[:notice], alert: flash[:alert], stripeUrl: flash[:stripe_url] },
       features: user ? build_features(user) : {},
       unreadNotificationsCount: user ? user.notifications.unread.count : 0,
-      unreadChatsCount: user ? ConversationParticipant.unread(user).count : 0,
+      unreadChatsCount: user ? unread_chats_count_for(user) : 0,
       selectOptions: Rails.application.config.select_options,
       pipelineConfig: user&.super_admin? ? Rails.application.config.pipeline : { stages: [], document_checklist: [] }
     }
@@ -33,6 +33,13 @@ class ApplicationController < ActionController::Base
 
   def pundit_user = Current.user
   def current_user = Current.user
+
+  # Super admin sees conversations via ChatsPolicy::Scope without being a
+  # participant, so ConversationParticipant.unread misses them. Use the SQL
+  # scope that mirrors Conversation#unread_for? for that case.
+  def unread_chats_count_for(user)
+    user.super_admin? ? Conversation.unread_for(user).count : ConversationParticipant.unread(user).count
+  end
 
   def pundit_not_authorized
     head :forbidden

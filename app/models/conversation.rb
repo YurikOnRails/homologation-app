@@ -8,6 +8,17 @@ class Conversation < ApplicationRecord
   has_many :conversation_participants, dependent: :destroy
   has_many :participants, through: :conversation_participants, source: :user
 
+  # Matches Conversation#unread_for? at the SQL level so callers with broad
+  # policy scope (e.g. super_admin seeing chats without a participant row)
+  # get a count consistent with what the chat list UI renders.
+  scope :unread_for, ->(user) {
+    joins(sanitize_sql_array([
+      "LEFT JOIN conversation_participants cps ON cps.conversation_id = conversations.id AND cps.user_id = ?",
+      user.id
+    ]))
+      .where("cps.id IS NULL OR cps.last_read_at IS NULL OR cps.last_read_at < conversations.last_message_at")
+  }
+
   validate :must_have_one_association
 
   def add_participant!(user)
