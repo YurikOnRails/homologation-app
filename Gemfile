@@ -29,6 +29,9 @@ gem "stripe"
 # File validation
 gem "active_storage_validations"
 
+# ZIP archive for "download all documents"
+gem "rubyzip", require: "zip"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

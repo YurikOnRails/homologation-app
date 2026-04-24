@@ -1,7 +1,7 @@
 class HomologationRequestsController < InertiaController
   include RequestSerializer
   include ConversationSerializer
-  before_action :set_request, only: [ :show, :update, :confirm_payment, :create_checkout_session, :download_document, :retry_sync ]
+  before_action :set_request, only: [ :show, :update, :confirm_payment, :create_checkout_session, :download_document, :download_all_documents, :retry_sync ]
 
   def index
     authorize HomologationRequest
@@ -102,6 +102,12 @@ class HomologationRequestsController < InertiaController
     authorize @request, :download_document?
     blob = ActiveStorage::Blob.find(params[:document_id])
     redirect_to rails_blob_url(blob, disposition: "attachment"), allow_other_host: true
+  end
+
+  def download_all_documents
+    authorize @request, :download_document?
+    archive = RequestArchive.new(@request)
+    send_data archive.build, type: "application/zip", disposition: "attachment", filename: archive.filename
   end
 
   private

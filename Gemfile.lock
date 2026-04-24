@@ -496,6 +496,7 @@ DEPENDENCIES
   pundit
   rails (~> 8.1.2)
   rubocop-rails-omakase
+  rubyzip
   selenium-webdriver
   sentry-rails
   sentry-ruby

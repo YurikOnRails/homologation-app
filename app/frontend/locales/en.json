@@ -96,6 +96,9 @@
       "file_category_originals": "Originals",
       "file_category_documents": "Translated documents"
     },
+    "files": {
+      "download_all": "Download all"
+    },
     "status": {
       "draft": "Draft",
       "submitted": "Submitted",
@@ -151,7 +154,9 @@
       "documents_hint": "Diploma copy, academic transcript, sworn translation (if available)",
       "drop_file": "Drop file here or click to browse",
       "drop_files": "Drop files here or click to browse",
-      "max_size": "Maximum {{size}} MB per file"
+      "file_constraints": "PDF, JPG, PNG, WebP · up to {{size}} MB",
+      "file_too_large": "{{name}}: file too large (max {{size}} MB)",
+      "file_type_not_supported": "{{name}}: format not supported (use PDF, JPG, PNG or WebP)"
     },
     "submitting": "Submitting...",
     "saving_draft": "Saving..."

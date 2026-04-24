@@ -52,6 +52,66 @@ class HomologationRequestTest < ActiveSupport::TestCase
     assert request.errors[:service_type].any?
   end
 
+  # === File validations ===
+
+  test "accepts pdf in originals" do
+    attach_blob(@draft_request.originals, "diploma.pdf", "application/pdf", "pdf")
+    assert @draft_request.valid?, @draft_request.errors.full_messages.join(", ")
+  end
+
+  test "accepts jpeg in originals" do
+    attach_blob(@draft_request.originals, "scan.jpg", "image/jpeg", "jpeg")
+    assert @draft_request.valid?
+  end
+
+  test "accepts png in documents" do
+    attach_blob(@draft_request.documents, "page.png", "image/png", "png")
+    assert @draft_request.valid?
+  end
+
+  test "accepts webp in application" do
+    attach_blob(@draft_request.application, "form.webp", "image/webp", "webp")
+    assert @draft_request.valid?
+  end
+
+  test "rejects executable in originals" do
+    attach_blob(@draft_request.originals, "malware.exe", "application/x-msdownload", "exe")
+    refute @draft_request.valid?
+    assert @draft_request.errors[:originals].any?, "expected :originals error, got #{@draft_request.errors.full_messages}"
+  end
+
+  test "rejects gif in documents" do
+    attach_blob(@draft_request.documents, "animation.gif", "image/gif", "gif")
+    refute @draft_request.valid?
+    assert @draft_request.errors[:documents].any?
+  end
+
+  test "rejects disallowed content type in application" do
+    attach_blob(@draft_request.application, "form.zip", "application/zip", "zip")
+    refute @draft_request.valid?
+    assert @draft_request.errors[:application].any?
+  end
+
+  test "rejects oversized file in originals" do
+    @draft_request.originals.attach(
+      io: StringIO.new("A" * 16.megabytes),
+      filename: "huge.pdf",
+      content_type: "application/pdf"
+    )
+    refute @draft_request.valid?
+    assert @draft_request.errors[:originals].any?
+  end
+
+  test "rejects oversized file in application" do
+    @draft_request.application.attach(
+      io: StringIO.new("A" * 16.megabytes),
+      filename: "huge.pdf",
+      content_type: "application/pdf"
+    )
+    refute @draft_request.valid?
+    assert @draft_request.errors[:application].any?
+  end
+
   test "soft delete discard and kept scopes" do
     assert_includes HomologationRequest.kept, @submitted_request
     @submitted_request.discard
@@ -168,4 +228,14 @@ class HomologationRequestTest < ActiveSupport::TestCase
 
   # NOTE: Pipeline tests (enter_pipeline!, advance_pipeline!, retreat_pipeline!,
   # toggle_checklist_item!, sync_status_from_pipeline!) live in test/models/pipeline_test.rb
+
+  private
+
+  def attach_blob(attachable, filename, content_type, ext)
+    attachable.attach(
+      io: StringIO.new("stub-#{ext}-bytes"),
+      filename: filename,
+      content_type: content_type
+    )
+  end
 end

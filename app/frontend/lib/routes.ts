@@ -42,6 +42,7 @@ export const routes = {
   retrySync: (id: number) => `/requests/${id}/retry_sync`,
   downloadDocument: (id: number, docId: number) =>
     `/requests/${id}/download_document?document_id=${docId}`,
+  downloadAll: (id: number) => `/requests/${id}/download_all`,
   requestMessages: (id: number) => `/requests/${id}/messages`,
   conversations: "/conversations",
   conversation: (id: number) => `/conversations/${id}`,

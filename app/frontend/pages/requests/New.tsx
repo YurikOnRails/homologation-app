@@ -354,6 +354,7 @@ export default function RequestsNew() {
                     name="homologation_request[documents][]"
                     multiple={true}
                     onUpload={(ids) => setData("documents", ids)}
+                    error={errors.documents}
                   />
                 </FormField>
               </CardContent>

@@ -54,6 +54,7 @@ Rails.application.routes.draw do
     resources :messages, only: [ :create ]
     member do
       get  :download_document
+      get  :download_all, action: :download_all_documents
       post :confirm_payment
       post :create_checkout_session
       post :retry_sync

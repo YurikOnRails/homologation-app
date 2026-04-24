@@ -415,14 +415,27 @@ export default function RequestsShow() {
 
                   {/* Files section */}
                   <AccordionItem value="files" className="border-b-0">
-                    <AccordionTrigger className="text-sm font-medium py-3">
-                      {t("requests.form.section_documents")}
+                    <div className="flex items-center gap-1">
+                      <AccordionTrigger className="text-sm font-medium py-3 flex-1">
+                        {t("requests.form.section_documents")}
+                        {request.files.length > 0 && (
+                          <span className="ml-auto mr-2 text-xs text-muted-foreground font-normal">
+                            {request.files.length}
+                          </span>
+                        )}
+                      </AccordionTrigger>
                       {request.files.length > 0 && (
-                        <span className="ml-auto mr-2 text-xs text-muted-foreground font-normal">
-                          {request.files.length}
-                        </span>
+                        <a
+                          href={routes.downloadAll(request.id)}
+                          download
+                          className="inline-flex items-center gap-1.5 px-2.5 rounded-md text-xs font-medium text-primary hover:bg-muted transition-colors min-h-[44px] shrink-0 cursor-pointer"
+                          title={t("requests.files.download_all")}
+                        >
+                          <Download className="h-4 w-4" />
+                          <span className="hidden sm:inline">{t("requests.files.download_all")}</span>
+                        </a>
                       )}
-                    </AccordionTrigger>
+                    </div>
                     <AccordionContent>
                       {request.files.length === 0 ? (
                         <div className="flex flex-col items-center py-6 text-center">

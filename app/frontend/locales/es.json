@@ -96,6 +96,9 @@
       "file_category_originals": "Originales",
       "file_category_documents": "Documentos traducidos"
     },
+    "files": {
+      "download_all": "Descargar todo"
+    },
     "status": {
       "draft": "Borrador",
       "submitted": "Enviada",
@@ -151,7 +154,9 @@
       "documents_hint": "Copia del diploma, notas académicas, traducción jurada (si la tienes)",
       "drop_file": "Arrastra un archivo aquí o haz clic para seleccionar",
       "drop_files": "Arrastra archivos aquí o haz clic para seleccionar",
-      "max_size": "Máximo {{size}} MB por archivo"
+      "file_constraints": "PDF, JPG, PNG, WebP · hasta {{size}} MB",
+      "file_too_large": "{{name}}: archivo demasiado grande (máx. {{size}} MB)",
+      "file_type_not_supported": "{{name}}: formato no admitido (usa PDF, JPG, PNG o WebP)"
     },
     "submitting": "Enviando...",
     "saving_draft": "Guardando..."

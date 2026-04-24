@@ -41,11 +41,18 @@ class HomologationRequest < ApplicationRecord
 
   VALID_SERVICE_TYPES = Rails.application.config.select_options["service_types"].map { |o| o["key"] }.freeze
 
+  ALLOWED_UPLOAD_TYPES = %w[application/pdf image/jpeg image/png image/webp].freeze
+  MAX_UPLOAD_SIZE = 15.megabytes
+
   validates :subject, presence: true
   validates :service_type, presence: true, inclusion: { in: VALID_SERVICE_TYPES }
   validates :pipeline_stage, inclusion: { in: PIPELINE_STAGES }, allow_nil: true
   validates :privacy_accepted, acceptance: { accept: true }, if: -> { status == "submitted" }
   validates :payment_amount, presence: true, numericality: { greater_than: 0 }, if: -> { status == "payment_confirmed" }
+
+  validates :application, content_type: { in: ALLOWED_UPLOAD_TYPES }, size: { less_than: MAX_UPLOAD_SIZE }
+  validates :originals,   content_type: { in: ALLOWED_UPLOAD_TYPES }, size: { less_than: MAX_UPLOAD_SIZE }
+  validates :documents,   content_type: { in: ALLOWED_UPLOAD_TYPES }, size: { less_than: MAX_UPLOAD_SIZE }
 
   after_save :create_request_conversation!, if: -> { saved_change_to_status? && status == "submitted" }
 

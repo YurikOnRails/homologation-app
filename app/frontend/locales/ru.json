@@ -96,6 +96,9 @@
       "file_category_originals": "Оригиналы",
       "file_category_documents": "Переведённые документы"
     },
+    "files": {
+      "download_all": "Скачать всё"
+    },
     "status": {
       "draft": "Черновик",
       "submitted": "Отправлена",
@@ -151,7 +154,9 @@
       "documents_hint": "Копия диплома, приложение с оценками, заверенный перевод (если есть)",
       "drop_file": "Перетащите файл сюда или нажмите для выбора",
       "drop_files": "Перетащите файлы сюда или нажмите для выбора",
-      "max_size": "Максимум {{size}} МБ на файл"
+      "file_constraints": "PDF, JPG, PNG, WebP · до {{size}} МБ",
+      "file_too_large": "{{name}}: файл слишком большой (максимум {{size}} МБ)",
+      "file_type_not_supported": "{{name}}: формат не поддерживается (используйте PDF, JPG, PNG или WebP)"
     },
     "submitting": "Отправка...",
     "saving_draft": "Сохранение..."

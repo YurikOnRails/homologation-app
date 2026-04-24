@@ -1,5 +1,6 @@
 require "test_helper"
 require "ostruct"
+require "zip"
 
 class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   setup do
@@ -558,6 +559,110 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  # === Download all (archive) ===
+
+  test "super_admin downloads all documents as zip" do
+    sign_in @admin
+    request = request_with_all_categories
+    get download_all_homologation_request_path(request)
+
+    assert_response :ok
+    assert_equal "application/zip", response.media_type
+
+    entries = unzip_entries(response.body)
+    assert_includes entries, "README.txt"
+    assert_includes entries, "01_application/form.pdf"
+    assert_includes entries, "02_originals/diploma.pdf"
+    assert_includes entries, "03_documents/translation.pdf"
+  end
+
+  test "student owner can download own archive" do
+    sign_in @student
+    request = request_with_all_categories
+    get download_all_homologation_request_path(request)
+    assert_response :ok
+    assert_equal "application/zip", response.media_type
+  end
+
+  test "other student cannot download archive" do
+    sign_in @other_student
+    request = request_with_all_categories
+    get download_all_homologation_request_path(request)
+    assert_response :forbidden
+  end
+
+  test "archive contains only categories that have files" do
+    sign_in @admin
+    @submitted_request.documents.attach(
+      io: File.open(file_fixture("test_document.pdf")),
+      filename: "translation.pdf",
+      content_type: "application/pdf"
+    )
+    get download_all_homologation_request_path(@submitted_request)
+
+    entries = unzip_entries(response.body)
+    assert_includes entries, "README.txt"
+    assert_includes entries, "03_documents/translation.pdf"
+    refute(entries.any? { |e| e.start_with?("01_application/") }, "unexpected 01_application/ entries: #{entries}")
+    refute(entries.any? { |e| e.start_with?("02_originals/") }, "unexpected 02_originals/ entries: #{entries}")
+  end
+
+  test "archive filename is transliterated to ASCII and includes request id" do
+    sign_in @admin
+    @student.update!(name: "Иван Петров")
+    request = request_with_all_categories
+
+    get download_all_homologation_request_path(request)
+    disposition = response.headers["Content-Disposition"]
+    filename = disposition[/filename="?([^";]+)"?/, 1]
+
+    assert_match(/\AIvan_Petrov_Request_#{request.id}\.zip\z/, filename,
+      "Expected Ivan_Petrov_Request_#{request.id}.zip, got #{filename.inspect}")
+    assert filename.ascii_only?, "Filename must be ASCII-only: #{filename.inspect}"
+  end
+
+  test "archive README contains student name, email, request id, service type, status, submitted date" do
+    sign_in @admin
+    request = request_with_all_categories
+
+    get download_all_homologation_request_path(request)
+    readme = read_zip_entry(response.body, "README.txt")
+
+    assert_includes readme, request.user.name
+    assert_includes readme, request.user.email_address
+    assert_includes readme, request.id.to_s
+    assert_includes readme, request.service_type
+    assert_includes readme, request.status
+    assert_match(/\d{4}-\d{2}-\d{2}/, readme, "README should include submission date")
+  end
+
+  test "request with zero files returns zip with README only" do
+    sign_in @admin
+    get download_all_homologation_request_path(@submitted_request)
+    assert_response :ok
+    entries = unzip_entries(response.body)
+    assert_equal [ "README.txt" ], entries
+  end
+
+  test "archive preserves exact byte content of uploaded files" do
+    sign_in @admin
+    path = file_fixture("test_document.pdf")
+    source_bytes = File.binread(path)
+    @submitted_request.originals.attach(
+      io: File.open(path),
+      filename: "diploma.pdf",
+      content_type: "application/pdf"
+    )
+    get download_all_homologation_request_path(@submitted_request)
+
+    extracted = nil
+    Zip::File.open_buffer(StringIO.new(response.body)) do |zip|
+      extracted = zip.find_entry("02_originals/diploma.pdf").get_input_stream.read
+    end
+    assert_equal source_bytes.bytesize, extracted.bytesize
+    assert_equal source_bytes, extracted.b
+  end
+
   private
 
   # Shared setup helpers — reduce duplication in tests
@@ -574,5 +679,40 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
       content_type: "application/pdf"
     )
     @submitted_request
+  end
+
+  def request_with_all_categories
+    r = @submitted_request
+    r.application.attach(
+      io: File.open(file_fixture("test_document.pdf")),
+      filename: "form.pdf",
+      content_type: "application/pdf"
+    )
+    r.originals.attach(
+      io: File.open(file_fixture("test_document.pdf")),
+      filename: "diploma.pdf",
+      content_type: "application/pdf"
+    )
+    r.documents.attach(
+      io: File.open(file_fixture("test_document.pdf")),
+      filename: "translation.pdf",
+      content_type: "application/pdf"
+    )
+    r
+  end
+
+  def unzip_entries(body)
+    entries = []
+    Zip::File.open_buffer(StringIO.new(body)) do |zip|
+      zip.each { |e| entries << e.name }
+    end
+    entries.sort
+  end
+
+  def read_zip_entry(body, name)
+    Zip::File.open_buffer(StringIO.new(body)) do |zip|
+      entry = zip.find_entry(name)
+      return entry.get_input_stream.read.force_encoding("UTF-8")
+    end
   end
 end

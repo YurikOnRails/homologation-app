@@ -1,10 +1,20 @@
 import { useCallback, useState } from "react"
-import { useDropzone } from "react-dropzone"
+import { useDropzone, type FileRejection } from "react-dropzone"
 import { DirectUpload } from "@rails/activestorage"
 import { useTranslation } from "react-i18next"
 import { X, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+
+// Keep in sync with HomologationRequest::ALLOWED_UPLOAD_TYPES / MAX_UPLOAD_SIZE.
+const MAX_SIZE_MB = 15
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
+const ACCEPT = {
+  "application/pdf": [".pdf"],
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/png": [".png"],
+  "image/webp": [".webp"],
+}
 
 interface UploadedFile {
   name: string
@@ -15,14 +25,17 @@ interface FileDropZoneProps {
   name: string
   multiple: boolean
   onUpload: (signedIds: string[]) => void
+  // Rails sends errors[:documents] as an array of messages (one per invalid attachment).
+  error?: string | string[]
 }
 
-export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
+export function FileDropZone({ name, multiple, onUpload, error: serverError }: FileDropZoneProps) {
   const { t } = useTranslation()
   const [uploaded, setUploaded] = useState<UploadedFile[]>([])
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [error, setError] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [rejections, setRejections] = useState<FileRejection[]>([])
 
   const uploadFile = useCallback(
     (file: File): Promise<string> => {
@@ -53,24 +66,23 @@ export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
   )
 
   const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+      setRejections(fileRejections)
       if (!acceptedFiles.length) return
       setUploading(true)
-      setError(null)
+      setUploadError(null)
       setProgress(0)
       try {
-        const signedIds: string[] = []
         const newUploaded: UploadedFile[] = []
         for (const file of acceptedFiles) {
           const signedId = await uploadFile(file)
-          signedIds.push(signedId)
           newUploaded.push({ name: file.name, signedId })
         }
         const allUploaded = multiple ? [...uploaded, ...newUploaded] : newUploaded
         setUploaded(allUploaded)
         onUpload(allUploaded.map((f) => f.signedId))
       } catch {
-        setError(t("common.error"))
+        setUploadError(t("common.error"))
       } finally {
         setUploading(false)
         setProgress(0)
@@ -85,11 +97,25 @@ export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
     onUpload(updated.map((f) => f.signedId))
   }
 
+  const translateRejection = (rejection: FileRejection): string => {
+    const code = rejection.errors[0]?.code
+    if (code === "file-too-large") {
+      return t("requests.form.file_too_large", { name: rejection.file.name, size: MAX_SIZE_MB })
+    }
+    if (code === "file-invalid-type") {
+      return t("requests.form.file_type_not_supported", { name: rejection.file.name })
+    }
+    return rejection.errors[0]?.message ?? t("common.error")
+  }
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple,
-    maxSize: 10 * 1024 * 1024,
+    maxSize: MAX_SIZE_BYTES,
+    accept: ACCEPT,
   })
+
+  const hasError = Boolean(serverError) || rejections.length > 0 || Boolean(uploadError)
 
   return (
     <div className="space-y-2">
@@ -99,7 +125,9 @@ export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
           "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors min-h-[80px] flex items-center justify-center",
           isDragActive
             ? "border-primary bg-primary/5"
-            : "border-muted-foreground/25 hover:border-primary/50"
+            : hasError
+              ? "border-destructive/60"
+              : "border-muted-foreground/25 hover:border-primary/50"
         )}
       >
         <input {...getInputProps()} name={name} />
@@ -111,7 +139,7 @@ export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
               : t("requests.form.drop_file")}
           </span>
           <span className="text-xs">
-            {t("requests.form.max_size", { size: 10 })}
+            {t("requests.form.file_constraints", { size: MAX_SIZE_MB })}
           </span>
         </div>
       </div>
@@ -125,7 +153,25 @@ export function FileDropZone({ name, multiple, onUpload }: FileDropZoneProps) {
         </div>
       )}
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {rejections.length > 0 && (
+        <ul className="space-y-1" role="alert">
+          {rejections.map((rejection, i) => (
+            <li
+              key={`${rejection.file.name}-${i}`}
+              className="text-sm text-destructive"
+            >
+              {translateRejection(rejection)}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
+      {serverError && (
+        <p className="text-sm text-destructive">
+          {Array.isArray(serverError) ? serverError.join(", ") : serverError}
+        </p>
+      )}
 
       {uploaded.length > 0 && (
         <ul className="space-y-1">
